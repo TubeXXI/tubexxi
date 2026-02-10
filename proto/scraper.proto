@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package scraper;
+option go_package = "tubexxi/video-api";
+
+service ScraperService {
+  rpc ScrapeHome (Empty) returns (HomeResponse);
+  rpc ScrapeList (ListRequest) returns (ListResponse);
+}
+
+message Empty {}
+
+message ListRequest {
+  string url = 1;
+}
+
+message Movie {
+  string id = 1;
+  string title = 2;
+  optional string original_title = 3;
+  optional string thumbnail = 4;
+  optional string synopsis = 5;
+  optional float rating = 6;
+  optional int64 duration = 7;
+  optional int32 year = 8;
+  optional string date_published = 9;
+  optional string label_quality = 10;
+  optional string genre = 11;
+  optional string original_page_url = 12;
+}
+
+message HomeSection {
+  string key = 1;
+  repeated Movie value = 2;
+  optional string view_all_url = 3;
+}
+
+message HomeResponse {
+  repeated HomeSection sections = 1;
+}
+
+message Pagination {
+  int32 current_page = 1;
+  int32 total_page = 2;
+  bool has_next = 3;
+  bool has_prev = 4;
+  optional string next_page_url = 5;
+  optional string prev_page_url = 6;
+}
+
+message ListResponse {
+  repeated Movie movies = 1;
+  Pagination pagination = 2;
+}
