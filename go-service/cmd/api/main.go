@@ -22,7 +22,9 @@ func main() {
 
 	cont, err := dependencies.NewContainer(ctxTimeout)
 	if err != nil {
-		cont.Logger.Fatal("Failed to initialize dependencies", zap.Error(err))
+		// If container fails to initialize, we might not have a logger yet
+		// Check if we can access the logger, otherwise use standard log
+		log.Fatalf("Failed to initialize dependencies: %v", err)
 	}
 	defer cont.Close()
 
@@ -48,6 +50,5 @@ func cleanup(ctx context.Context, cont *dependencies.Container) {
 		log.Fatalf("failed to close dependencies system %v", err)
 	}
 
-	cont.Close()
 	cont.Logger.Info("All services shut down gracefully ✅")
 }

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"sync"
 	"time"
-	"tubexxi/video-api/pkg/config"
+	"tubexxi/video-api/config"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"go.uber.org/zap"
@@ -62,7 +62,7 @@ func NewUnifiedNotifier(workers int, queueSize int, Cooldown time.Duration, cfg 
 		} else {
 			un.tgBot = bot
 			un.tgEnabled = true
-			logger.Info("Telegram notifier initialized",
+			logger.Info("✅ Telegram notifier initialized",
 				zap.String("bot_username", bot.Self.UserName),
 			)
 		}

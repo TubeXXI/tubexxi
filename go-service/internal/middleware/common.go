@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"time"
-	"tubexxi/video-api/pkg/config"
+	"tubexxi/video-api/config"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"

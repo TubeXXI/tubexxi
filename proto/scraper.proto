@@ -1,17 +1,56 @@
 syntax = "proto3";
 
 package scraper;
-option go_package = "tubexxi/video-api";
+option go_package = "tubexxi/video-api/proto";
 
 service ScraperService {
   rpc ScrapeHome (Empty) returns (HomeResponse);
   rpc ScrapeList (ListRequest) returns (ListResponse);
+  
+  // New RPCs
+  rpc GetMoviesByGenre (GenreRequest) returns (ListResponse);
+  rpc SearchMovies (SearchRequest) returns (ListResponse);
+  rpc GetMoviesByFeature (FeatureRequest) returns (ListResponse);
+  rpc GetMoviesByCountry (CountryRequest) returns (ListResponse);
+  rpc GetMoviesByYear (YearRequest) returns (ListResponse);
+  rpc GetSpecialPage (SpecialPageRequest) returns (ListResponse);
 }
 
 message Empty {}
 
 message ListRequest {
   string url = 1;
+}
+
+message GenreRequest {
+  string slug = 1;
+  int32 page = 2;
+}
+
+message SearchRequest {
+  string query = 1;
+  int32 page = 2;
+}
+
+message FeatureRequest {
+  // populer, most-commented, rating, release, latest
+  string feature_type = 1; 
+  int32 page = 2;
+}
+
+message CountryRequest {
+  string country_slug = 1;
+  int32 page = 2;
+}
+
+message YearRequest {
+  int32 year = 1;
+  int32 page = 2;
+}
+
+message SpecialPageRequest {
+  string page_name = 1;
+  int32 page = 2;
 }
 
 message Movie {

@@ -3,6 +3,7 @@ package minioclient
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -20,6 +21,73 @@ func (m *MinioClient) IsUp() bool {
 	return m.isUp
 }
 
+func (m *MinioClient) CreateBucket(ctx context.Context) error {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	exists, err := m.client.BucketExists(subCtx, m.bucketName)
+	if err != nil {
+		if errors.Is(subCtx.Err(), context.DeadlineExceeded) {
+			m.logger.Error("MinIO CreateBucket BucketExists timed out", zap.String("bucket", m.bucketName), zap.Error(err))
+		}
+		return fmt.Errorf("failed to check bucket existence: %w", err)
+	}
+	if !exists {
+		err = m.client.MakeBucket(subCtx, m.bucketName, minio.MakeBucketOptions{})
+		if err != nil {
+			if errors.Is(subCtx.Err(), context.DeadlineExceeded) {
+				m.logger.Error("MinIO CreateBucket MakeBucket timed out", zap.String("bucket", m.bucketName), zap.Error(err))
+			}
+			return fmt.Errorf("failed to create bucket: %w", err)
+		}
+		m.logger.Info("Bucket created successfully", zap.String("bucket", m.bucketName))
+
+		policy := fmt.Sprintf(`{
+			"Version": "2012-10-17",
+			"Statement": [
+				{
+					"Effect": "Allow",
+					"Principal": {
+						"AWS": ["*"]
+					},
+					"Action": ["s3:GetObject"],
+					"Resource": ["arn:aws:s3:::%s/*"]
+				}
+			]
+		}`, m.bucketName)
+
+		if err := m.client.SetBucketPolicy(subCtx, m.bucketName, policy); err != nil {
+			if errors.Is(subCtx.Err(), context.DeadlineExceeded) {
+				m.logger.Error("MinIO CreateBucket SetBucketPolicy timed out", zap.String("bucket", m.bucketName), zap.Error(err))
+			}
+			m.logger.Error("Failed to set bucket policy", zap.String("bucket", m.bucketName), zap.Error(err))
+		} else {
+			m.logger.Info("Bucket policy set to public read", zap.String("bucket", m.bucketName))
+		}
+	} else {
+		policy := fmt.Sprintf(`{
+			"Version": "2012-10-17",
+			"Statement": [
+				{
+					"Effect": "Allow",
+					"Principal": {
+						"AWS": ["*"]
+					},
+					"Action": ["s3:GetObject"],
+					"Resource": ["arn:aws:s3:::%s/*"]
+				}
+			]
+		}`, m.bucketName)
+
+		if err := m.client.SetBucketPolicy(subCtx, m.bucketName, policy); err != nil {
+			if errors.Is(subCtx.Err(), context.DeadlineExceeded) {
+				m.logger.Error("MinIO CreateBucket ensure policy timed out", zap.String("bucket", m.bucketName), zap.Error(err))
+			}
+			m.logger.Error("Failed to ensure bucket policy", zap.String("bucket", m.bucketName), zap.Error(err))
+		}
+	}
+	return nil
+}
 func (m *MinioClient) UploadFile(ctx context.Context, objectName string, reader io.Reader, objectSize int64, contentType string) (string, error) {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 5*time.Minute)
 	defer cancel()

@@ -6,8 +6,8 @@ import (
 	"html/template"
 	"net/smtp"
 	"strconv"
+	"tubexxi/video-api/config"
 	"tubexxi/video-api/internal/dto"
-	"tubexxi/video-api/pkg/config"
 
 	"go.uber.org/zap"
 )

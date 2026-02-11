@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"tubexxi/video-api/config"
 	"tubexxi/video-api/internal/infrastructure/contextpool"
 	"tubexxi/video-api/internal/infrastructure/metrics"
-	"tubexxi/video-api/pkg/config"
 
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
@@ -63,6 +63,7 @@ func NewRedisClient(ctx context.Context, cfg *config.RedisConfig, metrics *metri
 			metrics: metrics,
 			isUp:    true,
 			config:  cfg,
+			logger:  logger,
 		}
 
 		logger.Info("✅ Redis connected successfully",

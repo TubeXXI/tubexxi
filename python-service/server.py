@@ -5,13 +5,15 @@ import scraper_pb2
 import scraper_pb2_grpc
 from scraper import HomeScraper, MovieListScraper
 from fetcher import fetch_html
+import urllib.parse
 
 class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
+    BASE_URL = "https://tv8.lk21official.cc"
+
     def ScrapeHome(self, request, context):
-        url = "https://tv8.lk21official.cc/"
         try:
-            html_content = fetch_html(url)
-            scraper = HomeScraper(html_content, base_url=url)
+            html_content = fetch_html(self.BASE_URL)
+            scraper = HomeScraper(html_content, base_url=self.BASE_URL)
             results = scraper.scrape()
             
             sections = []
@@ -44,8 +46,7 @@ class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
             context.set_code(grpc.StatusCode.INTERNAL)
             return scraper_pb2.HomeResponse()
 
-    def ScrapeList(self, request, context):
-        url = request.url
+    def _scrape_url(self, url, context):
         if not url:
              context.set_details("URL is required")
              context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
@@ -53,11 +54,7 @@ class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
 
         try:
             html_content = fetch_html(url)
-            # Determine base_url from request url or default
-            # Ideally base_url should be the domain
-            base_url = "https://tv8.lk21official.cc"
-            
-            scraper = MovieListScraper(html_content, base_url=base_url)
+            scraper = MovieListScraper(html_content, base_url=self.BASE_URL)
             result = scraper.scrape()
             
             movies = []
@@ -92,6 +89,50 @@ class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
             context.set_details(str(e))
             context.set_code(grpc.StatusCode.INTERNAL)
             return scraper_pb2.ListResponse()
+
+    def ScrapeList(self, request, context):
+        return self._scrape_url(request.url, context)
+
+    def GetMoviesByGenre(self, request, context):
+        page = request.page if request.page > 0 else 1
+        url = f"{self.BASE_URL}/genre/{request.slug}/page/{page}"
+        return self._scrape_url(url, context)
+
+    def SearchMovies(self, request, context):
+        page = request.page if request.page > 0 else 1
+        # Using query param 's' which is standard for WP, but user showed 'spiderman=am' which is weird.
+        # Assuming ?s={query} works or /search/{query}/page/{page}
+        # Let's try standard search query param
+        query = urllib.parse.quote(request.query)
+        url = f"{self.BASE_URL}/search?s={query}&page={page}"
+        # Alternative from user input: https://tv8.lk21official.cc/search?spiderman=am&page=1
+        # If the above fails, we might need to investigate. But standard WP search is usually safe.
+        return self._scrape_url(url, context)
+
+    def GetMoviesByFeature(self, request, context):
+        page = request.page if request.page > 0 else 1
+        # Feature types: populer, most-commented, rating, release, latest
+        url = f"{self.BASE_URL}/{request.feature_type}/page/{page}"
+        return self._scrape_url(url, context)
+
+    def GetMoviesByCountry(self, request, context):
+        page = request.page if request.page > 0 else 1
+        url = f"{self.BASE_URL}/country/{request.country_slug}/page/{page}"
+        return self._scrape_url(url, context)
+
+    def GetMoviesByYear(self, request, context):
+        page = request.page if request.page > 0 else 1
+        url = f"{self.BASE_URL}/year/{request.year}/page/{page}"
+        return self._scrape_url(url, context)
+
+    def GetSpecialPage(self, request, context):
+        # e.g. /rekomendasi-film-pintar
+        # If page is needed, append /page/{n} ?? User didn't specify pagination for special page example.
+        # But assuming it might have pagination.
+        url = f"{self.BASE_URL}/{request.page_name}"
+        if request.page > 1:
+             url = f"{url}/page/{request.page}"
+        return self._scrape_url(url, context)
 
 def serve():
     port = '50051'

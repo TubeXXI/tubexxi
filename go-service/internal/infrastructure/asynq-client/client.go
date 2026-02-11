@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sync"
 	"time"
-	"tubexxi/video-api/pkg/config"
+	"tubexxi/video-api/config"
 
 	"github.com/hibiken/asynq"
 	"go.uber.org/zap"

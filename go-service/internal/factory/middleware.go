@@ -34,6 +34,9 @@ func NewMiddlewareFactory(cont *dependencies.Container) *MiddlewareFactory {
 			&cont.AppConfig.App,
 			cont.Logger,
 		),
+		LoggerMiddleware: middleware.NewLoggerMiddleware(
+			cont.Logger,
+		),
 		AuthMiddleware: middleware.NewAuthMiddleware(
 			cont.Notifier,
 			ctxinject,

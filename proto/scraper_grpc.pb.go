@@ -4,7 +4,7 @@
 // - protoc             v5.29.6
 // source: scraper.proto
 
-package video_api
+package proto
 
 import (
 	context "context"
@@ -19,8 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ScraperService_ScrapeHome_FullMethodName = "/scraper.ScraperService/ScrapeHome"
-	ScraperService_ScrapeList_FullMethodName = "/scraper.ScraperService/ScrapeList"
+	ScraperService_ScrapeHome_FullMethodName         = "/scraper.ScraperService/ScrapeHome"
+	ScraperService_ScrapeList_FullMethodName         = "/scraper.ScraperService/ScrapeList"
+	ScraperService_GetMoviesByGenre_FullMethodName   = "/scraper.ScraperService/GetMoviesByGenre"
+	ScraperService_SearchMovies_FullMethodName       = "/scraper.ScraperService/SearchMovies"
+	ScraperService_GetMoviesByFeature_FullMethodName = "/scraper.ScraperService/GetMoviesByFeature"
+	ScraperService_GetMoviesByCountry_FullMethodName = "/scraper.ScraperService/GetMoviesByCountry"
+	ScraperService_GetMoviesByYear_FullMethodName    = "/scraper.ScraperService/GetMoviesByYear"
+	ScraperService_GetSpecialPage_FullMethodName     = "/scraper.ScraperService/GetSpecialPage"
 )
 
 // ScraperServiceClient is the client API for ScraperService service.
@@ -29,6 +35,13 @@ const (
 type ScraperServiceClient interface {
 	ScrapeHome(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HomeResponse, error)
 	ScrapeList(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	// New RPCs
+	GetMoviesByGenre(ctx context.Context, in *GenreRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	SearchMovies(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	GetMoviesByFeature(ctx context.Context, in *FeatureRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	GetMoviesByCountry(ctx context.Context, in *CountryRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	GetMoviesByYear(ctx context.Context, in *YearRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	GetSpecialPage(ctx context.Context, in *SpecialPageRequest, opts ...grpc.CallOption) (*ListResponse, error)
 }
 
 type scraperServiceClient struct {
@@ -59,12 +72,79 @@ func (c *scraperServiceClient) ScrapeList(ctx context.Context, in *ListRequest, 
 	return out, nil
 }
 
+func (c *scraperServiceClient) GetMoviesByGenre(ctx context.Context, in *GenreRequest, opts ...grpc.CallOption) (*ListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetMoviesByGenre_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) SearchMovies(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*ListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListResponse)
+	err := c.cc.Invoke(ctx, ScraperService_SearchMovies_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) GetMoviesByFeature(ctx context.Context, in *FeatureRequest, opts ...grpc.CallOption) (*ListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetMoviesByFeature_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) GetMoviesByCountry(ctx context.Context, in *CountryRequest, opts ...grpc.CallOption) (*ListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetMoviesByCountry_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) GetMoviesByYear(ctx context.Context, in *YearRequest, opts ...grpc.CallOption) (*ListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetMoviesByYear_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) GetSpecialPage(ctx context.Context, in *SpecialPageRequest, opts ...grpc.CallOption) (*ListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetSpecialPage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ScraperServiceServer is the server API for ScraperService service.
 // All implementations must embed UnimplementedScraperServiceServer
 // for forward compatibility.
 type ScraperServiceServer interface {
 	ScrapeHome(context.Context, *Empty) (*HomeResponse, error)
 	ScrapeList(context.Context, *ListRequest) (*ListResponse, error)
+	// New RPCs
+	GetMoviesByGenre(context.Context, *GenreRequest) (*ListResponse, error)
+	SearchMovies(context.Context, *SearchRequest) (*ListResponse, error)
+	GetMoviesByFeature(context.Context, *FeatureRequest) (*ListResponse, error)
+	GetMoviesByCountry(context.Context, *CountryRequest) (*ListResponse, error)
+	GetMoviesByYear(context.Context, *YearRequest) (*ListResponse, error)
+	GetSpecialPage(context.Context, *SpecialPageRequest) (*ListResponse, error)
 	mustEmbedUnimplementedScraperServiceServer()
 }
 
@@ -80,6 +160,24 @@ func (UnimplementedScraperServiceServer) ScrapeHome(context.Context, *Empty) (*H
 }
 func (UnimplementedScraperServiceServer) ScrapeList(context.Context, *ListRequest) (*ListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ScrapeList not implemented")
+}
+func (UnimplementedScraperServiceServer) GetMoviesByGenre(context.Context, *GenreRequest) (*ListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMoviesByGenre not implemented")
+}
+func (UnimplementedScraperServiceServer) SearchMovies(context.Context, *SearchRequest) (*ListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchMovies not implemented")
+}
+func (UnimplementedScraperServiceServer) GetMoviesByFeature(context.Context, *FeatureRequest) (*ListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMoviesByFeature not implemented")
+}
+func (UnimplementedScraperServiceServer) GetMoviesByCountry(context.Context, *CountryRequest) (*ListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMoviesByCountry not implemented")
+}
+func (UnimplementedScraperServiceServer) GetMoviesByYear(context.Context, *YearRequest) (*ListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMoviesByYear not implemented")
+}
+func (UnimplementedScraperServiceServer) GetSpecialPage(context.Context, *SpecialPageRequest) (*ListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSpecialPage not implemented")
 }
 func (UnimplementedScraperServiceServer) mustEmbedUnimplementedScraperServiceServer() {}
 func (UnimplementedScraperServiceServer) testEmbeddedByValue()                        {}
@@ -138,6 +236,114 @@ func _ScraperService_ScrapeList_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ScraperService_GetMoviesByGenre_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetMoviesByGenre(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetMoviesByGenre_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetMoviesByGenre(ctx, req.(*GenreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_SearchMovies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).SearchMovies(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_SearchMovies_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).SearchMovies(ctx, req.(*SearchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_GetMoviesByFeature_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FeatureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetMoviesByFeature(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetMoviesByFeature_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetMoviesByFeature(ctx, req.(*FeatureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_GetMoviesByCountry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CountryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetMoviesByCountry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetMoviesByCountry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetMoviesByCountry(ctx, req.(*CountryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_GetMoviesByYear_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(YearRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetMoviesByYear(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetMoviesByYear_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetMoviesByYear(ctx, req.(*YearRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_GetSpecialPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SpecialPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetSpecialPage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetSpecialPage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetSpecialPage(ctx, req.(*SpecialPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ScraperService_ServiceDesc is the grpc.ServiceDesc for ScraperService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +358,30 @@ var ScraperService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ScrapeList",
 			Handler:    _ScraperService_ScrapeList_Handler,
+		},
+		{
+			MethodName: "GetMoviesByGenre",
+			Handler:    _ScraperService_GetMoviesByGenre_Handler,
+		},
+		{
+			MethodName: "SearchMovies",
+			Handler:    _ScraperService_SearchMovies_Handler,
+		},
+		{
+			MethodName: "GetMoviesByFeature",
+			Handler:    _ScraperService_GetMoviesByFeature_Handler,
+		},
+		{
+			MethodName: "GetMoviesByCountry",
+			Handler:    _ScraperService_GetMoviesByCountry_Handler,
+		},
+		{
+			MethodName: "GetMoviesByYear",
+			Handler:    _ScraperService_GetMoviesByYear_Handler,
+		},
+		{
+			MethodName: "GetSpecialPage",
+			Handler:    _ScraperService_GetSpecialPage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

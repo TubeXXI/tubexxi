@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"tubexxi/video-api/pkg/config"
+	"tubexxi/video-api/config"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

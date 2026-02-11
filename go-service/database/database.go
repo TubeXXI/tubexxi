@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"tubexxi/video-api/config"
 	"tubexxi/video-api/internal/infrastructure/metrics"
-	"tubexxi/video-api/pkg/config"
 	"tubexxi/video-api/pkg/logger"
 	"tubexxi/video-api/pkg/telegram"
 
@@ -94,7 +94,7 @@ func NewDatabase(ctx context.Context, cfg *config.DatabaseConfig, app *config.Ap
 	PGXDB = dbPool
 	dbMutex.Unlock()
 
-	logger.Info("PGX pool connected successfully",
+	logger.Info("✅ PGX pool connected successfully",
 		zap.String("dsn", maskPasswordInDSN(dsn)), // Helper function to hide password
 		zap.Int("max_conns", int(poolConfig.MaxConns)),
 		zap.Bool("debug", app.IsDebug),

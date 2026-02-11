@@ -3,7 +3,7 @@ package centrifugo
 import (
 	"context"
 	"errors"
-	"tubexxi/video-api/pkg/config"
+	"tubexxi/video-api/config"
 
 	"sync"
 

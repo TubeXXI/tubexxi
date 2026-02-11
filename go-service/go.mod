@@ -1,6 +1,6 @@
 module tubexxi/video-api
 
-go 1.25.1
+go 1.25.5
 
 require (
 	github.com/georgysavva/scany/v2 v2.1.4
@@ -12,8 +12,12 @@ require (
 	github.com/redis/go-redis/v9 v9.17.2
 	go.uber.org/zap v1.27.1
 	golang.org/x/crypto v0.46.0
+	google.golang.org/grpc v1.78.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	tubexxi/video-api/proto v0.0.0
 )
+
+replace tubexxi/video-api/proto => ../proto
 
 require (
 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
@@ -42,8 +46,6 @@ require (
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/net v0.48.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251029180050-ab9386a59fda // indirect
-	google.golang.org/grpc v1.78.0 // indirect
-	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.1 // indirect
 )
 
 require (
