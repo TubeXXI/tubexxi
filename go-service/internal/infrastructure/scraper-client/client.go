@@ -137,4 +137,13 @@ func (s *ScraperClient) GetSeriesSpecialPage(ctx context.Context, pageName strin
 	return s.client.GetSeriesSpecialPage(ctx, &pb.SpecialPageRequest{PageName: pageName, Page: page})
 }
 
-
+func (s *ScraperClient) GetSeriesDetail(ctx context.Context, slug string) (*pb.SeriesDetailResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetSeriesDetail(ctx, &pb.MovieDetailRequest{Slug: slug})
+}
+func (s *ScraperClient) GetSeriesEpisode(ctx context.Context, url string) (*pb.SeriesEpisodeResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetSeriesEpisode(ctx, &pb.SeriesEpisodeRequest{Url: url})
+}

@@ -69,3 +69,30 @@ class MovieDetail:
     countries: Optional[List[CountryMovie]] = None
     genres: Optional[List[Genre]] = None
     similar_movies: Optional[List[Movie]] = None
+
+@dataclass
+class SeriesEpisodeResponse:
+    episode_number: int
+    player_urls: List[PlayerUrl]
+    trailer_url: Optional[str] = None
+    download_url: Optional[str] = None
+
+@dataclass
+class EpisodeList:
+    episode_number: int
+    episode_url: str
+    player_urls: Optional[List[PlayerUrl]] = None
+    trailer_url: Optional[str] = None
+
+@dataclass
+class SeasonList:
+    current_season: int
+    total_season: int
+    episode_list: List[EpisodeList]
+
+@dataclass
+class SeriesDetail:
+    movie_detail: MovieDetail
+    season_name: Optional[str] = None
+    status: Optional[str] = None
+    season_list: Optional[List[SeasonList]] = None

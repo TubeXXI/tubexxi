@@ -35,6 +35,8 @@ const (
 	ScraperService_GetSeriesByCountry_FullMethodName   = "/scraper.ScraperService/GetSeriesByCountry"
 	ScraperService_GetSeriesByYear_FullMethodName      = "/scraper.ScraperService/GetSeriesByYear"
 	ScraperService_GetSeriesSpecialPage_FullMethodName = "/scraper.ScraperService/GetSeriesSpecialPage"
+	ScraperService_GetSeriesDetail_FullMethodName      = "/scraper.ScraperService/GetSeriesDetail"
+	ScraperService_GetSeriesEpisode_FullMethodName     = "/scraper.ScraperService/GetSeriesEpisode"
 )
 
 // ScraperServiceClient is the client API for ScraperService service.
@@ -60,6 +62,9 @@ type ScraperServiceClient interface {
 	GetSeriesByCountry(ctx context.Context, in *CountryRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	GetSeriesByYear(ctx context.Context, in *YearRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	GetSeriesSpecialPage(ctx context.Context, in *SpecialPageRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	// Series Detail
+	GetSeriesDetail(ctx context.Context, in *MovieDetailRequest, opts ...grpc.CallOption) (*SeriesDetailResponse, error)
+	GetSeriesEpisode(ctx context.Context, in *SeriesEpisodeRequest, opts ...grpc.CallOption) (*SeriesEpisodeResponse, error)
 }
 
 type scraperServiceClient struct {
@@ -230,6 +235,26 @@ func (c *scraperServiceClient) GetSeriesSpecialPage(ctx context.Context, in *Spe
 	return out, nil
 }
 
+func (c *scraperServiceClient) GetSeriesDetail(ctx context.Context, in *MovieDetailRequest, opts ...grpc.CallOption) (*SeriesDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SeriesDetailResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetSeriesDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) GetSeriesEpisode(ctx context.Context, in *SeriesEpisodeRequest, opts ...grpc.CallOption) (*SeriesEpisodeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SeriesEpisodeResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetSeriesEpisode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ScraperServiceServer is the server API for ScraperService service.
 // All implementations must embed UnimplementedScraperServiceServer
 // for forward compatibility.
@@ -253,6 +278,9 @@ type ScraperServiceServer interface {
 	GetSeriesByCountry(context.Context, *CountryRequest) (*ListResponse, error)
 	GetSeriesByYear(context.Context, *YearRequest) (*ListResponse, error)
 	GetSeriesSpecialPage(context.Context, *SpecialPageRequest) (*ListResponse, error)
+	// Series Detail
+	GetSeriesDetail(context.Context, *MovieDetailRequest) (*SeriesDetailResponse, error)
+	GetSeriesEpisode(context.Context, *SeriesEpisodeRequest) (*SeriesEpisodeResponse, error)
 	mustEmbedUnimplementedScraperServiceServer()
 }
 
@@ -310,6 +338,12 @@ func (UnimplementedScraperServiceServer) GetSeriesByYear(context.Context, *YearR
 }
 func (UnimplementedScraperServiceServer) GetSeriesSpecialPage(context.Context, *SpecialPageRequest) (*ListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSeriesSpecialPage not implemented")
+}
+func (UnimplementedScraperServiceServer) GetSeriesDetail(context.Context, *MovieDetailRequest) (*SeriesDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSeriesDetail not implemented")
+}
+func (UnimplementedScraperServiceServer) GetSeriesEpisode(context.Context, *SeriesEpisodeRequest) (*SeriesEpisodeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSeriesEpisode not implemented")
 }
 func (UnimplementedScraperServiceServer) mustEmbedUnimplementedScraperServiceServer() {}
 func (UnimplementedScraperServiceServer) testEmbeddedByValue()                        {}
@@ -620,6 +654,42 @@ func _ScraperService_GetSeriesSpecialPage_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ScraperService_GetSeriesDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MovieDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetSeriesDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetSeriesDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetSeriesDetail(ctx, req.(*MovieDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_GetSeriesEpisode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SeriesEpisodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetSeriesEpisode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetSeriesEpisode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetSeriesEpisode(ctx, req.(*SeriesEpisodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ScraperService_ServiceDesc is the grpc.ServiceDesc for ScraperService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -690,6 +760,14 @@ var ScraperService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSeriesSpecialPage",
 			Handler:    _ScraperService_GetSeriesSpecialPage_Handler,
+		},
+		{
+			MethodName: "GetSeriesDetail",
+			Handler:    _ScraperService_GetSeriesDetail_Handler,
+		},
+		{
+			MethodName: "GetSeriesEpisode",
+			Handler:    _ScraperService_GetSeriesEpisode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

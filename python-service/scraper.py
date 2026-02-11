@@ -3,7 +3,7 @@ import uuid
 import re
 from typing import List, Optional
 from datetime import datetime
-from entities import Movie, HomeScrapperResponse, MovieListResponse, Pagination, MovieDetail, PlayerUrl, MoviePerson, CountryMovie, Genre
+from entities import Movie, HomeScrapperResponse, MovieListResponse, Pagination, MovieDetail, PlayerUrl, MoviePerson, CountryMovie, Genre, SeriesDetail, SeasonList, EpisodeList, SeriesEpisodeResponse
 
 class BaseScraper:
     def __init__(self, html_content: str, base_url: str = "https://tv8.lk21official.cc"):
@@ -542,3 +542,121 @@ class MovieDetailScraper(BaseScraper):
             similar_movies=similar_movies
         )
 
+class SeriesDetailScraper(MovieDetailScraper):
+    def scrape(self, original_url: str) -> Optional[SeriesDetail]:
+        # 1. Get Base Movie Detail
+        movie_detail = super().scrape(original_url)
+        if not movie_detail:
+            return None
+        
+        # 2. Parse Series Specifics
+        season_list = []
+        season_name = None
+        status = None 
+        
+        # Status
+        status_tag = self.soup.find('span', string=re.compile(r'Status:', re.IGNORECASE))
+        if status_tag:
+             # usually status is next to it or in parent text
+             # If status_tag is "Status: Ongoing", then we extract it.
+             # Or if it's <span>Status:</span> <span>Ongoing</span>
+             parent = status_tag.find_parent('div') or status_tag.find_parent('li')
+             if parent:
+                 status = parent.get_text(strip=True).replace("Status:", "").strip()
+
+        # Season Select
+        season_select = self.soup.find('select', class_='season-select')
+        current_season_num = 1
+        total_seasons = 1
+        
+        if season_select:
+             options = season_select.find_all('option')
+             total_seasons = len(options)
+             # Determine current season from selected option
+             selected_option = season_select.find('option', selected=True)
+             if selected_option:
+                 try:
+                     current_season_num = int(selected_option['value'])
+                     season_name = selected_option.get_text(strip=True)
+                 except:
+                     pass
+        
+        # Episode List (for current season)
+        episodes = []
+        episode_ul = self.soup.find('ul', class_='episode-list')
+        if episode_ul:
+            for li in episode_ul.find_all('li'):
+                a = li.find('a')
+                if a:
+                    ep_url = self._make_absolute_url(a['href'])
+                    ep_title = a.get_text(strip=True) # "Episode 1", "Episode 2"
+                    
+                    # Parse episode number
+                    ep_num = 0
+                    match = re.search(r'Episode\s+(\d+)', ep_title, re.IGNORECASE)
+                    if match:
+                        ep_num = int(match.group(1))
+                    
+                    episodes.append(EpisodeList(
+                        episode_number=ep_num,
+                        episode_url=ep_url,
+                        player_urls=[], # Empty initially
+                        trailer_url=None
+                    ))
+        
+        # Add current season to list
+        season_list.append(SeasonList(
+            current_season=current_season_num,
+            total_season=total_seasons,
+            episode_list=episodes
+        ))
+        
+        return SeriesDetail(
+            movie_detail=movie_detail,
+            season_name=season_name,
+            status=status,
+            season_list=season_list
+        )
+
+class SeriesEpisodeScraper(BaseScraper):
+    def scrape(self, url: str) -> Optional[SeriesEpisodeResponse]:
+        # Parse Episode Number from Title or URL
+        title_tag = self.soup.find('title')
+        episode_number = 0
+        if title_tag:
+            title_text = title_tag.get_text(strip=True)
+            match = re.search(r'Episode\s+(\d+)', title_text, re.IGNORECASE)
+            if match:
+                episode_number = int(match.group(1))
+        
+        # Player URLs
+        player_urls = []
+        player_list = self.soup.find('ul', id='player-list')
+        if player_list:
+            for li in player_list.find_all('li'):
+                a = li.find('a')
+                if a:
+                    p_url = a.get('data-url') or a.get('href')
+                    server = a.get('data-server') or a.get_text(strip=True)
+                    if p_url:
+                        player_urls.append(PlayerUrl(url=p_url, type=server))
+        
+        # Trailer
+        trailer_url = None
+        trailer_link = self.soup.find('a', class_='yt-lightbox')
+        if trailer_link:
+            trailer_url = trailer_link.get('href')
+
+        # Download URL
+        download_url = None
+        # Try to find download link
+        download_btn = self.soup.find('a', class_='btn-download')
+        if download_btn:
+             download_url = self._make_absolute_url(download_btn['href'])
+
+        return SeriesEpisodeResponse(
+            episode_number=episode_number,
+            player_urls=player_urls,
+            trailer_url=trailer_url,
+            download_url=download_url
+        )

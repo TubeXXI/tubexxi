@@ -218,6 +218,18 @@ class ScraperServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetSeriesDetail(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSeriesEpisode(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ScraperServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -300,6 +312,16 @@ def add_ScraperServiceServicer_to_server(servicer, server):
                     servicer.GetSeriesSpecialPage,
                     request_deserializer=scraper__pb2.SpecialPageRequest.FromString,
                     response_serializer=scraper__pb2.ListResponse.SerializeToString,
+            ),
+            'GetSeriesDetail': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSeriesDetail,
+                    request_deserializer=scraper__pb2.MovieDetailRequest.FromString,
+                    response_serializer=scraper__pb2.SeriesDetailResponse.SerializeToString,
+            ),
+            'GetSeriesEpisode': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSeriesEpisode,
+                    request_deserializer=scraper__pb2.SeriesEpisodeRequest.FromString,
+                    response_serializer=scraper__pb2.SeriesEpisodeResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -734,6 +756,60 @@ class ScraperService(object):
             '/scraper.ScraperService/GetSeriesSpecialPage',
             scraper__pb2.SpecialPageRequest.SerializeToString,
             scraper__pb2.ListResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSeriesDetail(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/scraper.ScraperService/GetSeriesDetail',
+            scraper__pb2.MovieDetailRequest.SerializeToString,
+            scraper__pb2.SeriesDetailResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSeriesEpisode(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/scraper.ScraperService/GetSeriesEpisode',
+            scraper__pb2.SeriesEpisodeRequest.SerializeToString,
+            scraper__pb2.SeriesEpisodeResponse.FromString,
             options,
             channel_credentials,
             insecure,

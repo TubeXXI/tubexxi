@@ -289,3 +289,27 @@ func (h *MovieHandler) GetSeriesSpecialPage(c *fiber.Ctx) error {
 	)
 }
 
+func (h *MovieHandler) GetSeriesDetail(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+	slug := c.Params("slug")
+	if slug == "" {
+		slug = c.Query("url")
+	}
+
+	if slug == "" {
+		return response.Error(c, fiber.StatusBadRequest, "slug or url is required", nil)
+	}
+
+	result, err := h.service.GetSeriesDetail(ctx, slug)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if result == nil {
+		return response.Error(c, fiber.StatusNotFound, "series not found", nil)
+	}
+
+	return response.Success(c, "Success fetch series", result)
+}

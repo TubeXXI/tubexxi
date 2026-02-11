@@ -50,6 +50,8 @@ func (r *MovieRoutes) RegisterRoutes(parent fiber.Router) {
 	seriesRouter.Get("/search", r.handler.SearchSeries)
 	seriesRouter.Get("/special/:page_name", r.handler.GetSeriesSpecialPage)
 	seriesRouter.Get("/featured/:type", r.handler.GetSeriesByFeature)
+	seriesRouter.Get("/detail/:slug", r.handler.GetSeriesDetail)
+	seriesRouter.Get("/detail", r.handler.GetSeriesDetail)
 }
 
 

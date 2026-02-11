@@ -26,6 +26,10 @@ service ScraperService {
   rpc GetSeriesByCountry (CountryRequest) returns (ListResponse);
   rpc GetSeriesByYear (YearRequest) returns (ListResponse);
   rpc GetSeriesSpecialPage (SpecialPageRequest) returns (ListResponse);
+
+  // Series Detail
+  rpc GetSeriesDetail (MovieDetailRequest) returns (SeriesDetailResponse);
+  rpc GetSeriesEpisode (SeriesEpisodeRequest) returns (SeriesEpisodeResponse);
 }
 
 
@@ -146,4 +150,41 @@ message MovieDetail {
 
 message MovieDetailResponse {
   MovieDetail detail = 1;
+}
+
+// Series Messages
+
+message SeriesEpisodeRequest {
+  string url = 1;
+}
+
+message SeriesEpisodeResponse {
+    int32 episode_number = 1;
+    repeated PlayerUrl player_urls = 2;
+    string trailer_url = 3;
+    optional string download_url = 4;
+}
+
+message EpisodeList {
+    int32 episode_number = 1;
+    string episode_url = 2;
+    repeated PlayerUrl player_urls = 3; 
+    string trailer_url = 4;
+}
+
+message SeasonList {
+    int32 current_season = 1;
+    int32 total_season = 2;
+    repeated EpisodeList episode_list = 3;
+}
+
+message SeriesDetail {
+    MovieDetail movie_detail = 1;
+    string season_name = 2;
+    string status = 3;
+    repeated SeasonList season_list = 4;
+}
+
+message SeriesDetailResponse {
+    SeriesDetail detail = 1;
 }

@@ -207,6 +207,14 @@ func (s *MovieService) GetSeriesSpecialPage(ctx context.Context, pageName string
 	return s.mapProtoToListResponse(resp), nil
 }
 
+func (s *MovieService) GetSeriesDetail(ctx context.Context, slug string) (*entity.SeriesDetail, error) {
+	resp, err := s.scraperClient.GetSeriesDetail(ctx, slug)
+	if err != nil {
+		s.logger.Error("failed to get series detail", zap.String("slug", slug), zap.Error(err))
+		return nil, err
+	}
+	return s.mapProtoToSeriesDetail(resp), nil
+}
 
 func (s *MovieService) mapProtoToMovie(m *pb.Movie) entity.Movie {
 	id, err := uuid.Parse(m.Id)
@@ -299,7 +307,7 @@ func (s *MovieService) mapProtoToMovieDetail(resp *pb.MovieDetailResponse) *enti
 			updatedAt = &t
 		}
 	}
-	
+
 	// Map trailer url
 	var trailerUrl *string
 	if detail.TrailerUrl != "" {
@@ -378,5 +386,133 @@ func (s *MovieService) mapProtoToMovieDetail(resp *pb.MovieDetailResponse) *enti
 	}
 }
 
+func (s *MovieService) mapProtoToSeriesDetail(resp *pb.SeriesDetailResponse) *entity.SeriesDetail {
+	if resp.Detail == nil {
+		return nil
+	}
 
+	detail := resp.Detail
+	series := s.mapProtoToMovie(detail.MovieDetail.Movie)
 
+	var votes *int64
+	if detail.MovieDetail.Votes != 0 {
+		v := detail.MovieDetail.Votes
+		votes = &v
+	}
+
+	var releaseDate *time.Time
+	if detail.MovieDetail.ReleaseDate != "" {
+		if t, err := time.Parse(time.RFC3339, detail.MovieDetail.ReleaseDate); err == nil {
+			releaseDate = &t
+		}
+	}
+
+	var updatedAt *time.Time
+	if detail.MovieDetail.UpdatedAt != "" {
+		if t, err := time.Parse(time.RFC3339, detail.MovieDetail.UpdatedAt); err == nil {
+			updatedAt = &t
+		}
+	}
+
+	var directors []entity.MoviePerson
+	for _, d := range detail.MovieDetail.Directors {
+		n := d.Name
+		pu := d.PageUrl
+		directors = append(directors, entity.MoviePerson{
+			Name:    &n,
+			PageUrl: &pu,
+		})
+	}
+
+	var stars []entity.MoviePerson
+	for _, st := range detail.MovieDetail.MovieStars {
+		n := st.Name
+		pu := st.PageUrl
+		stars = append(stars, entity.MoviePerson{
+			Name:    &n,
+			PageUrl: &pu,
+		})
+	}
+
+	var countries []entity.CountryMovie
+	for _, c := range detail.MovieDetail.Countries {
+		n := c.Name
+		pu := c.PageUrl
+		countries = append(countries, entity.CountryMovie{
+			Name:    &n,
+			PageUrl: &pu,
+		})
+	}
+
+	var genres []entity.Genre
+	for _, g := range detail.MovieDetail.Genres {
+		n := g.Name
+		pu := g.PageUrl
+		genres = append(genres, entity.Genre{
+			Name:    &n,
+			PageUrl: &pu,
+		})
+	}
+
+	var similarMovies []entity.Movie
+	for _, sm := range detail.MovieDetail.SimilarMovies {
+		similarMovies = append(similarMovies, s.mapProtoToMovie(sm))
+	}
+
+	var seasonList []entity.SeasonList
+	for _, sl := range detail.SeasonList {
+		var episodeList []entity.EpisodeList
+		for _, el := range sl.EpisodeList {
+
+			// Map player urls for episode
+			var epPlayerUrls []entity.PlayerUrl
+			for _, p := range el.PlayerUrls {
+				u := p.Url
+				t := p.Type
+				epPlayerUrls = append(epPlayerUrls, entity.PlayerUrl{
+					URL:  &u,
+					Type: &t,
+				})
+			}
+
+			// Episode fields
+			epNum := el.EpisodeNumber
+			epUrl := el.EpisodeUrl
+			epTrailer := el.TrailerUrl
+
+			episodeList = append(episodeList, entity.EpisodeList{
+				EpisodeNumber: &epNum,
+				EpisodeUrl:    &epUrl,
+				PlayerUrl:     &epPlayerUrls,
+				TrailerUrl:    &epTrailer,
+			})
+		}
+
+		currSeason := sl.CurrentSeason
+		totalSeason := sl.TotalSeason
+
+		seasonList = append(seasonList, entity.SeasonList{
+			CurrentSeason: &currSeason,
+			TotalSeason:   &totalSeason,
+			EpisodeList:   &episodeList,
+		})
+	}
+
+	seasonName := detail.SeasonName
+	status := detail.Status
+
+	return &entity.SeriesDetail{
+		Movie:         series,
+		Votes:         votes,
+		SeasonName:    &seasonName,
+		Status:        &status,
+		SeasonList:    &seasonList,
+		ReleaseDate:   releaseDate,
+		UpdatedAt:     updatedAt,
+		Director:      &directors,
+		MovieStar:     &stars,
+		Countries:     &countries,
+		Genres:        &genres,
+		SimilarMovies: &similarMovies,
+	}
+}

@@ -1206,6 +1206,358 @@ func (x *MovieDetailResponse) GetDetail() *MovieDetail {
 	return nil
 }
 
+type SeriesEpisodeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SeriesEpisodeRequest) Reset() {
+	*x = SeriesEpisodeRequest{}
+	mi := &file_proto_scraper_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SeriesEpisodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SeriesEpisodeRequest) ProtoMessage() {}
+
+func (x *SeriesEpisodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SeriesEpisodeRequest.ProtoReflect.Descriptor instead.
+func (*SeriesEpisodeRequest) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *SeriesEpisodeRequest) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+type SeriesEpisodeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EpisodeNumber int32                  `protobuf:"varint,1,opt,name=episode_number,json=episodeNumber,proto3" json:"episode_number,omitempty"`
+	PlayerUrls    []*PlayerUrl           `protobuf:"bytes,2,rep,name=player_urls,json=playerUrls,proto3" json:"player_urls,omitempty"`
+	TrailerUrl    string                 `protobuf:"bytes,3,opt,name=trailer_url,json=trailerUrl,proto3" json:"trailer_url,omitempty"`
+	DownloadUrl   *string                `protobuf:"bytes,4,opt,name=download_url,json=downloadUrl,proto3,oneof" json:"download_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SeriesEpisodeResponse) Reset() {
+	*x = SeriesEpisodeResponse{}
+	mi := &file_proto_scraper_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SeriesEpisodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SeriesEpisodeResponse) ProtoMessage() {}
+
+func (x *SeriesEpisodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SeriesEpisodeResponse.ProtoReflect.Descriptor instead.
+func (*SeriesEpisodeResponse) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *SeriesEpisodeResponse) GetEpisodeNumber() int32 {
+	if x != nil {
+		return x.EpisodeNumber
+	}
+	return 0
+}
+
+func (x *SeriesEpisodeResponse) GetPlayerUrls() []*PlayerUrl {
+	if x != nil {
+		return x.PlayerUrls
+	}
+	return nil
+}
+
+func (x *SeriesEpisodeResponse) GetTrailerUrl() string {
+	if x != nil {
+		return x.TrailerUrl
+	}
+	return ""
+}
+
+func (x *SeriesEpisodeResponse) GetDownloadUrl() string {
+	if x != nil && x.DownloadUrl != nil {
+		return *x.DownloadUrl
+	}
+	return ""
+}
+
+type EpisodeList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EpisodeNumber int32                  `protobuf:"varint,1,opt,name=episode_number,json=episodeNumber,proto3" json:"episode_number,omitempty"`
+	EpisodeUrl    string                 `protobuf:"bytes,2,opt,name=episode_url,json=episodeUrl,proto3" json:"episode_url,omitempty"`
+	PlayerUrls    []*PlayerUrl           `protobuf:"bytes,3,rep,name=player_urls,json=playerUrls,proto3" json:"player_urls,omitempty"`
+	TrailerUrl    string                 `protobuf:"bytes,4,opt,name=trailer_url,json=trailerUrl,proto3" json:"trailer_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EpisodeList) Reset() {
+	*x = EpisodeList{}
+	mi := &file_proto_scraper_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EpisodeList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EpisodeList) ProtoMessage() {}
+
+func (x *EpisodeList) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EpisodeList.ProtoReflect.Descriptor instead.
+func (*EpisodeList) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *EpisodeList) GetEpisodeNumber() int32 {
+	if x != nil {
+		return x.EpisodeNumber
+	}
+	return 0
+}
+
+func (x *EpisodeList) GetEpisodeUrl() string {
+	if x != nil {
+		return x.EpisodeUrl
+	}
+	return ""
+}
+
+func (x *EpisodeList) GetPlayerUrls() []*PlayerUrl {
+	if x != nil {
+		return x.PlayerUrls
+	}
+	return nil
+}
+
+func (x *EpisodeList) GetTrailerUrl() string {
+	if x != nil {
+		return x.TrailerUrl
+	}
+	return ""
+}
+
+type SeasonList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CurrentSeason int32                  `protobuf:"varint,1,opt,name=current_season,json=currentSeason,proto3" json:"current_season,omitempty"`
+	TotalSeason   int32                  `protobuf:"varint,2,opt,name=total_season,json=totalSeason,proto3" json:"total_season,omitempty"`
+	EpisodeList   []*EpisodeList         `protobuf:"bytes,3,rep,name=episode_list,json=episodeList,proto3" json:"episode_list,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SeasonList) Reset() {
+	*x = SeasonList{}
+	mi := &file_proto_scraper_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SeasonList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SeasonList) ProtoMessage() {}
+
+func (x *SeasonList) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SeasonList.ProtoReflect.Descriptor instead.
+func (*SeasonList) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *SeasonList) GetCurrentSeason() int32 {
+	if x != nil {
+		return x.CurrentSeason
+	}
+	return 0
+}
+
+func (x *SeasonList) GetTotalSeason() int32 {
+	if x != nil {
+		return x.TotalSeason
+	}
+	return 0
+}
+
+func (x *SeasonList) GetEpisodeList() []*EpisodeList {
+	if x != nil {
+		return x.EpisodeList
+	}
+	return nil
+}
+
+type SeriesDetail struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MovieDetail   *MovieDetail           `protobuf:"bytes,1,opt,name=movie_detail,json=movieDetail,proto3" json:"movie_detail,omitempty"`
+	SeasonName    string                 `protobuf:"bytes,2,opt,name=season_name,json=seasonName,proto3" json:"season_name,omitempty"`
+	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	SeasonList    []*SeasonList          `protobuf:"bytes,4,rep,name=season_list,json=seasonList,proto3" json:"season_list,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SeriesDetail) Reset() {
+	*x = SeriesDetail{}
+	mi := &file_proto_scraper_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SeriesDetail) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SeriesDetail) ProtoMessage() {}
+
+func (x *SeriesDetail) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SeriesDetail.ProtoReflect.Descriptor instead.
+func (*SeriesDetail) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *SeriesDetail) GetMovieDetail() *MovieDetail {
+	if x != nil {
+		return x.MovieDetail
+	}
+	return nil
+}
+
+func (x *SeriesDetail) GetSeasonName() string {
+	if x != nil {
+		return x.SeasonName
+	}
+	return ""
+}
+
+func (x *SeriesDetail) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *SeriesDetail) GetSeasonList() []*SeasonList {
+	if x != nil {
+		return x.SeasonList
+	}
+	return nil
+}
+
+type SeriesDetailResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Detail        *SeriesDetail          `protobuf:"bytes,1,opt,name=detail,proto3" json:"detail,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SeriesDetailResponse) Reset() {
+	*x = SeriesDetailResponse{}
+	mi := &file_proto_scraper_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SeriesDetailResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SeriesDetailResponse) ProtoMessage() {}
+
+func (x *SeriesDetailResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SeriesDetailResponse.ProtoReflect.Descriptor instead.
+func (*SeriesDetailResponse) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *SeriesDetailResponse) GetDetail() *SeriesDetail {
+	if x != nil {
+		return x.Detail
+	}
+	return nil
+}
+
 var File_proto_scraper_proto protoreflect.FileDescriptor
 
 const file_proto_scraper_proto_rawDesc = "" +
@@ -1313,7 +1665,39 @@ const file_proto_scraper_proto_rawDesc = "" +
 	" \x03(\v2\x0e.scraper.GenreR\x06genres\x125\n" +
 	"\x0esimilar_movies\x18\v \x03(\v2\x0e.scraper.MovieR\rsimilarMovies\"C\n" +
 	"\x13MovieDetailResponse\x12,\n" +
-	"\x06detail\x18\x01 \x01(\v2\x14.scraper.MovieDetailR\x06detail2\xb1\b\n" +
+	"\x06detail\x18\x01 \x01(\v2\x14.scraper.MovieDetailR\x06detail\"(\n" +
+	"\x14SeriesEpisodeRequest\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\"\xcd\x01\n" +
+	"\x15SeriesEpisodeResponse\x12%\n" +
+	"\x0eepisode_number\x18\x01 \x01(\x05R\repisodeNumber\x123\n" +
+	"\vplayer_urls\x18\x02 \x03(\v2\x12.scraper.PlayerUrlR\n" +
+	"playerUrls\x12\x1f\n" +
+	"\vtrailer_url\x18\x03 \x01(\tR\n" +
+	"trailerUrl\x12&\n" +
+	"\fdownload_url\x18\x04 \x01(\tH\x00R\vdownloadUrl\x88\x01\x01B\x0f\n" +
+	"\r_download_url\"\xab\x01\n" +
+	"\vEpisodeList\x12%\n" +
+	"\x0eepisode_number\x18\x01 \x01(\x05R\repisodeNumber\x12\x1f\n" +
+	"\vepisode_url\x18\x02 \x01(\tR\n" +
+	"episodeUrl\x123\n" +
+	"\vplayer_urls\x18\x03 \x03(\v2\x12.scraper.PlayerUrlR\n" +
+	"playerUrls\x12\x1f\n" +
+	"\vtrailer_url\x18\x04 \x01(\tR\n" +
+	"trailerUrl\"\x8f\x01\n" +
+	"\n" +
+	"SeasonList\x12%\n" +
+	"\x0ecurrent_season\x18\x01 \x01(\x05R\rcurrentSeason\x12!\n" +
+	"\ftotal_season\x18\x02 \x01(\x05R\vtotalSeason\x127\n" +
+	"\fepisode_list\x18\x03 \x03(\v2\x14.scraper.EpisodeListR\vepisodeList\"\xb6\x01\n" +
+	"\fSeriesDetail\x127\n" +
+	"\fmovie_detail\x18\x01 \x01(\v2\x14.scraper.MovieDetailR\vmovieDetail\x12\x1f\n" +
+	"\vseason_name\x18\x02 \x01(\tR\n" +
+	"seasonName\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\x124\n" +
+	"\vseason_list\x18\x04 \x03(\v2\x13.scraper.SeasonListR\n" +
+	"seasonList\"E\n" +
+	"\x14SeriesDetailResponse\x12-\n" +
+	"\x06detail\x18\x01 \x01(\v2\x15.scraper.SeriesDetailR\x06detail2\xd3\t\n" +
 	"\x0eScraperService\x123\n" +
 	"\n" +
 	"ScrapeHome\x12\x0e.scraper.Empty\x1a\x15.scraper.HomeResponse\x129\n" +
@@ -1332,7 +1716,9 @@ const file_proto_scraper_proto_rawDesc = "" +
 	"\x12GetSeriesByFeature\x12\x17.scraper.FeatureRequest\x1a\x15.scraper.ListResponse\x12D\n" +
 	"\x12GetSeriesByCountry\x12\x17.scraper.CountryRequest\x1a\x15.scraper.ListResponse\x12>\n" +
 	"\x0fGetSeriesByYear\x12\x14.scraper.YearRequest\x1a\x15.scraper.ListResponse\x12J\n" +
-	"\x14GetSeriesSpecialPage\x12\x1b.scraper.SpecialPageRequest\x1a\x15.scraper.ListResponseB\x19Z\x17tubexxi/video-api/protob\x06proto3"
+	"\x14GetSeriesSpecialPage\x12\x1b.scraper.SpecialPageRequest\x1a\x15.scraper.ListResponse\x12M\n" +
+	"\x0fGetSeriesDetail\x12\x1b.scraper.MovieDetailRequest\x1a\x1d.scraper.SeriesDetailResponse\x12Q\n" +
+	"\x10GetSeriesEpisode\x12\x1d.scraper.SeriesEpisodeRequest\x1a\x1e.scraper.SeriesEpisodeResponseB\x19Z\x17tubexxi/video-api/protob\x06proto3"
 
 var (
 	file_proto_scraper_proto_rawDescOnce sync.Once
@@ -1346,28 +1732,34 @@ func file_proto_scraper_proto_rawDescGZIP() []byte {
 	return file_proto_scraper_proto_rawDescData
 }
 
-var file_proto_scraper_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_proto_scraper_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_proto_scraper_proto_goTypes = []any{
-	(*Empty)(nil),               // 0: scraper.Empty
-	(*ListRequest)(nil),         // 1: scraper.ListRequest
-	(*GenreRequest)(nil),        // 2: scraper.GenreRequest
-	(*SearchRequest)(nil),       // 3: scraper.SearchRequest
-	(*FeatureRequest)(nil),      // 4: scraper.FeatureRequest
-	(*CountryRequest)(nil),      // 5: scraper.CountryRequest
-	(*YearRequest)(nil),         // 6: scraper.YearRequest
-	(*SpecialPageRequest)(nil),  // 7: scraper.SpecialPageRequest
-	(*MovieDetailRequest)(nil),  // 8: scraper.MovieDetailRequest
-	(*Movie)(nil),               // 9: scraper.Movie
-	(*HomeSection)(nil),         // 10: scraper.HomeSection
-	(*HomeResponse)(nil),        // 11: scraper.HomeResponse
-	(*Pagination)(nil),          // 12: scraper.Pagination
-	(*ListResponse)(nil),        // 13: scraper.ListResponse
-	(*PlayerUrl)(nil),           // 14: scraper.PlayerUrl
-	(*MoviePerson)(nil),         // 15: scraper.MoviePerson
-	(*CountryMovie)(nil),        // 16: scraper.CountryMovie
-	(*Genre)(nil),               // 17: scraper.Genre
-	(*MovieDetail)(nil),         // 18: scraper.MovieDetail
-	(*MovieDetailResponse)(nil), // 19: scraper.MovieDetailResponse
+	(*Empty)(nil),                 // 0: scraper.Empty
+	(*ListRequest)(nil),           // 1: scraper.ListRequest
+	(*GenreRequest)(nil),          // 2: scraper.GenreRequest
+	(*SearchRequest)(nil),         // 3: scraper.SearchRequest
+	(*FeatureRequest)(nil),        // 4: scraper.FeatureRequest
+	(*CountryRequest)(nil),        // 5: scraper.CountryRequest
+	(*YearRequest)(nil),           // 6: scraper.YearRequest
+	(*SpecialPageRequest)(nil),    // 7: scraper.SpecialPageRequest
+	(*MovieDetailRequest)(nil),    // 8: scraper.MovieDetailRequest
+	(*Movie)(nil),                 // 9: scraper.Movie
+	(*HomeSection)(nil),           // 10: scraper.HomeSection
+	(*HomeResponse)(nil),          // 11: scraper.HomeResponse
+	(*Pagination)(nil),            // 12: scraper.Pagination
+	(*ListResponse)(nil),          // 13: scraper.ListResponse
+	(*PlayerUrl)(nil),             // 14: scraper.PlayerUrl
+	(*MoviePerson)(nil),           // 15: scraper.MoviePerson
+	(*CountryMovie)(nil),          // 16: scraper.CountryMovie
+	(*Genre)(nil),                 // 17: scraper.Genre
+	(*MovieDetail)(nil),           // 18: scraper.MovieDetail
+	(*MovieDetailResponse)(nil),   // 19: scraper.MovieDetailResponse
+	(*SeriesEpisodeRequest)(nil),  // 20: scraper.SeriesEpisodeRequest
+	(*SeriesEpisodeResponse)(nil), // 21: scraper.SeriesEpisodeResponse
+	(*EpisodeList)(nil),           // 22: scraper.EpisodeList
+	(*SeasonList)(nil),            // 23: scraper.SeasonList
+	(*SeriesDetail)(nil),          // 24: scraper.SeriesDetail
+	(*SeriesDetailResponse)(nil),  // 25: scraper.SeriesDetailResponse
 }
 var file_proto_scraper_proto_depIdxs = []int32{
 	9,  // 0: scraper.HomeSection.value:type_name -> scraper.Movie
@@ -1382,43 +1774,53 @@ var file_proto_scraper_proto_depIdxs = []int32{
 	17, // 9: scraper.MovieDetail.genres:type_name -> scraper.Genre
 	9,  // 10: scraper.MovieDetail.similar_movies:type_name -> scraper.Movie
 	18, // 11: scraper.MovieDetailResponse.detail:type_name -> scraper.MovieDetail
-	0,  // 12: scraper.ScraperService.ScrapeHome:input_type -> scraper.Empty
-	1,  // 13: scraper.ScraperService.ScrapeList:input_type -> scraper.ListRequest
-	2,  // 14: scraper.ScraperService.GetMoviesByGenre:input_type -> scraper.GenreRequest
-	3,  // 15: scraper.ScraperService.SearchMovies:input_type -> scraper.SearchRequest
-	4,  // 16: scraper.ScraperService.GetMoviesByFeature:input_type -> scraper.FeatureRequest
-	5,  // 17: scraper.ScraperService.GetMoviesByCountry:input_type -> scraper.CountryRequest
-	6,  // 18: scraper.ScraperService.GetMoviesByYear:input_type -> scraper.YearRequest
-	7,  // 19: scraper.ScraperService.GetSpecialPage:input_type -> scraper.SpecialPageRequest
-	8,  // 20: scraper.ScraperService.GetMovieDetail:input_type -> scraper.MovieDetailRequest
-	0,  // 21: scraper.ScraperService.GetSeriesHome:input_type -> scraper.Empty
-	2,  // 22: scraper.ScraperService.GetSeriesByGenre:input_type -> scraper.GenreRequest
-	3,  // 23: scraper.ScraperService.SearchSeries:input_type -> scraper.SearchRequest
-	4,  // 24: scraper.ScraperService.GetSeriesByFeature:input_type -> scraper.FeatureRequest
-	5,  // 25: scraper.ScraperService.GetSeriesByCountry:input_type -> scraper.CountryRequest
-	6,  // 26: scraper.ScraperService.GetSeriesByYear:input_type -> scraper.YearRequest
-	7,  // 27: scraper.ScraperService.GetSeriesSpecialPage:input_type -> scraper.SpecialPageRequest
-	11, // 28: scraper.ScraperService.ScrapeHome:output_type -> scraper.HomeResponse
-	13, // 29: scraper.ScraperService.ScrapeList:output_type -> scraper.ListResponse
-	13, // 30: scraper.ScraperService.GetMoviesByGenre:output_type -> scraper.ListResponse
-	13, // 31: scraper.ScraperService.SearchMovies:output_type -> scraper.ListResponse
-	13, // 32: scraper.ScraperService.GetMoviesByFeature:output_type -> scraper.ListResponse
-	13, // 33: scraper.ScraperService.GetMoviesByCountry:output_type -> scraper.ListResponse
-	13, // 34: scraper.ScraperService.GetMoviesByYear:output_type -> scraper.ListResponse
-	13, // 35: scraper.ScraperService.GetSpecialPage:output_type -> scraper.ListResponse
-	19, // 36: scraper.ScraperService.GetMovieDetail:output_type -> scraper.MovieDetailResponse
-	11, // 37: scraper.ScraperService.GetSeriesHome:output_type -> scraper.HomeResponse
-	13, // 38: scraper.ScraperService.GetSeriesByGenre:output_type -> scraper.ListResponse
-	13, // 39: scraper.ScraperService.SearchSeries:output_type -> scraper.ListResponse
-	13, // 40: scraper.ScraperService.GetSeriesByFeature:output_type -> scraper.ListResponse
-	13, // 41: scraper.ScraperService.GetSeriesByCountry:output_type -> scraper.ListResponse
-	13, // 42: scraper.ScraperService.GetSeriesByYear:output_type -> scraper.ListResponse
-	13, // 43: scraper.ScraperService.GetSeriesSpecialPage:output_type -> scraper.ListResponse
-	28, // [28:44] is the sub-list for method output_type
-	12, // [12:28] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	14, // 12: scraper.SeriesEpisodeResponse.player_urls:type_name -> scraper.PlayerUrl
+	14, // 13: scraper.EpisodeList.player_urls:type_name -> scraper.PlayerUrl
+	22, // 14: scraper.SeasonList.episode_list:type_name -> scraper.EpisodeList
+	18, // 15: scraper.SeriesDetail.movie_detail:type_name -> scraper.MovieDetail
+	23, // 16: scraper.SeriesDetail.season_list:type_name -> scraper.SeasonList
+	24, // 17: scraper.SeriesDetailResponse.detail:type_name -> scraper.SeriesDetail
+	0,  // 18: scraper.ScraperService.ScrapeHome:input_type -> scraper.Empty
+	1,  // 19: scraper.ScraperService.ScrapeList:input_type -> scraper.ListRequest
+	2,  // 20: scraper.ScraperService.GetMoviesByGenre:input_type -> scraper.GenreRequest
+	3,  // 21: scraper.ScraperService.SearchMovies:input_type -> scraper.SearchRequest
+	4,  // 22: scraper.ScraperService.GetMoviesByFeature:input_type -> scraper.FeatureRequest
+	5,  // 23: scraper.ScraperService.GetMoviesByCountry:input_type -> scraper.CountryRequest
+	6,  // 24: scraper.ScraperService.GetMoviesByYear:input_type -> scraper.YearRequest
+	7,  // 25: scraper.ScraperService.GetSpecialPage:input_type -> scraper.SpecialPageRequest
+	8,  // 26: scraper.ScraperService.GetMovieDetail:input_type -> scraper.MovieDetailRequest
+	0,  // 27: scraper.ScraperService.GetSeriesHome:input_type -> scraper.Empty
+	2,  // 28: scraper.ScraperService.GetSeriesByGenre:input_type -> scraper.GenreRequest
+	3,  // 29: scraper.ScraperService.SearchSeries:input_type -> scraper.SearchRequest
+	4,  // 30: scraper.ScraperService.GetSeriesByFeature:input_type -> scraper.FeatureRequest
+	5,  // 31: scraper.ScraperService.GetSeriesByCountry:input_type -> scraper.CountryRequest
+	6,  // 32: scraper.ScraperService.GetSeriesByYear:input_type -> scraper.YearRequest
+	7,  // 33: scraper.ScraperService.GetSeriesSpecialPage:input_type -> scraper.SpecialPageRequest
+	8,  // 34: scraper.ScraperService.GetSeriesDetail:input_type -> scraper.MovieDetailRequest
+	20, // 35: scraper.ScraperService.GetSeriesEpisode:input_type -> scraper.SeriesEpisodeRequest
+	11, // 36: scraper.ScraperService.ScrapeHome:output_type -> scraper.HomeResponse
+	13, // 37: scraper.ScraperService.ScrapeList:output_type -> scraper.ListResponse
+	13, // 38: scraper.ScraperService.GetMoviesByGenre:output_type -> scraper.ListResponse
+	13, // 39: scraper.ScraperService.SearchMovies:output_type -> scraper.ListResponse
+	13, // 40: scraper.ScraperService.GetMoviesByFeature:output_type -> scraper.ListResponse
+	13, // 41: scraper.ScraperService.GetMoviesByCountry:output_type -> scraper.ListResponse
+	13, // 42: scraper.ScraperService.GetMoviesByYear:output_type -> scraper.ListResponse
+	13, // 43: scraper.ScraperService.GetSpecialPage:output_type -> scraper.ListResponse
+	19, // 44: scraper.ScraperService.GetMovieDetail:output_type -> scraper.MovieDetailResponse
+	11, // 45: scraper.ScraperService.GetSeriesHome:output_type -> scraper.HomeResponse
+	13, // 46: scraper.ScraperService.GetSeriesByGenre:output_type -> scraper.ListResponse
+	13, // 47: scraper.ScraperService.SearchSeries:output_type -> scraper.ListResponse
+	13, // 48: scraper.ScraperService.GetSeriesByFeature:output_type -> scraper.ListResponse
+	13, // 49: scraper.ScraperService.GetSeriesByCountry:output_type -> scraper.ListResponse
+	13, // 50: scraper.ScraperService.GetSeriesByYear:output_type -> scraper.ListResponse
+	13, // 51: scraper.ScraperService.GetSeriesSpecialPage:output_type -> scraper.ListResponse
+	25, // 52: scraper.ScraperService.GetSeriesDetail:output_type -> scraper.SeriesDetailResponse
+	21, // 53: scraper.ScraperService.GetSeriesEpisode:output_type -> scraper.SeriesEpisodeResponse
+	36, // [36:54] is the sub-list for method output_type
+	18, // [18:36] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_proto_scraper_proto_init() }
@@ -1429,13 +1831,14 @@ func file_proto_scraper_proto_init() {
 	file_proto_scraper_proto_msgTypes[9].OneofWrappers = []any{}
 	file_proto_scraper_proto_msgTypes[10].OneofWrappers = []any{}
 	file_proto_scraper_proto_msgTypes[12].OneofWrappers = []any{}
+	file_proto_scraper_proto_msgTypes[21].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_scraper_proto_rawDesc), len(file_proto_scraper_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   20,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
