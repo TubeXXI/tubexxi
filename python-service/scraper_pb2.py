@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rscraper.proto\x12\x07scraper\"\x07\n\x05\x45mpty\"\x1a\n\x0bListRequest\x12\x0b\n\x03url\x18\x01 \x01(\t\"*\n\x0cGenreRequest\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x0c\n\x04page\x18\x02 \x01(\x05\",\n\rSearchRequest\x12\r\n\x05query\x18\x01 \x01(\t\x12\x0c\n\x04page\x18\x02 \x01(\x05\"4\n\x0e\x46\x65\x61tureRequest\x12\x14\n\x0c\x66\x65\x61ture_type\x18\x01 \x01(\t\x12\x0c\n\x04page\x18\x02 \x01(\x05\"4\n\x0e\x43ountryRequest\x12\x14\n\x0c\x63ountry_slug\x18\x01 \x01(\t\x12\x0c\n\x04page\x18\x02 \x01(\x05\")\n\x0bYearRequest\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\x0c\n\x04page\x18\x02 \x01(\x05\"5\n\x12SpecialPageRequest\x12\x11\n\tpage_name\x18\x01 \x01(\t\x12\x0c\n\x04page\x18\x02 \x01(\x05\"\xae\x03\n\x05Movie\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05title\x18\x02 \x01(\t\x12\x1b\n\x0eoriginal_title\x18\x03 \x01(\tH\x00\x88\x01\x01\x12\x16\n\tthumbnail\x18\x04 \x01(\tH\x01\x88\x01\x01\x12\x15\n\x08synopsis\x18\x05 \x01(\tH\x02\x88\x01\x01\x12\x13\n\x06rating\x18\x06 \x01(\x02H\x03\x88\x01\x01\x12\x15\n\x08\x64uration\x18\x07 \x01(\x03H\x04\x88\x01\x01\x12\x11\n\x04year\x18\x08 \x01(\x05H\x05\x88\x01\x01\x12\x1b\n\x0e\x64\x61te_published\x18\t \x01(\tH\x06\x88\x01\x01\x12\x1a\n\rlabel_quality\x18\n \x01(\tH\x07\x88\x01\x01\x12\x12\n\x05genre\x18\x0b \x01(\tH\x08\x88\x01\x01\x12\x1e\n\x11original_page_url\x18\x0c \x01(\tH\t\x88\x01\x01\x42\x11\n\x0f_original_titleB\x0c\n\n_thumbnailB\x0b\n\t_synopsisB\t\n\x07_ratingB\x0b\n\t_durationB\x07\n\x05_yearB\x11\n\x0f_date_publishedB\x10\n\x0e_label_qualityB\x08\n\x06_genreB\x14\n\x12_original_page_url\"e\n\x0bHomeSection\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x1d\n\x05value\x18\x02 \x03(\x0b\x32\x0e.scraper.Movie\x12\x19\n\x0cview_all_url\x18\x03 \x01(\tH\x00\x88\x01\x01\x42\x0f\n\r_view_all_url\"6\n\x0cHomeResponse\x12&\n\x08sections\x18\x01 \x03(\x0b\x32\x14.scraper.HomeSection\"\xb6\x01\n\nPagination\x12\x14\n\x0c\x63urrent_page\x18\x01 \x01(\x05\x12\x12\n\ntotal_page\x18\x02 \x01(\x05\x12\x10\n\x08has_next\x18\x03 \x01(\x08\x12\x10\n\x08has_prev\x18\x04 \x01(\x08\x12\x1a\n\rnext_page_url\x18\x05 \x01(\tH\x00\x88\x01\x01\x12\x1a\n\rprev_page_url\x18\x06 \x01(\tH\x01\x88\x01\x01\x42\x10\n\x0e_next_page_urlB\x10\n\x0e_prev_page_url\"W\n\x0cListResponse\x12\x1e\n\x06movies\x18\x01 \x03(\x0b\x32\x0e.scraper.Movie\x12\'\n\npagination\x18\x02 \x01(\x0b\x32\x13.scraper.Pagination2\x93\x04\n\x0eScraperService\x12\x33\n\nScrapeHome\x12\x0e.scraper.Empty\x1a\x15.scraper.HomeResponse\x12\x39\n\nScrapeList\x12\x14.scraper.ListRequest\x1a\x15.scraper.ListResponse\x12@\n\x10GetMoviesByGenre\x12\x15.scraper.GenreRequest\x1a\x15.scraper.ListResponse\x12=\n\x0cSearchMovies\x12\x16.scraper.SearchRequest\x1a\x15.scraper.ListResponse\x12\x44\n\x12GetMoviesByFeature\x12\x17.scraper.FeatureRequest\x1a\x15.scraper.ListResponse\x12\x44\n\x12GetMoviesByCountry\x12\x17.scraper.CountryRequest\x1a\x15.scraper.ListResponse\x12>\n\x0fGetMoviesByYear\x12\x14.scraper.YearRequest\x1a\x15.scraper.ListResponse\x12\x44\n\x0eGetSpecialPage\x12\x1b.scraper.SpecialPageRequest\x1a\x15.scraper.ListResponseB\x19Z\x17tubexxi/video-api/protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rscraper.proto\x12\x07scraper\"\x07\n\x05\x45mpty\"\x1a\n\x0bListRequest\x12\x0b\n\x03url\x18\x01 \x01(\t\"*\n\x0cGenreRequest\x12\x0c\n\x04slug\x18\x01 \x01(\t\x12\x0c\n\x04page\x18\x02 \x01(\x05\",\n\rSearchRequest\x12\r\n\x05query\x18\x01 \x01(\t\x12\x0c\n\x04page\x18\x02 \x01(\x05\"4\n\x0e\x46\x65\x61tureRequest\x12\x14\n\x0c\x66\x65\x61ture_type\x18\x01 \x01(\t\x12\x0c\n\x04page\x18\x02 \x01(\x05\"4\n\x0e\x43ountryRequest\x12\x14\n\x0c\x63ountry_slug\x18\x01 \x01(\t\x12\x0c\n\x04page\x18\x02 \x01(\x05\")\n\x0bYearRequest\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\x0c\n\x04page\x18\x02 \x01(\x05\"5\n\x12SpecialPageRequest\x12\x11\n\tpage_name\x18\x01 \x01(\t\x12\x0c\n\x04page\x18\x02 \x01(\x05\"\"\n\x12MovieDetailRequest\x12\x0c\n\x04slug\x18\x01 \x01(\t\"\xae\x03\n\x05Movie\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05title\x18\x02 \x01(\t\x12\x1b\n\x0eoriginal_title\x18\x03 \x01(\tH\x00\x88\x01\x01\x12\x16\n\tthumbnail\x18\x04 \x01(\tH\x01\x88\x01\x01\x12\x15\n\x08synopsis\x18\x05 \x01(\tH\x02\x88\x01\x01\x12\x13\n\x06rating\x18\x06 \x01(\x02H\x03\x88\x01\x01\x12\x15\n\x08\x64uration\x18\x07 \x01(\x03H\x04\x88\x01\x01\x12\x11\n\x04year\x18\x08 \x01(\x05H\x05\x88\x01\x01\x12\x1b\n\x0e\x64\x61te_published\x18\t \x01(\tH\x06\x88\x01\x01\x12\x1a\n\rlabel_quality\x18\n \x01(\tH\x07\x88\x01\x01\x12\x12\n\x05genre\x18\x0b \x01(\tH\x08\x88\x01\x01\x12\x1e\n\x11original_page_url\x18\x0c \x01(\tH\t\x88\x01\x01\x42\x11\n\x0f_original_titleB\x0c\n\n_thumbnailB\x0b\n\t_synopsisB\t\n\x07_ratingB\x0b\n\t_durationB\x07\n\x05_yearB\x11\n\x0f_date_publishedB\x10\n\x0e_label_qualityB\x08\n\x06_genreB\x14\n\x12_original_page_url\"e\n\x0bHomeSection\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x1d\n\x05value\x18\x02 \x03(\x0b\x32\x0e.scraper.Movie\x12\x19\n\x0cview_all_url\x18\x03 \x01(\tH\x00\x88\x01\x01\x42\x0f\n\r_view_all_url\"6\n\x0cHomeResponse\x12&\n\x08sections\x18\x01 \x03(\x0b\x32\x14.scraper.HomeSection\"\xb6\x01\n\nPagination\x12\x14\n\x0c\x63urrent_page\x18\x01 \x01(\x05\x12\x12\n\ntotal_page\x18\x02 \x01(\x05\x12\x10\n\x08has_next\x18\x03 \x01(\x08\x12\x10\n\x08has_prev\x18\x04 \x01(\x08\x12\x1a\n\rnext_page_url\x18\x05 \x01(\tH\x00\x88\x01\x01\x12\x1a\n\rprev_page_url\x18\x06 \x01(\tH\x01\x88\x01\x01\x42\x10\n\x0e_next_page_urlB\x10\n\x0e_prev_page_url\"W\n\x0cListResponse\x12\x1e\n\x06movies\x18\x01 \x03(\x0b\x32\x0e.scraper.Movie\x12\'\n\npagination\x18\x02 \x01(\x0b\x32\x13.scraper.Pagination\"&\n\tPlayerUrl\x12\x0b\n\x03url\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\"-\n\x0bMoviePerson\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08page_url\x18\x02 \x01(\t\".\n\x0c\x43ountryMovie\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08page_url\x18\x02 \x01(\t\"\'\n\x05Genre\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08page_url\x18\x02 \x01(\t\"\xe9\x02\n\x0bMovieDetail\x12\x1d\n\x05movie\x18\x01 \x01(\x0b\x32\x0e.scraper.Movie\x12\r\n\x05votes\x18\x02 \x01(\x03\x12\x14\n\x0crelease_date\x18\x03 \x01(\t\x12\x12\n\nupdated_at\x18\x04 \x01(\t\x12\'\n\x0bplayer_urls\x18\x05 \x03(\x0b\x32\x12.scraper.PlayerUrl\x12\x13\n\x0btrailer_url\x18\x06 \x01(\t\x12\'\n\tdirectors\x18\x07 \x03(\x0b\x32\x14.scraper.MoviePerson\x12)\n\x0bmovie_stars\x18\x08 \x03(\x0b\x32\x14.scraper.MoviePerson\x12(\n\tcountries\x18\t \x03(\x0b\x32\x15.scraper.CountryMovie\x12\x1e\n\x06genres\x18\n \x03(\x0b\x32\x0e.scraper.Genre\x12&\n\x0esimilar_movies\x18\x0b \x03(\x0b\x32\x0e.scraper.Movie\";\n\x13MovieDetailResponse\x12$\n\x06\x64\x65tail\x18\x01 \x01(\x0b\x32\x14.scraper.MovieDetail2\xe0\x04\n\x0eScraperService\x12\x33\n\nScrapeHome\x12\x0e.scraper.Empty\x1a\x15.scraper.HomeResponse\x12\x39\n\nScrapeList\x12\x14.scraper.ListRequest\x1a\x15.scraper.ListResponse\x12@\n\x10GetMoviesByGenre\x12\x15.scraper.GenreRequest\x1a\x15.scraper.ListResponse\x12=\n\x0cSearchMovies\x12\x16.scraper.SearchRequest\x1a\x15.scraper.ListResponse\x12\x44\n\x12GetMoviesByFeature\x12\x17.scraper.FeatureRequest\x1a\x15.scraper.ListResponse\x12\x44\n\x12GetMoviesByCountry\x12\x17.scraper.CountryRequest\x1a\x15.scraper.ListResponse\x12>\n\x0fGetMoviesByYear\x12\x14.scraper.YearRequest\x1a\x15.scraper.ListResponse\x12\x44\n\x0eGetSpecialPage\x12\x1b.scraper.SpecialPageRequest\x1a\x15.scraper.ListResponse\x12K\n\x0eGetMovieDetail\x12\x1b.scraper.MovieDetailRequest\x1a\x1c.scraper.MovieDetailResponseB\x19Z\x17tubexxi/video-api/protob\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -48,16 +48,30 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_YEARREQUEST']._serialized_end=302
   _globals['_SPECIALPAGEREQUEST']._serialized_start=304
   _globals['_SPECIALPAGEREQUEST']._serialized_end=357
-  _globals['_MOVIE']._serialized_start=360
-  _globals['_MOVIE']._serialized_end=790
-  _globals['_HOMESECTION']._serialized_start=792
-  _globals['_HOMESECTION']._serialized_end=893
-  _globals['_HOMERESPONSE']._serialized_start=895
-  _globals['_HOMERESPONSE']._serialized_end=949
-  _globals['_PAGINATION']._serialized_start=952
-  _globals['_PAGINATION']._serialized_end=1134
-  _globals['_LISTRESPONSE']._serialized_start=1136
-  _globals['_LISTRESPONSE']._serialized_end=1223
-  _globals['_SCRAPERSERVICE']._serialized_start=1226
-  _globals['_SCRAPERSERVICE']._serialized_end=1757
+  _globals['_MOVIEDETAILREQUEST']._serialized_start=359
+  _globals['_MOVIEDETAILREQUEST']._serialized_end=393
+  _globals['_MOVIE']._serialized_start=396
+  _globals['_MOVIE']._serialized_end=826
+  _globals['_HOMESECTION']._serialized_start=828
+  _globals['_HOMESECTION']._serialized_end=929
+  _globals['_HOMERESPONSE']._serialized_start=931
+  _globals['_HOMERESPONSE']._serialized_end=985
+  _globals['_PAGINATION']._serialized_start=988
+  _globals['_PAGINATION']._serialized_end=1170
+  _globals['_LISTRESPONSE']._serialized_start=1172
+  _globals['_LISTRESPONSE']._serialized_end=1259
+  _globals['_PLAYERURL']._serialized_start=1261
+  _globals['_PLAYERURL']._serialized_end=1299
+  _globals['_MOVIEPERSON']._serialized_start=1301
+  _globals['_MOVIEPERSON']._serialized_end=1346
+  _globals['_COUNTRYMOVIE']._serialized_start=1348
+  _globals['_COUNTRYMOVIE']._serialized_end=1394
+  _globals['_GENRE']._serialized_start=1396
+  _globals['_GENRE']._serialized_end=1435
+  _globals['_MOVIEDETAIL']._serialized_start=1438
+  _globals['_MOVIEDETAIL']._serialized_end=1799
+  _globals['_MOVIEDETAILRESPONSE']._serialized_start=1801
+  _globals['_MOVIEDETAILRESPONSE']._serialized_end=1860
+  _globals['_SCRAPERSERVICE']._serialized_start=1863
+  _globals['_SCRAPERSERVICE']._serialized_end=2471
 # @@protoc_insertion_point(module_scope)

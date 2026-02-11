@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v5.29.6
-// source: scraper.proto
+// source: proto/scraper.proto
 
 package proto
 
@@ -29,7 +29,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_scraper_proto_msgTypes[0]
+	mi := &file_proto_scraper_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -41,7 +41,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[0]
+	mi := &file_proto_scraper_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -54,7 +54,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{0}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{0}
 }
 
 type ListRequest struct {
@@ -66,7 +66,7 @@ type ListRequest struct {
 
 func (x *ListRequest) Reset() {
 	*x = ListRequest{}
-	mi := &file_scraper_proto_msgTypes[1]
+	mi := &file_proto_scraper_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -78,7 +78,7 @@ func (x *ListRequest) String() string {
 func (*ListRequest) ProtoMessage() {}
 
 func (x *ListRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[1]
+	mi := &file_proto_scraper_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -91,7 +91,7 @@ func (x *ListRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRequest.ProtoReflect.Descriptor instead.
 func (*ListRequest) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{1}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ListRequest) GetUrl() string {
@@ -111,7 +111,7 @@ type GenreRequest struct {
 
 func (x *GenreRequest) Reset() {
 	*x = GenreRequest{}
-	mi := &file_scraper_proto_msgTypes[2]
+	mi := &file_proto_scraper_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -123,7 +123,7 @@ func (x *GenreRequest) String() string {
 func (*GenreRequest) ProtoMessage() {}
 
 func (x *GenreRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[2]
+	mi := &file_proto_scraper_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -136,7 +136,7 @@ func (x *GenreRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenreRequest.ProtoReflect.Descriptor instead.
 func (*GenreRequest) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{2}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GenreRequest) GetSlug() string {
@@ -163,7 +163,7 @@ type SearchRequest struct {
 
 func (x *SearchRequest) Reset() {
 	*x = SearchRequest{}
-	mi := &file_scraper_proto_msgTypes[3]
+	mi := &file_proto_scraper_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -175,7 +175,7 @@ func (x *SearchRequest) String() string {
 func (*SearchRequest) ProtoMessage() {}
 
 func (x *SearchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[3]
+	mi := &file_proto_scraper_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -188,7 +188,7 @@ func (x *SearchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchRequest.ProtoReflect.Descriptor instead.
 func (*SearchRequest) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{3}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SearchRequest) GetQuery() string {
@@ -216,7 +216,7 @@ type FeatureRequest struct {
 
 func (x *FeatureRequest) Reset() {
 	*x = FeatureRequest{}
-	mi := &file_scraper_proto_msgTypes[4]
+	mi := &file_proto_scraper_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -228,7 +228,7 @@ func (x *FeatureRequest) String() string {
 func (*FeatureRequest) ProtoMessage() {}
 
 func (x *FeatureRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[4]
+	mi := &file_proto_scraper_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -241,7 +241,7 @@ func (x *FeatureRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FeatureRequest.ProtoReflect.Descriptor instead.
 func (*FeatureRequest) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{4}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *FeatureRequest) GetFeatureType() string {
@@ -268,7 +268,7 @@ type CountryRequest struct {
 
 func (x *CountryRequest) Reset() {
 	*x = CountryRequest{}
-	mi := &file_scraper_proto_msgTypes[5]
+	mi := &file_proto_scraper_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -280,7 +280,7 @@ func (x *CountryRequest) String() string {
 func (*CountryRequest) ProtoMessage() {}
 
 func (x *CountryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[5]
+	mi := &file_proto_scraper_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -293,7 +293,7 @@ func (x *CountryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountryRequest.ProtoReflect.Descriptor instead.
 func (*CountryRequest) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{5}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CountryRequest) GetCountrySlug() string {
@@ -320,7 +320,7 @@ type YearRequest struct {
 
 func (x *YearRequest) Reset() {
 	*x = YearRequest{}
-	mi := &file_scraper_proto_msgTypes[6]
+	mi := &file_proto_scraper_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -332,7 +332,7 @@ func (x *YearRequest) String() string {
 func (*YearRequest) ProtoMessage() {}
 
 func (x *YearRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[6]
+	mi := &file_proto_scraper_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -345,7 +345,7 @@ func (x *YearRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use YearRequest.ProtoReflect.Descriptor instead.
 func (*YearRequest) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{6}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *YearRequest) GetYear() int32 {
@@ -372,7 +372,7 @@ type SpecialPageRequest struct {
 
 func (x *SpecialPageRequest) Reset() {
 	*x = SpecialPageRequest{}
-	mi := &file_scraper_proto_msgTypes[7]
+	mi := &file_proto_scraper_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -384,7 +384,7 @@ func (x *SpecialPageRequest) String() string {
 func (*SpecialPageRequest) ProtoMessage() {}
 
 func (x *SpecialPageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[7]
+	mi := &file_proto_scraper_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -397,7 +397,7 @@ func (x *SpecialPageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SpecialPageRequest.ProtoReflect.Descriptor instead.
 func (*SpecialPageRequest) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{7}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SpecialPageRequest) GetPageName() string {
@@ -412,6 +412,50 @@ func (x *SpecialPageRequest) GetPage() int32 {
 		return x.Page
 	}
 	return 0
+}
+
+type MovieDetailRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Slug          string                 `protobuf:"bytes,1,opt,name=slug,proto3" json:"slug,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MovieDetailRequest) Reset() {
+	*x = MovieDetailRequest{}
+	mi := &file_proto_scraper_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MovieDetailRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MovieDetailRequest) ProtoMessage() {}
+
+func (x *MovieDetailRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MovieDetailRequest.ProtoReflect.Descriptor instead.
+func (*MovieDetailRequest) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *MovieDetailRequest) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
 }
 
 type Movie struct {
@@ -434,7 +478,7 @@ type Movie struct {
 
 func (x *Movie) Reset() {
 	*x = Movie{}
-	mi := &file_scraper_proto_msgTypes[8]
+	mi := &file_proto_scraper_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -446,7 +490,7 @@ func (x *Movie) String() string {
 func (*Movie) ProtoMessage() {}
 
 func (x *Movie) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[8]
+	mi := &file_proto_scraper_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -459,7 +503,7 @@ func (x *Movie) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Movie.ProtoReflect.Descriptor instead.
 func (*Movie) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{8}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Movie) GetId() string {
@@ -557,7 +601,7 @@ type HomeSection struct {
 
 func (x *HomeSection) Reset() {
 	*x = HomeSection{}
-	mi := &file_scraper_proto_msgTypes[9]
+	mi := &file_proto_scraper_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -569,7 +613,7 @@ func (x *HomeSection) String() string {
 func (*HomeSection) ProtoMessage() {}
 
 func (x *HomeSection) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[9]
+	mi := &file_proto_scraper_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -582,7 +626,7 @@ func (x *HomeSection) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HomeSection.ProtoReflect.Descriptor instead.
 func (*HomeSection) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{9}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *HomeSection) GetKey() string {
@@ -615,7 +659,7 @@ type HomeResponse struct {
 
 func (x *HomeResponse) Reset() {
 	*x = HomeResponse{}
-	mi := &file_scraper_proto_msgTypes[10]
+	mi := &file_proto_scraper_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -627,7 +671,7 @@ func (x *HomeResponse) String() string {
 func (*HomeResponse) ProtoMessage() {}
 
 func (x *HomeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[10]
+	mi := &file_proto_scraper_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -640,7 +684,7 @@ func (x *HomeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HomeResponse.ProtoReflect.Descriptor instead.
 func (*HomeResponse) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{10}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *HomeResponse) GetSections() []*HomeSection {
@@ -664,7 +708,7 @@ type Pagination struct {
 
 func (x *Pagination) Reset() {
 	*x = Pagination{}
-	mi := &file_scraper_proto_msgTypes[11]
+	mi := &file_proto_scraper_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -676,7 +720,7 @@ func (x *Pagination) String() string {
 func (*Pagination) ProtoMessage() {}
 
 func (x *Pagination) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[11]
+	mi := &file_proto_scraper_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -689,7 +733,7 @@ func (x *Pagination) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Pagination.ProtoReflect.Descriptor instead.
 func (*Pagination) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{11}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *Pagination) GetCurrentPage() int32 {
@@ -744,7 +788,7 @@ type ListResponse struct {
 
 func (x *ListResponse) Reset() {
 	*x = ListResponse{}
-	mi := &file_scraper_proto_msgTypes[12]
+	mi := &file_proto_scraper_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -756,7 +800,7 @@ func (x *ListResponse) String() string {
 func (*ListResponse) ProtoMessage() {}
 
 func (x *ListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_scraper_proto_msgTypes[12]
+	mi := &file_proto_scraper_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -769,7 +813,7 @@ func (x *ListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListResponse.ProtoReflect.Descriptor instead.
 func (*ListResponse) Descriptor() ([]byte, []int) {
-	return file_scraper_proto_rawDescGZIP(), []int{12}
+	return file_proto_scraper_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListResponse) GetMovies() []*Movie {
@@ -786,11 +830,387 @@ func (x *ListResponse) GetPagination() *Pagination {
 	return nil
 }
 
-var File_scraper_proto protoreflect.FileDescriptor
+type PlayerUrl struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
 
-const file_scraper_proto_rawDesc = "" +
+func (x *PlayerUrl) Reset() {
+	*x = PlayerUrl{}
+	mi := &file_proto_scraper_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PlayerUrl) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlayerUrl) ProtoMessage() {}
+
+func (x *PlayerUrl) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlayerUrl.ProtoReflect.Descriptor instead.
+func (*PlayerUrl) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *PlayerUrl) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *PlayerUrl) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+type MoviePerson struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	PageUrl       string                 `protobuf:"bytes,2,opt,name=page_url,json=pageUrl,proto3" json:"page_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MoviePerson) Reset() {
+	*x = MoviePerson{}
+	mi := &file_proto_scraper_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MoviePerson) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MoviePerson) ProtoMessage() {}
+
+func (x *MoviePerson) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MoviePerson.ProtoReflect.Descriptor instead.
+func (*MoviePerson) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *MoviePerson) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *MoviePerson) GetPageUrl() string {
+	if x != nil {
+		return x.PageUrl
+	}
+	return ""
+}
+
+type CountryMovie struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	PageUrl       string                 `protobuf:"bytes,2,opt,name=page_url,json=pageUrl,proto3" json:"page_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CountryMovie) Reset() {
+	*x = CountryMovie{}
+	mi := &file_proto_scraper_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CountryMovie) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CountryMovie) ProtoMessage() {}
+
+func (x *CountryMovie) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CountryMovie.ProtoReflect.Descriptor instead.
+func (*CountryMovie) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *CountryMovie) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CountryMovie) GetPageUrl() string {
+	if x != nil {
+		return x.PageUrl
+	}
+	return ""
+}
+
+type Genre struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	PageUrl       string                 `protobuf:"bytes,2,opt,name=page_url,json=pageUrl,proto3" json:"page_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Genre) Reset() {
+	*x = Genre{}
+	mi := &file_proto_scraper_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Genre) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Genre) ProtoMessage() {}
+
+func (x *Genre) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Genre.ProtoReflect.Descriptor instead.
+func (*Genre) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *Genre) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Genre) GetPageUrl() string {
+	if x != nil {
+		return x.PageUrl
+	}
+	return ""
+}
+
+type MovieDetail struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Movie         *Movie                 `protobuf:"bytes,1,opt,name=movie,proto3" json:"movie,omitempty"`
+	Votes         int64                  `protobuf:"varint,2,opt,name=votes,proto3" json:"votes,omitempty"`
+	ReleaseDate   string                 `protobuf:"bytes,3,opt,name=release_date,json=releaseDate,proto3" json:"release_date,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	PlayerUrls    []*PlayerUrl           `protobuf:"bytes,5,rep,name=player_urls,json=playerUrls,proto3" json:"player_urls,omitempty"`
+	TrailerUrl    string                 `protobuf:"bytes,6,opt,name=trailer_url,json=trailerUrl,proto3" json:"trailer_url,omitempty"`
+	Directors     []*MoviePerson         `protobuf:"bytes,7,rep,name=directors,proto3" json:"directors,omitempty"`
+	MovieStars    []*MoviePerson         `protobuf:"bytes,8,rep,name=movie_stars,json=movieStars,proto3" json:"movie_stars,omitempty"`
+	Countries     []*CountryMovie        `protobuf:"bytes,9,rep,name=countries,proto3" json:"countries,omitempty"`
+	Genres        []*Genre               `protobuf:"bytes,10,rep,name=genres,proto3" json:"genres,omitempty"`
+	SimilarMovies []*Movie               `protobuf:"bytes,11,rep,name=similar_movies,json=similarMovies,proto3" json:"similar_movies,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MovieDetail) Reset() {
+	*x = MovieDetail{}
+	mi := &file_proto_scraper_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MovieDetail) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MovieDetail) ProtoMessage() {}
+
+func (x *MovieDetail) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MovieDetail.ProtoReflect.Descriptor instead.
+func (*MovieDetail) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *MovieDetail) GetMovie() *Movie {
+	if x != nil {
+		return x.Movie
+	}
+	return nil
+}
+
+func (x *MovieDetail) GetVotes() int64 {
+	if x != nil {
+		return x.Votes
+	}
+	return 0
+}
+
+func (x *MovieDetail) GetReleaseDate() string {
+	if x != nil {
+		return x.ReleaseDate
+	}
+	return ""
+}
+
+func (x *MovieDetail) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+func (x *MovieDetail) GetPlayerUrls() []*PlayerUrl {
+	if x != nil {
+		return x.PlayerUrls
+	}
+	return nil
+}
+
+func (x *MovieDetail) GetTrailerUrl() string {
+	if x != nil {
+		return x.TrailerUrl
+	}
+	return ""
+}
+
+func (x *MovieDetail) GetDirectors() []*MoviePerson {
+	if x != nil {
+		return x.Directors
+	}
+	return nil
+}
+
+func (x *MovieDetail) GetMovieStars() []*MoviePerson {
+	if x != nil {
+		return x.MovieStars
+	}
+	return nil
+}
+
+func (x *MovieDetail) GetCountries() []*CountryMovie {
+	if x != nil {
+		return x.Countries
+	}
+	return nil
+}
+
+func (x *MovieDetail) GetGenres() []*Genre {
+	if x != nil {
+		return x.Genres
+	}
+	return nil
+}
+
+func (x *MovieDetail) GetSimilarMovies() []*Movie {
+	if x != nil {
+		return x.SimilarMovies
+	}
+	return nil
+}
+
+type MovieDetailResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Detail        *MovieDetail           `protobuf:"bytes,1,opt,name=detail,proto3" json:"detail,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MovieDetailResponse) Reset() {
+	*x = MovieDetailResponse{}
+	mi := &file_proto_scraper_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MovieDetailResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MovieDetailResponse) ProtoMessage() {}
+
+func (x *MovieDetailResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MovieDetailResponse.ProtoReflect.Descriptor instead.
+func (*MovieDetailResponse) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *MovieDetailResponse) GetDetail() *MovieDetail {
+	if x != nil {
+		return x.Detail
+	}
+	return nil
+}
+
+var File_proto_scraper_proto protoreflect.FileDescriptor
+
+const file_proto_scraper_proto_rawDesc = "" +
 	"\n" +
-	"\rscraper.proto\x12\ascraper\"\a\n" +
+	"\x13proto/scraper.proto\x12\ascraper\"\a\n" +
 	"\x05Empty\"\x1f\n" +
 	"\vListRequest\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\"6\n" +
@@ -811,7 +1231,9 @@ const file_scraper_proto_rawDesc = "" +
 	"\x04page\x18\x02 \x01(\x05R\x04page\"E\n" +
 	"\x12SpecialPageRequest\x12\x1b\n" +
 	"\tpage_name\x18\x01 \x01(\tR\bpageName\x12\x12\n" +
-	"\x04page\x18\x02 \x01(\x05R\x04page\"\xaa\x04\n" +
+	"\x04page\x18\x02 \x01(\x05R\x04page\"(\n" +
+	"\x12MovieDetailRequest\x12\x12\n" +
+	"\x04slug\x18\x01 \x01(\tR\x04slug\"\xaa\x04\n" +
 	"\x05Movie\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12*\n" +
@@ -860,7 +1282,38 @@ const file_scraper_proto_rawDesc = "" +
 	"\x06movies\x18\x01 \x03(\v2\x0e.scraper.MovieR\x06movies\x123\n" +
 	"\n" +
 	"pagination\x18\x02 \x01(\v2\x13.scraper.PaginationR\n" +
-	"pagination2\x93\x04\n" +
+	"pagination\"1\n" +
+	"\tPlayerUrl\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\"<\n" +
+	"\vMoviePerson\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x19\n" +
+	"\bpage_url\x18\x02 \x01(\tR\apageUrl\"=\n" +
+	"\fCountryMovie\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x19\n" +
+	"\bpage_url\x18\x02 \x01(\tR\apageUrl\"6\n" +
+	"\x05Genre\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x19\n" +
+	"\bpage_url\x18\x02 \x01(\tR\apageUrl\"\xe0\x03\n" +
+	"\vMovieDetail\x12$\n" +
+	"\x05movie\x18\x01 \x01(\v2\x0e.scraper.MovieR\x05movie\x12\x14\n" +
+	"\x05votes\x18\x02 \x01(\x03R\x05votes\x12!\n" +
+	"\frelease_date\x18\x03 \x01(\tR\vreleaseDate\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x04 \x01(\tR\tupdatedAt\x123\n" +
+	"\vplayer_urls\x18\x05 \x03(\v2\x12.scraper.PlayerUrlR\n" +
+	"playerUrls\x12\x1f\n" +
+	"\vtrailer_url\x18\x06 \x01(\tR\n" +
+	"trailerUrl\x122\n" +
+	"\tdirectors\x18\a \x03(\v2\x14.scraper.MoviePersonR\tdirectors\x125\n" +
+	"\vmovie_stars\x18\b \x03(\v2\x14.scraper.MoviePersonR\n" +
+	"movieStars\x123\n" +
+	"\tcountries\x18\t \x03(\v2\x15.scraper.CountryMovieR\tcountries\x12&\n" +
+	"\x06genres\x18\n" +
+	" \x03(\v2\x0e.scraper.GenreR\x06genres\x125\n" +
+	"\x0esimilar_movies\x18\v \x03(\v2\x0e.scraper.MovieR\rsimilarMovies\"C\n" +
+	"\x13MovieDetailResponse\x12,\n" +
+	"\x06detail\x18\x01 \x01(\v2\x14.scraper.MovieDetailR\x06detail2\xe0\x04\n" +
 	"\x0eScraperService\x123\n" +
 	"\n" +
 	"ScrapeHome\x12\x0e.scraper.Empty\x1a\x15.scraper.HomeResponse\x129\n" +
@@ -871,87 +1324,105 @@ const file_scraper_proto_rawDesc = "" +
 	"\x12GetMoviesByFeature\x12\x17.scraper.FeatureRequest\x1a\x15.scraper.ListResponse\x12D\n" +
 	"\x12GetMoviesByCountry\x12\x17.scraper.CountryRequest\x1a\x15.scraper.ListResponse\x12>\n" +
 	"\x0fGetMoviesByYear\x12\x14.scraper.YearRequest\x1a\x15.scraper.ListResponse\x12D\n" +
-	"\x0eGetSpecialPage\x12\x1b.scraper.SpecialPageRequest\x1a\x15.scraper.ListResponseB\x19Z\x17tubexxi/video-api/protob\x06proto3"
+	"\x0eGetSpecialPage\x12\x1b.scraper.SpecialPageRequest\x1a\x15.scraper.ListResponse\x12K\n" +
+	"\x0eGetMovieDetail\x12\x1b.scraper.MovieDetailRequest\x1a\x1c.scraper.MovieDetailResponseB\x19Z\x17tubexxi/video-api/protob\x06proto3"
 
 var (
-	file_scraper_proto_rawDescOnce sync.Once
-	file_scraper_proto_rawDescData []byte
+	file_proto_scraper_proto_rawDescOnce sync.Once
+	file_proto_scraper_proto_rawDescData []byte
 )
 
-func file_scraper_proto_rawDescGZIP() []byte {
-	file_scraper_proto_rawDescOnce.Do(func() {
-		file_scraper_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_scraper_proto_rawDesc), len(file_scraper_proto_rawDesc)))
+func file_proto_scraper_proto_rawDescGZIP() []byte {
+	file_proto_scraper_proto_rawDescOnce.Do(func() {
+		file_proto_scraper_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_scraper_proto_rawDesc), len(file_proto_scraper_proto_rawDesc)))
 	})
-	return file_scraper_proto_rawDescData
+	return file_proto_scraper_proto_rawDescData
 }
 
-var file_scraper_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
-var file_scraper_proto_goTypes = []any{
-	(*Empty)(nil),              // 0: scraper.Empty
-	(*ListRequest)(nil),        // 1: scraper.ListRequest
-	(*GenreRequest)(nil),       // 2: scraper.GenreRequest
-	(*SearchRequest)(nil),      // 3: scraper.SearchRequest
-	(*FeatureRequest)(nil),     // 4: scraper.FeatureRequest
-	(*CountryRequest)(nil),     // 5: scraper.CountryRequest
-	(*YearRequest)(nil),        // 6: scraper.YearRequest
-	(*SpecialPageRequest)(nil), // 7: scraper.SpecialPageRequest
-	(*Movie)(nil),              // 8: scraper.Movie
-	(*HomeSection)(nil),        // 9: scraper.HomeSection
-	(*HomeResponse)(nil),       // 10: scraper.HomeResponse
-	(*Pagination)(nil),         // 11: scraper.Pagination
-	(*ListResponse)(nil),       // 12: scraper.ListResponse
+var file_proto_scraper_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_proto_scraper_proto_goTypes = []any{
+	(*Empty)(nil),               // 0: scraper.Empty
+	(*ListRequest)(nil),         // 1: scraper.ListRequest
+	(*GenreRequest)(nil),        // 2: scraper.GenreRequest
+	(*SearchRequest)(nil),       // 3: scraper.SearchRequest
+	(*FeatureRequest)(nil),      // 4: scraper.FeatureRequest
+	(*CountryRequest)(nil),      // 5: scraper.CountryRequest
+	(*YearRequest)(nil),         // 6: scraper.YearRequest
+	(*SpecialPageRequest)(nil),  // 7: scraper.SpecialPageRequest
+	(*MovieDetailRequest)(nil),  // 8: scraper.MovieDetailRequest
+	(*Movie)(nil),               // 9: scraper.Movie
+	(*HomeSection)(nil),         // 10: scraper.HomeSection
+	(*HomeResponse)(nil),        // 11: scraper.HomeResponse
+	(*Pagination)(nil),          // 12: scraper.Pagination
+	(*ListResponse)(nil),        // 13: scraper.ListResponse
+	(*PlayerUrl)(nil),           // 14: scraper.PlayerUrl
+	(*MoviePerson)(nil),         // 15: scraper.MoviePerson
+	(*CountryMovie)(nil),        // 16: scraper.CountryMovie
+	(*Genre)(nil),               // 17: scraper.Genre
+	(*MovieDetail)(nil),         // 18: scraper.MovieDetail
+	(*MovieDetailResponse)(nil), // 19: scraper.MovieDetailResponse
 }
-var file_scraper_proto_depIdxs = []int32{
-	8,  // 0: scraper.HomeSection.value:type_name -> scraper.Movie
-	9,  // 1: scraper.HomeResponse.sections:type_name -> scraper.HomeSection
-	8,  // 2: scraper.ListResponse.movies:type_name -> scraper.Movie
-	11, // 3: scraper.ListResponse.pagination:type_name -> scraper.Pagination
-	0,  // 4: scraper.ScraperService.ScrapeHome:input_type -> scraper.Empty
-	1,  // 5: scraper.ScraperService.ScrapeList:input_type -> scraper.ListRequest
-	2,  // 6: scraper.ScraperService.GetMoviesByGenre:input_type -> scraper.GenreRequest
-	3,  // 7: scraper.ScraperService.SearchMovies:input_type -> scraper.SearchRequest
-	4,  // 8: scraper.ScraperService.GetMoviesByFeature:input_type -> scraper.FeatureRequest
-	5,  // 9: scraper.ScraperService.GetMoviesByCountry:input_type -> scraper.CountryRequest
-	6,  // 10: scraper.ScraperService.GetMoviesByYear:input_type -> scraper.YearRequest
-	7,  // 11: scraper.ScraperService.GetSpecialPage:input_type -> scraper.SpecialPageRequest
-	10, // 12: scraper.ScraperService.ScrapeHome:output_type -> scraper.HomeResponse
-	12, // 13: scraper.ScraperService.ScrapeList:output_type -> scraper.ListResponse
-	12, // 14: scraper.ScraperService.GetMoviesByGenre:output_type -> scraper.ListResponse
-	12, // 15: scraper.ScraperService.SearchMovies:output_type -> scraper.ListResponse
-	12, // 16: scraper.ScraperService.GetMoviesByFeature:output_type -> scraper.ListResponse
-	12, // 17: scraper.ScraperService.GetMoviesByCountry:output_type -> scraper.ListResponse
-	12, // 18: scraper.ScraperService.GetMoviesByYear:output_type -> scraper.ListResponse
-	12, // 19: scraper.ScraperService.GetSpecialPage:output_type -> scraper.ListResponse
-	12, // [12:20] is the sub-list for method output_type
-	4,  // [4:12] is the sub-list for method input_type
-	4,  // [4:4] is the sub-list for extension type_name
-	4,  // [4:4] is the sub-list for extension extendee
-	0,  // [0:4] is the sub-list for field type_name
+var file_proto_scraper_proto_depIdxs = []int32{
+	9,  // 0: scraper.HomeSection.value:type_name -> scraper.Movie
+	10, // 1: scraper.HomeResponse.sections:type_name -> scraper.HomeSection
+	9,  // 2: scraper.ListResponse.movies:type_name -> scraper.Movie
+	12, // 3: scraper.ListResponse.pagination:type_name -> scraper.Pagination
+	9,  // 4: scraper.MovieDetail.movie:type_name -> scraper.Movie
+	14, // 5: scraper.MovieDetail.player_urls:type_name -> scraper.PlayerUrl
+	15, // 6: scraper.MovieDetail.directors:type_name -> scraper.MoviePerson
+	15, // 7: scraper.MovieDetail.movie_stars:type_name -> scraper.MoviePerson
+	16, // 8: scraper.MovieDetail.countries:type_name -> scraper.CountryMovie
+	17, // 9: scraper.MovieDetail.genres:type_name -> scraper.Genre
+	9,  // 10: scraper.MovieDetail.similar_movies:type_name -> scraper.Movie
+	18, // 11: scraper.MovieDetailResponse.detail:type_name -> scraper.MovieDetail
+	0,  // 12: scraper.ScraperService.ScrapeHome:input_type -> scraper.Empty
+	1,  // 13: scraper.ScraperService.ScrapeList:input_type -> scraper.ListRequest
+	2,  // 14: scraper.ScraperService.GetMoviesByGenre:input_type -> scraper.GenreRequest
+	3,  // 15: scraper.ScraperService.SearchMovies:input_type -> scraper.SearchRequest
+	4,  // 16: scraper.ScraperService.GetMoviesByFeature:input_type -> scraper.FeatureRequest
+	5,  // 17: scraper.ScraperService.GetMoviesByCountry:input_type -> scraper.CountryRequest
+	6,  // 18: scraper.ScraperService.GetMoviesByYear:input_type -> scraper.YearRequest
+	7,  // 19: scraper.ScraperService.GetSpecialPage:input_type -> scraper.SpecialPageRequest
+	8,  // 20: scraper.ScraperService.GetMovieDetail:input_type -> scraper.MovieDetailRequest
+	11, // 21: scraper.ScraperService.ScrapeHome:output_type -> scraper.HomeResponse
+	13, // 22: scraper.ScraperService.ScrapeList:output_type -> scraper.ListResponse
+	13, // 23: scraper.ScraperService.GetMoviesByGenre:output_type -> scraper.ListResponse
+	13, // 24: scraper.ScraperService.SearchMovies:output_type -> scraper.ListResponse
+	13, // 25: scraper.ScraperService.GetMoviesByFeature:output_type -> scraper.ListResponse
+	13, // 26: scraper.ScraperService.GetMoviesByCountry:output_type -> scraper.ListResponse
+	13, // 27: scraper.ScraperService.GetMoviesByYear:output_type -> scraper.ListResponse
+	13, // 28: scraper.ScraperService.GetSpecialPage:output_type -> scraper.ListResponse
+	19, // 29: scraper.ScraperService.GetMovieDetail:output_type -> scraper.MovieDetailResponse
+	21, // [21:30] is the sub-list for method output_type
+	12, // [12:21] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
-func init() { file_scraper_proto_init() }
-func file_scraper_proto_init() {
-	if File_scraper_proto != nil {
+func init() { file_proto_scraper_proto_init() }
+func file_proto_scraper_proto_init() {
+	if File_proto_scraper_proto != nil {
 		return
 	}
-	file_scraper_proto_msgTypes[8].OneofWrappers = []any{}
-	file_scraper_proto_msgTypes[9].OneofWrappers = []any{}
-	file_scraper_proto_msgTypes[11].OneofWrappers = []any{}
+	file_proto_scraper_proto_msgTypes[9].OneofWrappers = []any{}
+	file_proto_scraper_proto_msgTypes[10].OneofWrappers = []any{}
+	file_proto_scraper_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_scraper_proto_rawDesc), len(file_scraper_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_scraper_proto_rawDesc), len(file_proto_scraper_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_scraper_proto_goTypes,
-		DependencyIndexes: file_scraper_proto_depIdxs,
-		MessageInfos:      file_scraper_proto_msgTypes,
+		GoTypes:           file_proto_scraper_proto_goTypes,
+		DependencyIndexes: file_proto_scraper_proto_depIdxs,
+		MessageInfos:      file_proto_scraper_proto_msgTypes,
 	}.Build()
-	File_scraper_proto = out.File
-	file_scraper_proto_goTypes = nil
-	file_scraper_proto_depIdxs = nil
+	File_proto_scraper_proto = out.File
+	file_proto_scraper_proto_goTypes = nil
+	file_proto_scraper_proto_depIdxs = nil
 }

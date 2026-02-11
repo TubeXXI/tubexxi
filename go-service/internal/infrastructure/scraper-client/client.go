@@ -86,3 +86,10 @@ func (s *ScraperClient) GetSpecialPage(ctx context.Context, pageName string, pag
 	defer cancel()
 	return s.client.GetSpecialPage(ctx, &pb.SpecialPageRequest{PageName: pageName, Page: page})
 }
+
+func (s *ScraperClient) GetMovieDetail(ctx context.Context, slug string) (*pb.MovieDetailResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetMovieDetail(ctx, &pb.MovieDetailRequest{Slug: slug})
+}
+

@@ -21,9 +21,39 @@ type Movie struct {
 	OriginalPageUrl *string    `json:"original_page_url" validate:"omitempty"`
 }
 
+type MovieDetail struct {
+	Movie
+	Votes        *int64          `json:"votes" validate:"omitempty"`
+	ReleaseDate  *time.Time      `json:"release_date" validate:"omitempty"`
+	UpdatedAt    *time.Time      `json:"updated_at" validate:"omitempty"`
+	PlayerUrl    *[]PlayerUrl    `json:"player_url" validate:"omitempty"`
+	TrailerUrl   *string         `json:"trailer_url" validate:"omitempty"`
+	Director     *[]MoviePerson  `json:"director" validate:"omitempty"`
+	MovieStar    *[]MoviePerson  `json:"movie_star" validate:"omitempty"`
+	Countries    *[]CountryMovie `json:"countries" validate:"omitempty"`
+	Genres       *[]Genre        `json:"genres" validate:"omitempty"`
+	SimilarMovies *[]Movie        `json:"similar_movies" validate:"omitempty"`
+}
+
+
+type MoviePerson struct {
+	Name    *string `json:"name" validate:"omitempty"`
+	PageUrl *string `json:"page_url" validate:"omitempty"`
+}
+
+type PlayerUrl struct {
+	URL  *string `json:"url" validate:"omitempty"`
+	Type *string `json:"type" validate:"omitempty"`
+}
+
+type CountryMovie struct {
+	Name    *string `json:"name" validate:"omitempty"`
+	PageUrl *string `json:"page_url" validate:"omitempty"`
+}
+
 type Genre struct {
-	ID   uuid.UUID `json:"id" validate:"required,uuid"`
-	Name string    `json:"name" validate:"required"`
+	Name    *string `json:"name" validate:"omitempty"`
+	PageUrl *string `json:"page_url" validate:"omitempty"`
 }
 
 type HomeScrapperListResponse struct {
@@ -49,4 +79,18 @@ type HomeScrapperResponse struct {
 	Key        string  `json:"key"`
 	Value      []Movie `json:"value"`
 	ViewAllUrl *string `json:"view_all_url" validate:"omitempty"`
+}
+
+type Pagination struct {
+	CurrentPage int32   `json:"current_page"`
+	TotalPage   int32   `json:"total_page"`
+	HasNext     bool    `json:"has_next"`
+	HasPrev     bool    `json:"has_prev"`
+	NextPageUrl *string `json:"next_page_url"`
+	PrevPageUrl *string `json:"prev_page_url"`
+}
+
+type MovieListResponse struct {
+	Movies     []Movie    `json:"movies"`
+	Pagination Pagination `json:"pagination"`
 }

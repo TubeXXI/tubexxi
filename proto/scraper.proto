@@ -14,6 +14,9 @@ service ScraperService {
   rpc GetMoviesByCountry (CountryRequest) returns (ListResponse);
   rpc GetMoviesByYear (YearRequest) returns (ListResponse);
   rpc GetSpecialPage (SpecialPageRequest) returns (ListResponse);
+
+  // Detail
+  rpc GetMovieDetail (MovieDetailRequest) returns (MovieDetailResponse);
 }
 
 message Empty {}
@@ -53,6 +56,11 @@ message SpecialPageRequest {
   int32 page = 2;
 }
 
+message MovieDetailRequest {
+  string slug = 1;
+}
+
+
 message Movie {
   string id = 1;
   string title = 2;
@@ -90,4 +98,42 @@ message Pagination {
 message ListResponse {
   repeated Movie movies = 1;
   Pagination pagination = 2;
+}
+
+message PlayerUrl {
+  string url = 1;
+  string type = 2;
+}
+
+message MoviePerson {
+  string name = 1;
+  string page_url = 2;
+}
+
+message CountryMovie {
+  string name = 1;
+  string page_url = 2;
+}
+
+message Genre {
+  string name = 1;
+  string page_url = 2;
+}
+
+message MovieDetail {
+  Movie movie = 1;
+  int64 votes = 2;
+  string release_date = 3;
+  string updated_at = 4;
+  repeated PlayerUrl player_urls = 5;
+  string trailer_url = 6;
+  repeated MoviePerson directors = 7;
+  repeated MoviePerson movie_stars = 8;
+  repeated CountryMovie countries = 9;
+  repeated Genre genres = 10;
+  repeated Movie similar_movies = 11;
+}
+
+message MovieDetailResponse {
+  MovieDetail detail = 1;
 }
