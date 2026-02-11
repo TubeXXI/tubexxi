@@ -215,6 +215,14 @@ func (s *MovieService) GetSeriesDetail(ctx context.Context, slug string) (*entit
 	}
 	return s.mapProtoToSeriesDetail(resp), nil
 }
+func (s *MovieService) GetSeriesEpisode(ctx context.Context, url string) (*entity.SeriesEpisode, error) {
+	resp, err := s.scraperClient.GetSeriesEpisode(ctx, url)
+	if err != nil {
+		s.logger.Error("failed to get series episode", zap.String("url", url), zap.Error(err))
+		return nil, err
+	}
+	return s.mapProtoToSeriesEpisode(resp), nil
+}
 
 func (s *MovieService) mapProtoToMovie(m *pb.Movie) entity.Movie {
 	id, err := uuid.Parse(m.Id)
@@ -514,5 +522,42 @@ func (s *MovieService) mapProtoToSeriesDetail(resp *pb.SeriesDetailResponse) *en
 		Countries:     &countries,
 		Genres:        &genres,
 		SimilarMovies: &similarMovies,
+	}
+}
+
+func (s *MovieService) mapProtoToSeriesEpisode(resp *pb.SeriesEpisodeResponse) *entity.SeriesEpisode {
+	if resp == nil {
+		return nil
+	}
+
+	epNum := resp.EpisodeNumber
+
+	var playerUrls []entity.PlayerUrl
+	for _, p := range resp.PlayerUrls {
+		if p == nil {
+			continue
+		}
+		u := p.Url
+		t := p.Type
+		playerUrls = append(playerUrls, entity.PlayerUrl{URL: &u, Type: &t})
+	}
+
+	var trailerUrl *string
+	if resp.TrailerUrl != "" {
+		t := resp.TrailerUrl
+		trailerUrl = &t
+	}
+
+	var downloadUrl *string
+	if resp.DownloadUrl != nil {
+		d := *resp.DownloadUrl
+		downloadUrl = &d
+	}
+
+	return &entity.SeriesEpisode{
+		EpisodeNumber: &epNum,
+		PlayerUrl:     &playerUrls,
+		TrailerUrl:    trailerUrl,
+		DownloadUrl:   downloadUrl,
 	}
 }

@@ -313,3 +313,22 @@ func (h *MovieHandler) GetSeriesDetail(c *fiber.Ctx) error {
 
 	return response.Success(c, "Success fetch series", result)
 }
+
+func (h *MovieHandler) GetSeriesEpisode(c *fiber.Ctx) error {
+	ctx := c.UserContext()
+	url := c.Query("url")
+	if url == "" {
+		return response.Error(c, fiber.StatusBadRequest, "url is required", nil)
+	}
+
+	result, err := h.service.GetSeriesEpisode(ctx, url)
+	if err != nil {
+		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
+	}
+
+	if result == nil {
+		return response.Error(c, fiber.StatusNotFound, "episode not found", nil)
+	}
+
+	return response.Success(c, "Success fetch series episode", result)
+}

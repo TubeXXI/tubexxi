@@ -83,6 +83,14 @@ type EpisodeList struct {
 	TrailerUrl    *string      `json:"trailer_url" validate:"omitempty"`
 }
 
+type SeriesEpisode struct {
+	EpisodeUrl    *string      `json:"episode_url" validate:"omitempty"`
+	EpisodeNumber *int32       `json:"episode_number" validate:"omitempty"`
+	PlayerUrl     *[]PlayerUrl `json:"player_url" validate:"omitempty"`
+	TrailerUrl    *string      `json:"trailer_url" validate:"omitempty"`
+	DownloadUrl   *string      `json:"download_url" validate:"omitempty"`
+}
+
 type HomeScrapperListResponse struct {
 	CarouselMovies       []Movie `json:"carousel_movies"`
 	NewMovies            []Movie `json:"new_movies"`

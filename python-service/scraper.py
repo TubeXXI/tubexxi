@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import json
 import uuid
 import re
 from typing import List, Optional
@@ -549,67 +550,139 @@ class SeriesDetailScraper(MovieDetailScraper):
         if not movie_detail:
             return None
         
-        # 2. Parse Series Specifics
-        season_list = []
-        season_name = None
-        status = None 
-        
-        # Status
-        status_tag = self.soup.find('span', string=re.compile(r'Status:', re.IGNORECASE))
-        if status_tag:
-             # usually status is next to it or in parent text
-             # If status_tag is "Status: Ongoing", then we extract it.
-             # Or if it's <span>Status:</span> <span>Ongoing</span>
-             parent = status_tag.find_parent('div') or status_tag.find_parent('li')
-             if parent:
-                 status = parent.get_text(strip=True).replace("Status:", "").strip()
+        season_list: List[SeasonList] = []
+        season_name: Optional[str] = None
+        status: Optional[str] = None
 
-        # Season Select
-        season_select = self.soup.find('select', class_='season-select')
-        current_season_num = 1
-        total_seasons = 1
-        
-        if season_select:
-             options = season_select.find_all('option')
-             total_seasons = len(options)
-             # Determine current season from selected option
-             selected_option = season_select.find('option', selected=True)
-             if selected_option:
-                 try:
-                     current_season_num = int(selected_option['value'])
-                     season_name = selected_option.get_text(strip=True)
-                 except:
-                     pass
-        
-        # Episode List (for current season)
-        episodes = []
-        episode_ul = self.soup.find('ul', class_='episode-list')
-        if episode_ul:
-            for li in episode_ul.find_all('li'):
-                a = li.find('a')
-                if a:
-                    ep_url = self._make_absolute_url(a['href'])
-                    ep_title = a.get_text(strip=True) # "Episode 1", "Episode 2"
-                    
-                    # Parse episode number
+        status_tag = self.soup.find(string=re.compile(r"Status\s*:\s*", re.IGNORECASE))
+        if status_tag:
+            parent = getattr(status_tag, "parent", None)
+            if parent:
+                status = parent.get_text(strip=True)
+                status = re.sub(r"Status\s*:\s*", "", status, flags=re.IGNORECASE).strip() or None
+
+        episodes_by_season: dict[int, dict[int, str]] = {}
+        current_season_num: Optional[int] = None
+
+        season_data_el = self.soup.find(id="season-data")
+        if season_data_el:
+            raw = season_data_el.get_text(strip=True)
+            if raw:
+                try:
+                    season_data = json.loads(raw)
+                    if isinstance(season_data, dict):
+                        for season_key, eps in season_data.items():
+                            try:
+                                season_num = int(str(season_key))
+                            except Exception:
+                                continue
+                            if not isinstance(eps, list):
+                                continue
+                            for ep in eps:
+                                if not isinstance(ep, dict):
+                                    continue
+                                try:
+                                    episode_num = int(str(ep.get("episode_no") or ep.get("episode") or "0"))
+                                except Exception:
+                                    continue
+                                slug = ep.get("slug")
+                                if not slug:
+                                    continue
+                                url = self._make_absolute_url("/" + str(slug).lstrip("/"))
+                                episodes_by_season.setdefault(season_num, {})[episode_num] = url
+                except Exception:
+                    pass
+
+        watch_data_el = self.soup.find(id="watch-history-data")
+        if watch_data_el:
+            raw = watch_data_el.get_text(strip=True)
+            if raw:
+                try:
+                    watch_data = json.loads(raw)
+                    if isinstance(watch_data, dict) and watch_data.get("current_season") is not None:
+                        current_season_num = int(str(watch_data.get("current_season")))
+                except Exception:
+                    pass
+
+        if not episodes_by_season:
+            for a in self.soup.find_all("a", href=True):
+                href = a.get("href")
+                if not href:
+                    continue
+                m = re.search(r"season-(\d+)-episode-(\d+)", href, re.IGNORECASE)
+                if not m:
+                    continue
+                try:
+                    season_num = int(m.group(1))
+                    episode_num = int(m.group(2))
+                except Exception:
+                    continue
+                episodes_by_season.setdefault(season_num, {})[episode_num] = self._make_absolute_url(href)
+
+        if not episodes_by_season:
+            current_season_num = 1
+            total_seasons = 1
+
+            season_select = self.soup.find("select", class_="season-select")
+            if season_select:
+                options = season_select.find_all("option")
+                if options:
+                    total_seasons = len(options)
+                selected_option = season_select.find("option", selected=True)
+                if selected_option:
+                    try:
+                        current_season_num = int(selected_option.get("value") or "1")
+                        season_name = selected_option.get_text(strip=True) or None
+                    except Exception:
+                        pass
+
+            episodes: List[EpisodeList] = []
+            episode_ul = self.soup.find("ul", class_="episode-list")
+            if episode_ul:
+                for li in episode_ul.find_all("li"):
+                    a = li.find("a", href=True)
+                    if not a:
+                        continue
+                    ep_url = self._make_absolute_url(a.get("href"))
+                    ep_title = a.get_text(strip=True)
                     ep_num = 0
-                    match = re.search(r'Episode\s+(\d+)', ep_title, re.IGNORECASE)
+                    match = re.search(r"Episode\s+(\d+)", ep_title or "", re.IGNORECASE)
                     if match:
                         ep_num = int(match.group(1))
-                    
                     episodes.append(EpisodeList(
                         episode_number=ep_num,
                         episode_url=ep_url,
-                        player_urls=[], # Empty initially
-                        trailer_url=None
+                        player_urls=[],
+                        trailer_url=None,
                     ))
-        
-        # Add current season to list
-        season_list.append(SeasonList(
-            current_season=current_season_num,
-            total_season=total_seasons,
-            episode_list=episodes
-        ))
+
+            season_list.append(SeasonList(
+                current_season=current_season_num,
+                total_season=total_seasons,
+                episode_list=episodes,
+            ))
+        else:
+            seasons_sorted = sorted(episodes_by_season.keys())
+            total_seasons = max(seasons_sorted)
+            if current_season_num is None:
+                current_season_num = total_seasons
+            season_name = f"Season {current_season_num}"
+
+            for season_num in seasons_sorted:
+                episode_map = episodes_by_season.get(season_num, {})
+                episodes: List[EpisodeList] = []
+                for episode_num in sorted(episode_map.keys()):
+                    episodes.append(EpisodeList(
+                        episode_number=episode_num,
+                        episode_url=episode_map[episode_num],
+                        player_urls=[],
+                        trailer_url=None,
+                    ))
+                season_list.append(SeasonList(
+                    current_season=season_num,
+                    total_season=total_seasons,
+                    episode_list=episodes,
+                ))
         
         return SeriesDetail(
             movie_detail=movie_detail,
