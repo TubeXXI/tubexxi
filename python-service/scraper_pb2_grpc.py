@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + ' but the generated code in scraper_pb2_grpc.py depends on'
+        + ' but the generated code in proto/scraper_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -113,6 +113,16 @@ class ScraperServiceStub(object):
                 '/scraper.ScraperService/GetSeriesSpecialPage',
                 request_serializer=scraper__pb2.SpecialPageRequest.SerializeToString,
                 response_deserializer=scraper__pb2.ListResponse.FromString,
+                _registered_method=True)
+        self.GetSeriesDetail = channel.unary_unary(
+                '/scraper.ScraperService/GetSeriesDetail',
+                request_serializer=scraper__pb2.MovieDetailRequest.SerializeToString,
+                response_deserializer=scraper__pb2.SeriesDetailResponse.FromString,
+                _registered_method=True)
+        self.GetSeriesEpisode = channel.unary_unary(
+                '/scraper.ScraperService/GetSeriesEpisode',
+                request_serializer=scraper__pb2.SeriesEpisodeRequest.SerializeToString,
+                response_deserializer=scraper__pb2.SeriesEpisodeResponse.FromString,
                 _registered_method=True)
 
 
@@ -219,7 +229,8 @@ class ScraperServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetSeriesDetail(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Series Detail
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -403,8 +414,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetMoviesByGenre',
-            scraper__pb2.GenreRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.GenreRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -430,8 +441,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/SearchMovies',
-            scraper__pb2.SearchRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.SearchRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -457,8 +468,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetMoviesByFeature',
-            scraper__pb2.FeatureRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.FeatureRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -484,8 +495,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetMoviesByCountry',
-            scraper__pb2.CountryRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.CountryRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -511,8 +522,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetMoviesByYear',
-            scraper__pb2.YearRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.YearRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -538,8 +549,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetSpecialPage',
-            scraper__pb2.SpecialPageRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.SpecialPageRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -565,8 +576,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetMovieDetail',
-            scraper__pb2.MovieDetailRequest.SerializeToString,
-            scraper__pb2.MovieDetailResponse.FromString,
+            proto_dot_scraper__pb2.MovieDetailRequest.SerializeToString,
+            proto_dot_scraper__pb2.MovieDetailResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -592,8 +603,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetSeriesHome',
-            scraper__pb2.Empty.SerializeToString,
-            scraper__pb2.HomeResponse.FromString,
+            proto_dot_scraper__pb2.Empty.SerializeToString,
+            proto_dot_scraper__pb2.HomeResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -619,8 +630,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetSeriesByGenre',
-            scraper__pb2.GenreRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.GenreRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -646,8 +657,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/SearchSeries',
-            scraper__pb2.SearchRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.SearchRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -673,8 +684,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetSeriesByFeature',
-            scraper__pb2.FeatureRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.FeatureRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -700,8 +711,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetSeriesByCountry',
-            scraper__pb2.CountryRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.CountryRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -727,8 +738,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetSeriesByYear',
-            scraper__pb2.YearRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.YearRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -754,8 +765,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetSeriesSpecialPage',
-            scraper__pb2.SpecialPageRequest.SerializeToString,
-            scraper__pb2.ListResponse.FromString,
+            proto_dot_scraper__pb2.SpecialPageRequest.SerializeToString,
+            proto_dot_scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -781,8 +792,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetSeriesDetail',
-            scraper__pb2.MovieDetailRequest.SerializeToString,
-            scraper__pb2.SeriesDetailResponse.FromString,
+            proto_dot_scraper__pb2.MovieDetailRequest.SerializeToString,
+            proto_dot_scraper__pb2.SeriesDetailResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -808,8 +819,8 @@ class ScraperService(object):
             request,
             target,
             '/scraper.ScraperService/GetSeriesEpisode',
-            scraper__pb2.SeriesEpisodeRequest.SerializeToString,
-            scraper__pb2.SeriesEpisodeResponse.FromString,
+            proto_dot_scraper__pb2.SeriesEpisodeRequest.SerializeToString,
+            proto_dot_scraper__pb2.SeriesEpisodeResponse.FromString,
             options,
             channel_credentials,
             insecure,

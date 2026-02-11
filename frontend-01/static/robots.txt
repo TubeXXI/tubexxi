@@ -1,3 +1,7 @@
-# allow crawling everything by default
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /private/
+Disallow: /tmp/
+Disallow: /uploads/
+# Add your own disallow entries here
+# Contact: support@agcforge.com
