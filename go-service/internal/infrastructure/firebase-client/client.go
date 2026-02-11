@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 	"tubexxi/video-api/config"
 
 	firebase "firebase.google.com/go/v4"
@@ -24,7 +25,7 @@ func NewFirebaseClient(ctx context.Context, logger *zap.Logger, cfg *config.AppC
 		return nil, fmt.Errorf("missing FirebaseProjectID in config")
 	}
 
-	opt, err := getCredentialsOption(cfg, logger)
+	opts, err := getCredentialsOptions(cfg, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +34,7 @@ func NewFirebaseClient(ctx context.Context, logger *zap.Logger, cfg *config.AppC
 		ProjectID: cfg.FirebaseProjectID,
 	}
 
-	app, err := firebase.NewApp(ctx, firebaseConfig, opt)
+	app, err := firebase.NewApp(ctx, firebaseConfig, opts...)
 	if err != nil {
 		logger.Error("Failed to initialize Firebase app", zap.Error(err))
 		return nil, fmt.Errorf("failed to initialize Firebase app: %w", err)
@@ -58,8 +59,7 @@ func NewFirebaseClient(ctx context.Context, logger *zap.Logger, cfg *config.AppC
 	}, nil
 }
 
-func getCredentialsOption(cfg *config.AppConfig, logger *zap.Logger) (option.ClientOption, error) {
-
+func getCredentialsOptions(cfg *config.AppConfig, logger *zap.Logger) ([]option.ClientOption, error) {
 	var path string
 	if cfg.IsDevelopment() {
 		possiblePaths := []string{
@@ -80,7 +80,7 @@ func getCredentialsOption(cfg *config.AppConfig, logger *zap.Logger) (option.Cli
 		}
 
 		if path != "" {
-			return option.WithCredentialsFile(path), nil
+			return []option.ClientOption{option.WithCredentialsFile(path)}, nil
 		}
 	}
 
@@ -94,17 +94,28 @@ func getCredentialsOption(cfg *config.AppConfig, logger *zap.Logger) (option.Cli
 		for _, p := range productionPaths {
 			if _, err := os.Stat(p); err == nil {
 				logger.Info("Using production credentials", zap.String("path", p))
-				return option.WithCredentialsFile(p), nil
+				return []option.ClientOption{option.WithCredentialsFile(p)}, nil
 			}
 		}
 	}
 
 	logger.Warn("No explicit credentials found, falling back to Application Default Credentials")
-	return option.WithCredentialsFile(""), nil // Empty string = ADC
+	return []option.ClientOption{}, nil
 }
 
-func (fc *FirebaseClient) VerifyIDToken(ctx context.Context, idToken string) (*auth.Token, error) {
-	token, err := fc.AuthClient.VerifyIDToken(ctx, idToken)
+func (fc *FirebaseClient) VerifyIDToken(ctx context.Context, idToken string, checkRevoked bool) (*auth.Token, error) {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
+	var (
+		token *auth.Token
+		err   error
+	)
+	if checkRevoked {
+		token, err = fc.AuthClient.VerifyIDTokenAndCheckRevoked(ctx, idToken)
+	} else {
+		token, err = fc.AuthClient.VerifyIDToken(ctx, idToken)
+	}
 	if err != nil {
 		fc.logger.Error("Failed to verify ID token", zap.Error(err))
 		return nil, err
@@ -113,12 +124,68 @@ func (fc *FirebaseClient) VerifyIDToken(ctx context.Context, idToken string) (*a
 }
 
 func (fc *FirebaseClient) GetUser(ctx context.Context, uid string) (*auth.UserRecord, error) {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
 	user, err := fc.AuthClient.GetUser(ctx, uid)
 	if err != nil {
 		fc.logger.Error("Failed to get user", zap.String("uid", uid), zap.Error(err))
 		return nil, err
 	}
 	return user, nil
+}
+
+func (fc *FirebaseClient) CreateUser(ctx context.Context, email string, password string, displayName string) (*auth.UserRecord, error) {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
+	params := (&auth.UserToCreate{}).Email(email).Password(password)
+	if displayName != "" {
+		params = params.DisplayName(displayName)
+	}
+
+	user, err := fc.AuthClient.CreateUser(ctx, params)
+	if err != nil {
+		fc.logger.Error("Failed to create Firebase user", zap.String("email", email), zap.Error(err))
+		return nil, err
+	}
+	return user, nil
+}
+
+func (fc *FirebaseClient) UpdateUserPassword(ctx context.Context, uid string, newPassword string) (*auth.UserRecord, error) {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
+	user, err := fc.AuthClient.UpdateUser(ctx, uid, (&auth.UserToUpdate{}).Password(newPassword))
+	if err != nil {
+		fc.logger.Error("Failed to update Firebase user password", zap.String("uid", uid), zap.Error(err))
+		return nil, err
+	}
+	return user, nil
+}
+
+func (fc *FirebaseClient) EmailVerificationLink(ctx context.Context, email string) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
+	link, err := fc.AuthClient.EmailVerificationLink(ctx, email)
+	if err != nil {
+		fc.logger.Error("Failed to generate email verification link", zap.String("email", email), zap.Error(err))
+		return "", err
+	}
+	return link, nil
+}
+
+func (fc *FirebaseClient) PasswordResetLink(ctx context.Context, email string) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
+	link, err := fc.AuthClient.PasswordResetLink(ctx, email)
+	if err != nil {
+		fc.logger.Error("Failed to generate password reset link", zap.String("email", email), zap.Error(err))
+		return "", err
+	}
+	return link, nil
 }
 
 func (fc *FirebaseClient) Close() error {

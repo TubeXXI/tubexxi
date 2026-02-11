@@ -22,7 +22,7 @@ func NewSettingRoutes(
 	csrf *middleware.CSRFMiddleware,
 ) *SettingRoutes {
 	return &SettingRoutes{
-		path:      "/settings",
+		path:      "/web-client/settings",
 		handler:   handler,
 		ctxinject: ctxinject,
 		auth:      auth,
@@ -37,7 +37,7 @@ func (r *SettingRoutes) RegisterRoutes(parent fiber.Router) {
 	router.Get("/all", r.handler.GetAllSettings)
 
 	protected := router.Group("/protected")
-	protected.Use(r.auth)
+	protected.Use(r.auth.FirebaseAuth())
 	protected.Post("/update", r.csrf.CSRFProtect(), r.handler.UpdateSettingsBulk)
 	protected.Put("/upload", r.csrf.CSRFProtect(), r.handler.UploadFile)
 }

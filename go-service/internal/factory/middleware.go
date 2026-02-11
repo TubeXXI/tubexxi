@@ -41,10 +41,10 @@ func NewMiddlewareFactory(cont *dependencies.Container) *MiddlewareFactory {
 		AuthMiddleware: middleware.NewAuthMiddleware(
 			cont.Notifier,
 			ctxinject,
-			cont.RedisClient,
-			cont.SessionHelper,
+			cont.FirebaseClient,
+			cont.UserRepo,
 			cont.Logger,
-			cont.AppConfig.JWT.JwtSecret,
+			!cont.AppConfig.App.IsDevelopment(),
 		),
 		CSRFMiddleware: middleware.NewCSRFMiddleware(
 			cont.Notifier,

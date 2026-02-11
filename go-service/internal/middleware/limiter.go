@@ -9,7 +9,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
-	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
 
@@ -37,14 +36,15 @@ func (rm *RateLimiterMiddleware) ProgressDelay(key string) fiber.Handler {
 
 		attemptsKey := fmt.Sprintf("delay:%s:%s", key, c.Locals("real_ip").(string))
 
-		attempts, err := rm.redisClient.GetInt(ctx, attemptsKey)
-		if err != nil && err != redis.Nil {
+		attempts, err := rm.redisClient.Increment(ctx, attemptsKey)
+		if err != nil {
 			rm.logger.Error("Redis error", zap.Error(err))
 			return c.Next()
 		}
+		_ = rm.redisClient.Expire(ctx, attemptsKey, 30*time.Minute)
 
-		if attempts >= 3 {
-			delay := time.Duration(attempts-2) * time.Second
+		if attempts >= 4 {
+			delay := time.Duration(attempts-3) * time.Second
 			time.Sleep(delay)
 		}
 		return c.Next()

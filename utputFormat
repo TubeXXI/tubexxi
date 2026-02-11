@@ -1,0 +1,11 @@
+HTTP/1.1 400 Bad Request
+Date: Wed, 11 Feb 2026 22:30:45 GMT
+Content-Type: application/json
+Content-Length: 83
+Vary: Origin
+X-Request-Id: 661cfe7f-6fd9-469a-a992-6604fb27e8ae
+X-Ratelimit-Limit: 100
+X-Ratelimit-Remaining: 99
+X-Ratelimit-Reset: 60
+
+{"status":400,"success":false,"message":"invalid character 'e' in numeric literal"}

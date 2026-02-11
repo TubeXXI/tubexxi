@@ -27,6 +27,11 @@ func (m *AdminMiddleware) Handler() fiber.Handler {
 			return response.Error(c, fiber.StatusUnauthorized, "User authentication required", nil)
 		}
 
+		firebaseUID, _ := c.Locals("firebase_uid").(string)
+		if firebaseUID == "" {
+			return response.Error(c, fiber.StatusUnauthorized, "Firebase authentication required", nil)
+		}
+
 		role, ok := c.Locals("role_level").(int)
 		if !ok || (role != entity.RoleLevelAdmin && role != entity.RoleLevelSuperAdmin) {
 			return response.Error(c, fiber.StatusForbidden, "Admin access required", nil)
