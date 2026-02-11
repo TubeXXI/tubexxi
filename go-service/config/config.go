@@ -41,6 +41,7 @@ type DatabaseConfig struct {
 	DbMaxOpenConn     int
 	DbMaxIdleConn     int
 	DbConnMaxLifetime time.Duration
+	DatabaseURL       string
 }
 
 type RedisConfig struct {
@@ -125,6 +126,7 @@ func Load() (*Config, error) {
 			DbMaxOpenConn:     getEnvAsInt("DB_MAX_OPEN_CONNS", 25),
 			DbMaxIdleConn:     getEnvAsInt("DB_MAX_IDLE_CONNS", 5),
 			DbConnMaxLifetime: getAsTime("DB_CONN_MAX_LIFETIME", 5*time.Minute),
+			DatabaseURL:       getEnv("DATABASE_URL", ""),
 		},
 		Redis: RedisConfig{
 			RedisHost:        getEnv("REDIS_HOST", "localhost"),

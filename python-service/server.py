@@ -17,9 +17,9 @@ except ImportError:
 load_dotenv()
 
 class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
-    BASE_URL = os.getenv("MOVIE_BASE_URL")
-    SERIES_BASE_URL = os.getenv("SERIES_BASE_URL")
-    ANIME_BASE_URL = os.getenv("ANIME_BASE_URL")
+    BASE_URL = os.getenv("MOVIE_BASE_URL", "https://tv8.lk21official.cc")
+    SERIES_BASE_URL = os.getenv("SERIES_BASE_URL", "https://tv3.nontondrama.my")
+    ANIME_BASE_URL = os.getenv("ANIME_BASE_URL", "https://tv3.nontondrama.my")
 
     def ScrapeHome(self, request, context):
         try:

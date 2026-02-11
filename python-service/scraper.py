@@ -11,13 +11,33 @@ class BaseScraper:
         self.base_url = base_url.rstrip('/')
 
     def _make_absolute_url(self, url: Optional[str]) -> Optional[str]:
+        if url is None:
+            return None
+        
+        # Ensure it is a string before stripping
+        try:
+             url = str(url).strip()
+        except Exception:
+             return None
+
         if not url:
             return None
+
         if url.startswith('http'):
             return url
-        if url.startswith('/'):
-            return f"{self.base_url}{url}"
-        return f"{self.base_url}/{url}"
+        
+        if url.startswith('//'):
+            return f"https:{url}"
+        
+        # Ensure base_url is set
+        base = self.base_url if self.base_url else "https://tv8.lk21official.cc"
+        base = base.rstrip('/') # Ensure no trailing slash
+        
+        # Safe concatenation
+        if not url.startswith('/'):
+            url = f"/{url}"
+            
+        return f"{base}{url}"
 
     def _parse_article(self, article) -> Optional[Movie]:
         try:
@@ -98,9 +118,9 @@ class HomeScraper(BaseScraper):
     def scrape(self) -> List[HomeScrapperResponse]:
         results = []
         slider_mappings = {
-            "New Movies": "Film Terbaru",
-            "Featured Series": "SERIES UNGGULAN",
-            "Series Updates": "SERIES UPDATE",
+            "New Movies": "TERBARU",
+            "Featured Series": "Film Unggulan",
+            "Series Updates": "LK21 TERBARU",
             "Top Of The Month": "TOP BULAN INI",
             "Recommendation For You": "Rekomendasi Untukmu",
             "Watch With Family": "Nonton Bareng Keluarga",
@@ -117,28 +137,85 @@ class HomeScraper(BaseScraper):
         # 1. Process Sliders
         for key, aria_label in slider_mappings.items():
             movies, view_all_url = self._scrape_slider(aria_label)
-            if movies:
-                results.append(HomeScrapperResponse(key=key, value=movies, view_all_url=view_all_url))
+            
+            # If empty, try fallback to grid headers for Series Home
+            if not movies and self.base_url and "nontondrama" in self.base_url:
+                 if key == "New Movies":
+                      # For "New Movies", fallback to "Episode Terbaru" grid
+                      movies = self._scrape_grid("Episode Terbaru")
+                 elif key == "Featured Series":
+                      pass
+            
+            # Safe check for view_all_url
+            final_view_all_url = None
+            try:
+                final_view_all_url = self._make_absolute_url(view_all_url)
+            except:
+                pass
+            
+            # Ensure safe URL for movies too
+            safe_movies = []
+            for m in movies:
+                  try:
+                      m.original_page_url = self._make_absolute_url(m.original_page_url)
+                      m.thumbnail = self._make_absolute_url(m.thumbnail)
+                      safe_movies.append(m)
+                  except:
+                       pass
+
+            if safe_movies:
+                results.append(HomeScrapperResponse(key=key, value=safe_movies, view_all_url=final_view_all_url))
             else:
-                results.append(HomeScrapperResponse(key=key, value=[], view_all_url=None))
+                results.append(HomeScrapperResponse(key=key, value=[], view_all_url=final_view_all_url))
 
         # 2. Process "All Latest Movies" (Grid)
-        all_latest = self._scrape_grid("Daftar Lengkap Film Terbaru")
+        all_latest = self._scrape_grid("Daftar Lengkap Series Terbaru")
+        if not all_latest:
+             all_latest = self._scrape_grid("Daftar Lengkap Film Terbaru")
+             
         results.append(HomeScrapperResponse(key="All Latest Movies", value=all_latest, view_all_url=self._make_absolute_url("/latest-movies")))
 
         return results
 
     def _scrape_slider(self, aria_label: str) -> tuple[List[Movie], Optional[str]]:
         slider_wrapper = self.soup.find('div', class_='slider-wrapper', attrs={'aria-label': aria_label})
+        
+        # Fallback: Check if aria_label is actually in a section header h2/h3
+        if not slider_wrapper:
+             # Look for section with header containing aria_label
+             headers = self.soup.find_all(['h2', 'h3'], string=re.compile(re.escape(aria_label), re.IGNORECASE))
+             for header in headers:
+                 # Find parent section or container
+                 section = header.find_parent('section')
+                 if section:
+                     slider_wrapper = section.find('div', class_='slider-wrapper')
+                     if slider_wrapper:
+                         break
+                     # Or maybe it's a grid
+                     grid = section.find('div', class_='gallery-grid')
+                     if grid:
+                         # Treat grid as slider wrapper for parsing purposes (both contain articles)
+                         slider_wrapper = grid
+                         break
+
         if not slider_wrapper:
             return [], None
         
         view_all_url = None
+        # Try finding view all link in parent section
         section = slider_wrapper.find_parent('section')
         if section:
             see_all_link = section.find('a', string=re.compile(r"LIHAT SEMUA", re.IGNORECASE))
             if see_all_link:
                 view_all_url = self._make_absolute_url(see_all_link['href'])
+        
+        # If not found in section, maybe it's a direct sibling or inside header div
+        if not view_all_url:
+             header_div = slider_wrapper.find_previous_sibling('div', class_='header')
+             if header_div:
+                  see_all_link = header_div.find('a', string=re.compile(r"LIHAT SEMUA", re.IGNORECASE))
+                  if see_all_link:
+                       view_all_url = self._make_absolute_url(see_all_link['href'])
 
         movies = []
         articles = slider_wrapper.find_all('article')

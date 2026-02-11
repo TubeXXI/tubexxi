@@ -17,11 +17,15 @@ def fetch_html(url: str) -> str:
     retries = Retry(total=3, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     session.mount('https://', HTTPAdapter(max_retries=retries))
 
+    if not url.startswith(('http://', 'https://')):
+        raise ValueError(f"Invalid URL '{url}': No scheme supplied. Perhaps you meant https://{url}?")
+    
     try:
         response = session.get(url, headers=headers, timeout=15)
         response.raise_for_status()
         return response.text
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching URL {url}: {e}")
-        # Return empty string or re-raise depending on desired behavior
+        print(f"Error fetching {url}: {e}")
+        # Return empty string or re-raise? 
+        # For now re-raise so gRPC can catch it
         raise e

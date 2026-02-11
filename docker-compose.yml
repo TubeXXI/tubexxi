@@ -12,7 +12,7 @@ services:
         max-file: "3"
     ports:
       - "127.0.0.1:5002:5002"
-    env_file:
+    environment:
       - APP_NAME=${APP_NAME}
       - APP_PORT=${APP_PORT}
       - APP_ENV=${APP_ENV}
@@ -102,6 +102,40 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+
+  setup:
+    build:
+      context: ./go-service
+      dockerfile: Dockerfile
+    container_name: tubexxi_setup
+    restart: "no"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_SSL_MODE=${DB_SSL_MODE}
+      - DB_MAX_OPEN_CONNS=${DB_MAX_OPEN_CONNS}
+      - DB_MAX_IDLE_CONNS=${DB_MAX_IDLE_CONNS}
+      - DB_CONN_MAX_LIFETIME=${DB_CONN_MAX_LIFETIME}
+    networks:
+      - infrastructure-network
+    command: >
+      /bin/sh -c "
+      echo 'Waiting for PostgreSQL to be ready...'
+      until pg_isready -h infrastructure-postgres -p 5432 -U ${DB_USER}; do
+        echo 'Waiting for PostgreSQL...'
+        sleep 2
+      done
+      echo 'Running migrations...'
+      migrate -path database/migrations -database $${DATABASE_URL} up
+      echo 'Running seeders...'
+      ./seeders
+      echo 'Setup completed!'
+      "
+    profiles: ["setup"]
 
 networks:
   tubexxi-network:
