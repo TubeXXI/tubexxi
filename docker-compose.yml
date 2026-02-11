@@ -1,0 +1,80 @@
+services:
+  backend:
+    build:
+      context: ./go-service
+      dockerfile: Dockerfile
+    container_name: tubexxi_api
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - "127.0.0.1:5002:5002"
+    env_file:
+      - APP_NAME=${APP_NAME}
+      - APP_PORT=${APP_PORT}
+      - APP_ENV=${APP_ENV}
+      - APP_DEBUG=${APP_DEBUG}
+      - APP_URL=${APP_URL}
+      - APP_CLIENT_URL=${APP_CLIENT_URL}
+      - APP_ADMIN_EMAIL=${APP_ADMIN_EMAIL}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_SSL_MODE=${DB_SSL_MODE}
+      - DB_MAX_OPEN_CONNS=${DB_MAX_OPEN_CONNS}
+      - DB_MAX_IDLE_CONNS=${DB_MAX_IDLE_CONNS}
+      - DB_CONN_MAX_LIFETIME=${DB_CONN_MAX_LIFETIME}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_ASYNQ_DB=${REDIS_ASYNQ_DB}
+      - REDIS_INSTANCE=${REDIS_INSTANCE}
+      - REDIS_POOL_SIZE=${REDIS_POOL_SIZE}
+      - REDIS_CONCURRENCY=${REDIS_CONCURRENCY}
+      - CENTRIFUGE_URL=${CENTRIFUGE_URL}
+      - CENTRIFUGO_API_KEY=${CENTRIFUGO_API_KEY}
+      - CENTRIFUGO_TOKEN_SECRET=${CENTRIFUGO_TOKEN_SECRET}
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_BUCKET=${MINIO_BUCKET}
+      - MINIO_USE_SSL=${MINIO_USE_SSL}
+      - BCRYPT_COST=${BCRYPT_COST}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRE_HOURS=${JWT_EXPIRE_HOURS}
+      - JWT_REFRESH_EXPIRE_HOURS=${JWT_REFRESH_EXPIRE_HOURS}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - TELEGRAM_NOTIFICATIONS=${TELEGRAM_NOTIFICATIONS}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM_NAME=${SMTP_FROM_NAME}
+      - SMTP_FROM_ADDRESS=${SMTP_FROM_ADDRESS}
+      - SCRAPER_HOST=${SCRAPER_HOST}
+      - SCRAPER_PORT=${SCRAPER_PORT}
+    networks:
+      - tubexxi-network
+      - shared-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  tubexxi-network:
+    driver: bridge
+
+  shared-network:
+    external: true
+    name: shared-network

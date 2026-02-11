@@ -113,7 +113,7 @@ func Load() (*Config, error) {
 			Port:       getEnv("APP_PORT", "8080"),
 			URL:        getEnv("APP_URL", "http://localhost:8080"),
 			ClientUrl:  getEnv("APP_CLIENT_URL", "http://localhost:3000"),
-			AdminEmail: getEnv("App_ADMIN_EMAIL", "premiumwatchdevice@gmail.com"),
+			AdminEmail: getEnv("APP_ADMIN_EMAIL", "premiumwatchdevice@gmail.com"),
 		},
 		Database: DatabaseConfig{
 			DbHost:            getEnv("DB_HOST", "localhost"),
