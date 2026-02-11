@@ -14,10 +14,9 @@ require (
 	golang.org/x/crypto v0.46.0
 	google.golang.org/grpc v1.78.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
-	tubexxi/video-api/proto v0.0.0
 )
 
-replace tubexxi/video-api/proto => ../proto
+replace tubexxi/video-api/proto => ./proto
 
 require (
 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
@@ -88,5 +87,5 @@ require (
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
 	golang.org/x/time v0.14.0 // indirect
-	google.golang.org/protobuf v1.36.11 // indirect
+	google.golang.org/protobuf v1.36.11
 )

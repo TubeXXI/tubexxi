@@ -3,7 +3,7 @@ services:
     build:
       context: ./go-service
       dockerfile: Dockerfile
-    container_name: tubexxi_api
+    container_name: tubexxi_go_api
     restart: always
     logging:
       driver: "json-file"
@@ -66,6 +66,38 @@ services:
       - shared-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  python-service:
+    build:
+      context: ./python-service
+      dockerfile: Dockerfile
+    container_name: tubexxi_python_service
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - "127.0.0.1:${SCRAPER_PORT}:${SCRAPER_PORT}"
+    environment:
+      - APP_NAME=${APP_NAME}
+      - SCRAPER_PORT=${SCRAPER_PORT}
+      - SCRAPER_HOST=${SCRAPER_HOST}
+      - MOVIE_BASE_URL=${MOVIE_BASE_URL}
+      - SERIES_BASE_URL=${SERIES_BASE_URL}
+      - ANIME_BASE_URL=${ANIME_BASE_URL}
+    depends_on:
+      - backend
+    networks:
+      - tubexxi-network
+      - shared-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${SCRAPER_PORT}/health"]
       interval: 30s
       timeout: 10s
       retries: 3

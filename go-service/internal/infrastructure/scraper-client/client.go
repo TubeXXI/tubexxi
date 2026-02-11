@@ -93,3 +93,48 @@ func (s *ScraperClient) GetMovieDetail(ctx context.Context, slug string) (*pb.Mo
 	return s.client.GetMovieDetail(ctx, &pb.MovieDetailRequest{Slug: slug})
 }
 
+// Series methods
+
+func (s *ScraperClient) GetSeriesHome(ctx context.Context) (*pb.HomeResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetSeriesHome(ctx, &pb.Empty{})
+}
+
+func (s *ScraperClient) GetSeriesByGenre(ctx context.Context, slug string, page int32) (*pb.ListResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetSeriesByGenre(ctx, &pb.GenreRequest{Slug: slug, Page: page})
+}
+
+func (s *ScraperClient) SearchSeries(ctx context.Context, query string, page int32) (*pb.ListResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.SearchSeries(ctx, &pb.SearchRequest{Query: query, Page: page})
+}
+
+func (s *ScraperClient) GetSeriesByFeature(ctx context.Context, featureType string, page int32) (*pb.ListResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetSeriesByFeature(ctx, &pb.FeatureRequest{FeatureType: featureType, Page: page})
+}
+
+func (s *ScraperClient) GetSeriesByCountry(ctx context.Context, country string, page int32) (*pb.ListResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetSeriesByCountry(ctx, &pb.CountryRequest{CountrySlug: country, Page: page})
+}
+
+func (s *ScraperClient) GetSeriesByYear(ctx context.Context, year int32, page int32) (*pb.ListResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetSeriesByYear(ctx, &pb.YearRequest{Year: year, Page: page})
+}
+
+func (s *ScraperClient) GetSeriesSpecialPage(ctx context.Context, pageName string, page int32) (*pb.ListResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetSeriesSpecialPage(ctx, &pb.SpecialPageRequest{PageName: pageName, Page: page})
+}
+
+

@@ -17,7 +17,17 @@ service ScraperService {
 
   // Detail
   rpc GetMovieDetail (MovieDetailRequest) returns (MovieDetailResponse);
+
+  // Series RPCs
+  rpc GetSeriesHome (Empty) returns (HomeResponse);
+  rpc GetSeriesByGenre (GenreRequest) returns (ListResponse);
+  rpc SearchSeries (SearchRequest) returns (ListResponse);
+  rpc GetSeriesByFeature (FeatureRequest) returns (ListResponse);
+  rpc GetSeriesByCountry (CountryRequest) returns (ListResponse);
+  rpc GetSeriesByYear (YearRequest) returns (ListResponse);
+  rpc GetSeriesSpecialPage (SpecialPageRequest) returns (ListResponse);
 }
+
 
 message Empty {}
 

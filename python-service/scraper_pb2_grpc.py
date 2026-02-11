@@ -79,6 +79,41 @@ class ScraperServiceStub(object):
                 request_serializer=scraper__pb2.MovieDetailRequest.SerializeToString,
                 response_deserializer=scraper__pb2.MovieDetailResponse.FromString,
                 _registered_method=True)
+        self.GetSeriesHome = channel.unary_unary(
+                '/scraper.ScraperService/GetSeriesHome',
+                request_serializer=scraper__pb2.Empty.SerializeToString,
+                response_deserializer=scraper__pb2.HomeResponse.FromString,
+                _registered_method=True)
+        self.GetSeriesByGenre = channel.unary_unary(
+                '/scraper.ScraperService/GetSeriesByGenre',
+                request_serializer=scraper__pb2.GenreRequest.SerializeToString,
+                response_deserializer=scraper__pb2.ListResponse.FromString,
+                _registered_method=True)
+        self.SearchSeries = channel.unary_unary(
+                '/scraper.ScraperService/SearchSeries',
+                request_serializer=scraper__pb2.SearchRequest.SerializeToString,
+                response_deserializer=scraper__pb2.ListResponse.FromString,
+                _registered_method=True)
+        self.GetSeriesByFeature = channel.unary_unary(
+                '/scraper.ScraperService/GetSeriesByFeature',
+                request_serializer=scraper__pb2.FeatureRequest.SerializeToString,
+                response_deserializer=scraper__pb2.ListResponse.FromString,
+                _registered_method=True)
+        self.GetSeriesByCountry = channel.unary_unary(
+                '/scraper.ScraperService/GetSeriesByCountry',
+                request_serializer=scraper__pb2.CountryRequest.SerializeToString,
+                response_deserializer=scraper__pb2.ListResponse.FromString,
+                _registered_method=True)
+        self.GetSeriesByYear = channel.unary_unary(
+                '/scraper.ScraperService/GetSeriesByYear',
+                request_serializer=scraper__pb2.YearRequest.SerializeToString,
+                response_deserializer=scraper__pb2.ListResponse.FromString,
+                _registered_method=True)
+        self.GetSeriesSpecialPage = channel.unary_unary(
+                '/scraper.ScraperService/GetSeriesSpecialPage',
+                request_serializer=scraper__pb2.SpecialPageRequest.SerializeToString,
+                response_deserializer=scraper__pb2.ListResponse.FromString,
+                _registered_method=True)
 
 
 class ScraperServiceServicer(object):
@@ -140,6 +175,49 @@ class ScraperServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetSeriesHome(self, request, context):
+        """Series RPCs
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSeriesByGenre(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SearchSeries(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSeriesByFeature(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSeriesByCountry(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSeriesByYear(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSeriesSpecialPage(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ScraperServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -187,6 +265,41 @@ def add_ScraperServiceServicer_to_server(servicer, server):
                     servicer.GetMovieDetail,
                     request_deserializer=scraper__pb2.MovieDetailRequest.FromString,
                     response_serializer=scraper__pb2.MovieDetailResponse.SerializeToString,
+            ),
+            'GetSeriesHome': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSeriesHome,
+                    request_deserializer=scraper__pb2.Empty.FromString,
+                    response_serializer=scraper__pb2.HomeResponse.SerializeToString,
+            ),
+            'GetSeriesByGenre': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSeriesByGenre,
+                    request_deserializer=scraper__pb2.GenreRequest.FromString,
+                    response_serializer=scraper__pb2.ListResponse.SerializeToString,
+            ),
+            'SearchSeries': grpc.unary_unary_rpc_method_handler(
+                    servicer.SearchSeries,
+                    request_deserializer=scraper__pb2.SearchRequest.FromString,
+                    response_serializer=scraper__pb2.ListResponse.SerializeToString,
+            ),
+            'GetSeriesByFeature': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSeriesByFeature,
+                    request_deserializer=scraper__pb2.FeatureRequest.FromString,
+                    response_serializer=scraper__pb2.ListResponse.SerializeToString,
+            ),
+            'GetSeriesByCountry': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSeriesByCountry,
+                    request_deserializer=scraper__pb2.CountryRequest.FromString,
+                    response_serializer=scraper__pb2.ListResponse.SerializeToString,
+            ),
+            'GetSeriesByYear': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSeriesByYear,
+                    request_deserializer=scraper__pb2.YearRequest.FromString,
+                    response_serializer=scraper__pb2.ListResponse.SerializeToString,
+            ),
+            'GetSeriesSpecialPage': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSeriesSpecialPage,
+                    request_deserializer=scraper__pb2.SpecialPageRequest.FromString,
+                    response_serializer=scraper__pb2.ListResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -432,6 +545,195 @@ class ScraperService(object):
             '/scraper.ScraperService/GetMovieDetail',
             scraper__pb2.MovieDetailRequest.SerializeToString,
             scraper__pb2.MovieDetailResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSeriesHome(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/scraper.ScraperService/GetSeriesHome',
+            scraper__pb2.Empty.SerializeToString,
+            scraper__pb2.HomeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSeriesByGenre(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/scraper.ScraperService/GetSeriesByGenre',
+            scraper__pb2.GenreRequest.SerializeToString,
+            scraper__pb2.ListResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SearchSeries(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/scraper.ScraperService/SearchSeries',
+            scraper__pb2.SearchRequest.SerializeToString,
+            scraper__pb2.ListResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSeriesByFeature(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/scraper.ScraperService/GetSeriesByFeature',
+            scraper__pb2.FeatureRequest.SerializeToString,
+            scraper__pb2.ListResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSeriesByCountry(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/scraper.ScraperService/GetSeriesByCountry',
+            scraper__pb2.CountryRequest.SerializeToString,
+            scraper__pb2.ListResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSeriesByYear(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/scraper.ScraperService/GetSeriesByYear',
+            scraper__pb2.YearRequest.SerializeToString,
+            scraper__pb2.ListResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSeriesSpecialPage(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/scraper.ScraperService/GetSeriesSpecialPage',
+            scraper__pb2.SpecialPageRequest.SerializeToString,
+            scraper__pb2.ListResponse.FromString,
             options,
             channel_credentials,
             insecure,

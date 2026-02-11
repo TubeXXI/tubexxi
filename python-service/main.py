@@ -4,6 +4,14 @@ import dataclasses
 import argparse
 from scraper import HomeScraper, MovieListScraper
 from fetcher import fetch_html
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    # Fallback: define a no-op load_dotenv if python-dotenv is not installed
+    def load_dotenv(*args, **kwargs):
+        pass
+
+load_dotenv()
 
 class EnhancedJSONEncoder(json.JSONEncoder):
         def default(self, o):
@@ -28,7 +36,7 @@ def main():
         with open(file_path, 'r', encoding='utf-8') as f:
             html_content = f.read()
     else:
-        target_url = args.url if args.url else "https://tv8.lk21official.cc/"
+        target_url = args.url if args.url else os.getenv("MOVIE_BASE_URL")
         try:
             html_content = fetch_html(target_url)
         except Exception as e:

@@ -121,6 +121,93 @@ func (s *MovieService) GetMovieDetail(ctx context.Context, slug string) (*entity
 	return s.mapProtoToMovieDetail(resp), nil
 }
 
+// Series methods
+
+func (s *MovieService) GetSeriesHome(ctx context.Context) ([]entity.HomeScrapperResponse, error) {
+	resp, err := s.scraperClient.GetSeriesHome(ctx)
+	if err != nil {
+		s.logger.Error("failed to scrape series home", zap.Error(err))
+		return nil, err
+	}
+
+	var homeResponse []entity.HomeScrapperResponse
+	for _, section := range resp.Sections {
+		var movies []entity.Movie
+		for _, m := range section.Value {
+			movie := s.mapProtoToMovie(m)
+			movies = append(movies, movie)
+		}
+
+		var viewAllUrl *string
+		if section.ViewAllUrl != nil {
+			viewAllUrl = section.ViewAllUrl
+		}
+
+		homeResponse = append(homeResponse, entity.HomeScrapperResponse{
+			Key:        section.Key,
+			Value:      movies,
+			ViewAllUrl: viewAllUrl,
+		})
+	}
+
+	return homeResponse, nil
+}
+
+func (s *MovieService) GetSeriesByGenre(ctx context.Context, slug string, page int32) (*entity.MovieListResponse, error) {
+	resp, err := s.scraperClient.GetSeriesByGenre(ctx, slug, page)
+	if err != nil {
+		s.logger.Error("failed to get series by genre", zap.String("slug", slug), zap.Error(err))
+		return nil, err
+	}
+	return s.mapProtoToListResponse(resp), nil
+}
+
+func (s *MovieService) SearchSeries(ctx context.Context, query string, page int32) (*entity.MovieListResponse, error) {
+	resp, err := s.scraperClient.SearchSeries(ctx, query, page)
+	if err != nil {
+		s.logger.Error("failed to search series", zap.String("query", query), zap.Error(err))
+		return nil, err
+	}
+	return s.mapProtoToListResponse(resp), nil
+}
+
+func (s *MovieService) GetSeriesByFeature(ctx context.Context, featureType string, page int32) (*entity.MovieListResponse, error) {
+	resp, err := s.scraperClient.GetSeriesByFeature(ctx, featureType, page)
+	if err != nil {
+		s.logger.Error("failed to get series by feature", zap.String("type", featureType), zap.Error(err))
+		return nil, err
+	}
+	return s.mapProtoToListResponse(resp), nil
+}
+
+func (s *MovieService) GetSeriesByCountry(ctx context.Context, country string, page int32) (*entity.MovieListResponse, error) {
+	resp, err := s.scraperClient.GetSeriesByCountry(ctx, country, page)
+	if err != nil {
+		s.logger.Error("failed to get series by country", zap.String("country", country), zap.Error(err))
+		return nil, err
+	}
+	return s.mapProtoToListResponse(resp), nil
+}
+
+func (s *MovieService) GetSeriesByYear(ctx context.Context, year int32, page int32) (*entity.MovieListResponse, error) {
+	resp, err := s.scraperClient.GetSeriesByYear(ctx, year, page)
+	if err != nil {
+		s.logger.Error("failed to get series by year", zap.Int32("year", year), zap.Error(err))
+		return nil, err
+	}
+	return s.mapProtoToListResponse(resp), nil
+}
+
+func (s *MovieService) GetSeriesSpecialPage(ctx context.Context, pageName string, page int32) (*entity.MovieListResponse, error) {
+	resp, err := s.scraperClient.GetSeriesSpecialPage(ctx, pageName, page)
+	if err != nil {
+		s.logger.Error("failed to get series special page", zap.String("page", pageName), zap.Error(err))
+		return nil, err
+	}
+	return s.mapProtoToListResponse(resp), nil
+}
+
+
 func (s *MovieService) mapProtoToMovie(m *pb.Movie) entity.Movie {
 	id, err := uuid.Parse(m.Id)
 	if err != nil {

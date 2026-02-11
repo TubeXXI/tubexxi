@@ -6,9 +6,20 @@ import scraper_pb2_grpc
 from scraper import HomeScraper, MovieListScraper, MovieDetailScraper
 from fetcher import fetch_html
 import urllib.parse
+import os
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    # Fallback: define a no-op load_dotenv if python-dotenv is not installed
+    def load_dotenv(*args, **kwargs):
+        pass
+
+load_dotenv()
 
 class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
-    BASE_URL = "https://tv8.lk21official.cc"
+    BASE_URL = os.getenv("MOVIE_BASE_URL")
+    SERIES_BASE_URL = os.getenv("SERIES_BASE_URL")
+    ANIME_BASE_URL = os.getenv("ANIME_BASE_URL")
 
     def ScrapeHome(self, request, context):
         try:
@@ -234,7 +245,10 @@ class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
             movie_detail = scraper_pb2.MovieDetail(
                 movie=proto_movie,
                 votes=detail.votes,
+                release_date=detail.release_date,
+                updated_at=detail.updated_at,
                 player_urls=proto_player_urls,
+                trailer_url=detail.trailer_url,
                 directors=proto_directors,
                 movie_stars=proto_stars,
                 countries=proto_countries,
@@ -250,13 +264,159 @@ class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
             context.set_code(grpc.StatusCode.INTERNAL)
             return scraper_pb2.MovieDetailResponse()
 
+    # --- Series Implementation ---
+
+    def GetSeriesHome(self, request, context):
+        try:
+            html_content = fetch_html(self.SERIES_BASE_URL)
+            scraper = HomeScraper(html_content, base_url=self.SERIES_BASE_URL)
+            results = scraper.scrape()
+            
+            sections = []
+            for item in results:
+                movies = []
+                for m in item.value:
+                    movies.append(scraper_pb2.Movie(
+                        id=m.id,
+                        title=m.title,
+                        original_title=m.original_title,
+                        thumbnail=m.thumbnail,
+                        synopsis=m.synopsis,
+                        rating=m.rating,
+                        duration=m.duration,
+                        year=m.year,
+                        date_published=m.date_published,
+                        label_quality=m.label_quality,
+                        genre=m.genre,
+                        original_page_url=m.original_page_url
+                    ))
+                sections.append(scraper_pb2.HomeSection(
+                    key=item.key, 
+                    value=movies,
+                    view_all_url=item.view_all_url
+                ))
+            
+            return scraper_pb2.HomeResponse(sections=sections)
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return scraper_pb2.HomeResponse()
+
+    def GetSeriesByGenre(self, request, context):
+        # NOTE: User provided tv8.lk21official.cc for genre in prompt, 
+        # but logically if it's series, it should be on series site or shared.
+        # Assuming series site supports /genre/...
+        page = request.page if request.page > 0 else 1
+        url = f"{self.SERIES_BASE_URL}/genre/{request.slug}/page/{page}"
+        return self._scrape_url(url, context, base_url=self.SERIES_BASE_URL)
+
+    def SearchSeries(self, request, context):
+        query = urllib.parse.quote(request.query)
+        # Assuming standard WP search on series site too
+        url = f"{self.SERIES_BASE_URL}/?s={query}"
+        if request.page > 1:
+            url = f"{url}&page={request.page}"
+        return self._scrape_url(url, context, base_url=self.SERIES_BASE_URL)
+
+    def GetSeriesByFeature(self, request, context):
+        page = request.page if request.page > 0 else 1
+        # Feature types: populer, ongoing, complete, west, latest, asian, rating, release
+        # URL pattern: https://tv3.nontondrama.my/series/ongoing/page/1
+        # OR https://tv3.nontondrama.my/populer/page/1
+        # We need to handle path differences based on feature type
+        
+        feature = request.feature_type
+        
+        # Direct paths
+        if feature in ['populer', 'latest', 'rating', 'release']:
+            url = f"{self.SERIES_BASE_URL}/{feature}/page/{page}"
+        # Series subpaths
+        elif feature in ['ongoing', 'complete', 'west', 'asian']:
+             url = f"{self.SERIES_BASE_URL}/series/{feature}"
+             # asian example: https://tv3.nontondrama.my/series/asian (no page? or page/1?)
+             # User example: https://tv3.nontondrama.my/series/asian (no page showed)
+             # User example: https://tv3.nontondrama.my/series/west/page/1
+             # Assuming pagination exists for all list pages
+             url = f"{url}/page/{page}"
+        else:
+             # Fallback
+             url = f"{self.SERIES_BASE_URL}/{feature}/page/{page}"
+
+        return self._scrape_url(url, context, base_url=self.SERIES_BASE_URL)
+
+    def GetSeriesByCountry(self, request, context):
+        page = request.page if request.page > 0 else 1
+        url = f"{self.SERIES_BASE_URL}/country/{request.country_slug}/page/{page}"
+        return self._scrape_url(url, context, base_url=self.SERIES_BASE_URL)
+
+    def GetSeriesByYear(self, request, context):
+        page = request.page if request.page > 0 else 1
+        url = f"{self.SERIES_BASE_URL}/year/{request.year}/page/{page}"
+        return self._scrape_url(url, context, base_url=self.SERIES_BASE_URL)
+
+    def GetSeriesSpecialPage(self, request, context):
+        # e.g. /rekomendasi-film-pintar
+        url = f"{self.SERIES_BASE_URL}/{request.page_name}"
+        if request.page > 1:
+             url = f"{url}/page/{request.page}"
+        return self._scrape_url(url, context, base_url=self.SERIES_BASE_URL)
+
+
+    def _scrape_url(self, url, context, base_url=None):
+        if not base_url:
+            base_url = self.BASE_URL
+            
+        if not url:
+             context.set_details("URL is required")
+             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+             return scraper_pb2.ListResponse()
+
+        try:
+            html_content = fetch_html(url)
+            scraper = MovieListScraper(html_content, base_url=base_url)
+            result = scraper.scrape()
+            
+            movies = []
+            for m in result.movies:
+                movies.append(scraper_pb2.Movie(
+                    id=m.id,
+                    title=m.title,
+                    original_title=m.original_title,
+                    thumbnail=m.thumbnail,
+                    synopsis=m.synopsis,
+                    rating=m.rating,
+                    duration=m.duration,
+                    year=m.year,
+                    date_published=m.date_published,
+                    label_quality=m.label_quality,
+                    genre=m.genre,
+                    original_page_url=m.original_page_url
+                ))
+            
+            pagination = scraper_pb2.Pagination(
+                current_page=result.pagination.current_page,
+                total_page=result.pagination.total_page,
+                has_next=result.pagination.has_next,
+                has_prev=result.pagination.has_prev,
+                next_page_url=result.pagination.next_page_url,
+                prev_page_url=result.pagination.prev_page_url
+            )
+            
+            return scraper_pb2.ListResponse(movies=movies, pagination=pagination)
+            
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return scraper_pb2.ListResponse()
+
 
 def serve():
-    port = '50051'
+    port = os.getenv("SCRAPER_PORT", "50051")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     scraper_pb2_grpc.add_ScraperServiceServicer_to_server(ScraperService(), server)
-    server.add_insecure_port('[::]:' + port)
-    print("Scraper Service started on port " + port)
+    host = os.getenv("SCRAPER_HOST", "localhost")
+    server.add_insecure_port(f"{host}:{port}")
+    print(f"Scraper Service started on {host}:{port}")
     server.start()
     server.wait_for_termination()
 
