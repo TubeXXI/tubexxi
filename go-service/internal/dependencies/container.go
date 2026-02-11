@@ -37,6 +37,8 @@ type Container struct {
 	ScraperClient    *scraper_client.ScraperClient
 	FirebaseClient   *firebaseclient.FirebaseClient
 	UserRepo         repository.UserRepository
+	SettingRepo      repository.SettingRepository
+	ApplicationRepo  repository.ApplicationRepository
 	UserHelper       *helpers.UserHelper
 	SessionHelper    *helpers.SessionHelper
 	EmailHelper      *helpers.MailHelper
@@ -57,6 +59,7 @@ func NewContainer(ctx context.Context) (*Container, error) {
 
 	metrics.InitMetrics()
 
+	// Initialize client
 	dbPool, err := database.NewDatabase(ctx, &init.Database, &init.App, notifier, logger)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create database pool: %w", err)
@@ -91,8 +94,12 @@ func NewContainer(ctx context.Context) (*Container, error) {
 		return nil, fmt.Errorf("failed to create firebase client: %w", err)
 	}
 
+	// Initialize repository
 	userRepo := repository.NewUserRepository(dbPool.Pool, logger)
+	settingRepo := repository.NewSettingRepository(dbPool.Pool, logger)
+	applicationRepo := repository.NewApplicationRepository(dbPool.Pool, logger)
 
+	// Initialize helper
 	userHelper := helpers.NewUserHelper(redis, userRepo)
 	sessionHelper := helpers.NewSessionHelper(redis, logger)
 	emailHelper := helpers.NewMailHelper(userHelper, sessionHelper, &init.App, &init.Email, logger)
@@ -111,6 +118,8 @@ func NewContainer(ctx context.Context) (*Container, error) {
 		ScraperClient:    scraperClient,
 		FirebaseClient:   firebaseClient,
 		UserRepo:         userRepo,
+		SettingRepo:      settingRepo,
+		ApplicationRepo:  applicationRepo,
 		UserHelper:       userHelper,
 		SessionHelper:    sessionHelper,
 		EmailHelper:      emailHelper,

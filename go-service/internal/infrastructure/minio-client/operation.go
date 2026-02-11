@@ -1,13 +1,11 @@
 package minioclient
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
-	"strings"
+	"net/url"
 	"time"
 	"tubexxi/video-api/internal/infrastructure/contextpool"
 
@@ -88,197 +86,86 @@ func (m *MinioClient) CreateBucket(ctx context.Context) error {
 	}
 	return nil
 }
-func (m *MinioClient) UploadFile(ctx context.Context, objectName string, reader io.Reader, objectSize int64, contentType string) (string, error) {
-	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 5*time.Minute)
+
+func (c *MinioClient) UploadFile(ctx context.Context, bucketName string, objectName string, reader io.Reader, objectSize int64, contentType string) (string, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()
 
-	_, err := m.client.PutObject(
-		subCtx,
-		m.bucketName,
-		objectName,
-		reader,
-		objectSize,
-		minio.PutObjectOptions{
-			ContentType: contentType,
-			UserMetadata: map[string]string{
-				"uploaded-by": "social-forge",
-				"uploaded-at": time.Now().Format(time.RFC3339),
-			},
-		},
-	)
+	info, err := c.client.PutObject(subCtx, bucketName, objectName, reader, objectSize, minio.PutObjectOptions{
+		ContentType: contentType,
+	})
 	if err != nil {
-		m.logger.Error("Failed to upload file to MinIO",
-			zap.String("object", objectName),
-			zap.String("content_type", contentType),
-			zap.Int64("size", objectSize),
-			zap.Error(err),
-		)
+		c.logger.Error("MinIO UploadFile PutObject failed", zap.String("bucket", bucketName), zap.String("object", objectName), zap.Error(err))
 		return "", fmt.Errorf("failed to upload file: %w", err)
 	}
 
-	fileURL := fmt.Sprintf("%s/%s/%s", m.config.MinioEndpoint, m.bucketName, objectName)
+	c.logger.Debug("Successfully uploaded file", zap.String("bucket", bucketName), zap.String("object", objectName), zap.Int64("size", info.Size))
 
-	m.logger.Info("File uploaded successfully",
-		zap.String("object", objectName),
-		zap.String("url", fileURL),
-		zap.String("content_type", contentType),
-		zap.Int64("size", objectSize),
-	)
-
-	return fileURL, nil
-}
-func (m *MinioClient) UploadImage(ctx context.Context, objectName string, reader io.Reader, objectSize int64) (string, error) {
-	const maxImageSize = 10 << 20 // 10MB
-	if objectSize > maxImageSize {
-		return "", fmt.Errorf("image size exceeds maximum limit of 10MB")
+	protocol := "http"
+	if c.config.MinioUseSSL {
+		protocol = "https"
 	}
-
-	buffer := make([]byte, 512)
-	_, err := reader.Read(buffer)
-	if err != nil && err != io.EOF {
-		return "", fmt.Errorf("failed to read file for content type detection: %w", err)
-	}
-
-	contentType := http.DetectContentType(buffer)
-
-	if !strings.HasPrefix(contentType, "image/") {
-		return "", fmt.Errorf("file is not an image")
-	}
-
-	multiReader := io.MultiReader(bytes.NewReader(buffer), reader)
-
-	return m.UploadFile(ctx, objectName, multiReader, objectSize, contentType)
+	return fmt.Sprintf("%s://%s/%s/%s", protocol, c.config.MinioEndpoint, bucketName, objectName), nil
 }
-func (m *MinioClient) UploadVideo(ctx context.Context, objectName string, reader io.Reader, objectSize int64) (string, error) {
-	return m.UploadFile(ctx, objectName, reader, objectSize, "video/mp4")
-}
-func (m *MinioClient) UploadDocument(ctx context.Context, objectName string, reader io.Reader, objectSize int64) (string, error) {
-	return m.UploadFile(ctx, objectName, reader, objectSize, "application/octet-stream")
-}
-func (m *MinioClient) DownloadFile(ctx context.Context, objectName string) (io.ReadCloser, error) {
-	ctx, cancel := contextpool.WithTimeoutIfNone(ctx, 5*time.Minute)
+
+func (c *MinioClient) GetFileURL(ctx context.Context, bucketName string, objectName string, expiry time.Duration) (string, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()
 
-	object, err := m.client.GetObject(ctx, m.bucketName, objectName, minio.GetObjectOptions{})
+	reqParams := make(url.Values)
+	presignedURL, err := c.client.PresignedGetObject(subCtx, bucketName, objectName, expiry, reqParams)
 	if err != nil {
-		m.logger.Error("Failed to download file from MinIO",
-			zap.String("object", objectName),
-			zap.Error(err),
-		)
-		return nil, fmt.Errorf("failed to download file: %w", err)
+		if errors.Is(subCtx.Err(), context.DeadlineExceeded) {
+			c.logger.Error("MinIO GetFileURL timed out", zap.String("bucket", bucketName), zap.String("object", objectName), zap.Error(err))
+		}
+		return "", fmt.Errorf("failed to generate presigned url: %w", err)
 	}
-
-	return object, nil
+	return presignedURL.String(), nil
 }
-func (m *MinioClient) GetFileInfo(ctx context.Context, objectName string) (*minio.ObjectInfo, error) {
-	ctx, cancel := contextpool.WithTimeoutIfNone(ctx, 10*time.Second)
+
+func (c *MinioClient) DeleteFile(ctx context.Context, bucketName string, objectName string) error {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()
 
-	info, err := m.client.StatObject(ctx, m.bucketName, objectName, minio.StatObjectOptions{})
-	if err != nil {
-		return nil, fmt.Errorf("failed to get file info: %w", err)
+	opts := minio.RemoveObjectOptions{
+		GovernanceBypass: true,
 	}
-
-	return &info, nil
-}
-func (m *MinioClient) DeleteFile(ctx context.Context, objectName string) error {
-	ctx, cancel := contextpool.WithTimeoutIfNone(ctx, 10*time.Second)
-	defer cancel()
-
-	err := m.client.RemoveObject(ctx, m.bucketName, objectName, minio.RemoveObjectOptions{})
+	err := c.client.RemoveObject(subCtx, bucketName, objectName, opts)
 	if err != nil {
-		m.logger.Error("Failed to delete file from MinIO",
-			zap.String("object", objectName),
-			zap.Error(err),
-		)
+		c.logger.Error("MinIO DeleteFile RemoveObject failed", zap.String("bucket", bucketName), zap.String("object", objectName), zap.Error(err))
 		return fmt.Errorf("failed to delete file: %w", err)
 	}
-
-	m.logger.Debug("File deleted successfully",
-		zap.String("object", objectName),
-	)
-
 	return nil
 }
-func (m *MinioClient) MultiDeleteFiles(ctx context.Context, objectNames []string) error {
-	ctx, cancel := contextpool.WithTimeoutIfNone(ctx, 30*time.Second)
+
+func (c *MinioClient) DeleteFolder(ctx context.Context, bucketName string, prefix string) error {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 30*time.Second)
 	defer cancel()
 
 	objectsCh := make(chan minio.ObjectInfo)
-
 	go func() {
 		defer close(objectsCh)
-		for _, name := range objectNames {
-			objectsCh <- minio.ObjectInfo{Key: name}
+		for object := range c.client.ListObjects(subCtx, bucketName, minio.ListObjectsOptions{Prefix: prefix, Recursive: true}) {
+			if object.Err != nil {
+				c.logger.Error("MinIO DeleteFolder ListObjects failed", zap.String("bucket", bucketName), zap.String("prefix", prefix), zap.Error(object.Err))
+				continue
+			}
+			objectsCh <- object
 		}
 	}()
 
-	errorCh := m.client.RemoveObjects(ctx, m.bucketName, objectsCh, minio.RemoveObjectsOptions{})
-	for err := range errorCh {
-		if err.Err != nil {
-			m.logger.Error("Failed to delete file",
-				zap.String("object", err.ObjectName),
-				zap.Error(err.Err),
-			)
-			return fmt.Errorf("failed to delete file %s: %w", err.ObjectName, err.Err)
-		}
+	opts := minio.RemoveObjectsOptions{
+		GovernanceBypass: true,
+	}
+
+	errorCh := c.client.RemoveObjects(subCtx, bucketName, objectsCh, opts)
+	for e := range errorCh {
+		c.logger.Error("MinIO DeleteFolder RemoveObjects failed", zap.String("bucket", bucketName), zap.String("object", e.ObjectName), zap.Error(e.Err))
 	}
 
 	return nil
 }
-func (m *MinioClient) ListFiles(ctx context.Context, prefix string) ([]string, error) {
-	ctx, cancel := contextpool.WithTimeoutIfNone(ctx, 30*time.Second)
-	defer cancel()
 
-	var fileNames []string
-
-	objectCh := m.client.ListObjects(ctx, m.bucketName, minio.ListObjectsOptions{
-		Prefix:    prefix,
-		Recursive: true,
-	})
-
-	for object := range objectCh {
-		if object.Err != nil {
-			m.logger.Error("Error listing files",
-				zap.Error(object.Err),
-			)
-			return nil, fmt.Errorf("failed to list files: %w", object.Err)
-		}
-		fileNames = append(fileNames, object.Key)
-	}
-
-	return fileNames, nil
-}
-func (m *MinioClient) GetPresignedURL(ctx context.Context, objectName string, expiry time.Duration) (string, error) {
-	ctx, cancel := contextpool.WithTimeoutIfNone(ctx, 10*time.Second)
-	defer cancel()
-
-	presignedURL, err := m.client.PresignedGetObject(ctx, m.bucketName, objectName, expiry, nil)
-	if err != nil {
-		m.logger.Error("Failed to generate presigned URL",
-			zap.String("object", objectName),
-			zap.Error(err),
-		)
-		return "", fmt.Errorf("failed to generate presigned URL: %w", err)
-	}
-
-	return presignedURL.String(), nil
-}
-func (m *MinioClient) GetPresignedUploadURL(ctx context.Context, objectName string, expiry time.Duration) (string, error) {
-	ctx, cancel := contextpool.WithTimeoutIfNone(ctx, 10*time.Second)
-	defer cancel()
-
-	presignedURL, err := m.client.PresignedPutObject(ctx, m.bucketName, objectName, expiry)
-	if err != nil {
-		m.logger.Error("Failed to generate presigned upload URL",
-			zap.String("object", objectName),
-			zap.Error(err),
-		)
-		return "", fmt.Errorf("failed to generate presigned upload URL: %w", err)
-	}
-
-	return presignedURL.String(), nil
-}
 func (m *MinioClient) Close() error {
 	m.mu.Lock()
 	defer m.mu.Unlock()

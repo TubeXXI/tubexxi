@@ -9,6 +9,9 @@ import (
 
 func RegisterApiRoutes(router fiber.Router, cont *dependencies.Container, mw *factory.MiddlewareFactory) {
 
+	settingFactory := factory.NewSettingFactory(cont, mw)
+	settingFactory.GetRoutes(router)
+
 	userFactory := factory.NewUserFactory(cont, mw)
 	userFactory.GetRoutes(router)
 

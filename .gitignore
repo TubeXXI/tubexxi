@@ -7,3 +7,4 @@ go-service/*.env
 go-service/*.sql
 go-service/service-account.json
 python-service/results/*.json
+test.rest

@@ -2,11 +2,13 @@ package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"mime/multipart"
+	"net/url"
+	"strings"
 	"sync"
 	"time"
+	"tubexxi/video-api/config"
 	"tubexxi/video-api/internal/dto"
 	"tubexxi/video-api/internal/entity"
 	helpers "tubexxi/video-api/internal/helper"
@@ -25,6 +27,7 @@ type UserService struct {
 	sessionHelper *helpers.SessionHelper
 	logger        *zap.Logger
 	minio         *minioclient.MinioClient
+	cfg           *config.Config
 }
 
 func NewUserService(
@@ -33,6 +36,7 @@ func NewUserService(
 	sessionHelper *helpers.SessionHelper,
 	logger *zap.Logger,
 	minio *minioclient.MinioClient,
+	cfg *config.Config,
 ) *UserService {
 	return &UserService{
 		userRepo:      userRepo,
@@ -40,6 +44,7 @@ func NewUserService(
 		sessionHelper: sessionHelper,
 		logger:        logger,
 		minio:         minio,
+		cfg:           cfg,
 	}
 }
 func (s *UserService) GetUserByID(ctx context.Context, userID string) (*entity.User, error) {
@@ -125,7 +130,7 @@ func (s *UserService) Logout(ctx context.Context, userID string) error {
 
 	return nil
 }
-func (s *UserService) ChangeAvatar(ctx context.Context, userID string, avatarFile *multipart.FileHeader) (string, error) {
+func (s *UserService) ChangeAvatar(ctx context.Context, userID string, file *multipart.FileHeader) (string, error) {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()
 
@@ -139,82 +144,49 @@ func (s *UserService) ChangeAvatar(ctx context.Context, userID string, avatarFil
 		return "", dto.ErrUserNotFound
 	}
 
-	objectName := fmt.Sprintf("user/%s/avatar", userID)
+	contentType := file.Header.Get("Content-Type")
+	if !strings.HasPrefix(contentType, "image/") {
+		return "", fmt.Errorf("invalid file type: %s", contentType)
+	}
 
-	var wg sync.WaitGroup
+	src, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer src.Close()
+
+	bucketName := s.cfg.MinIO.MinioBucketName
+	objectName := fmt.Sprintf("users/%s-%s", user.ID, file.Filename)
+
 	if user.AvatarURL.Valid && user.AvatarURL.String != "" {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 5*time.Second)
-			defer cleanupCancel()
-			if errDelete := s.minio.DeleteFile(cleanupCtx, objectName); errDelete != nil {
-				s.logger.Error("Failed to delete old avatar",
-					zap.String("user_id", user.ID.String()),
-					zap.Error(errDelete),
-				)
+		oldObject := user.AvatarURL.String
+		parsedURL, err := url.Parse(oldObject)
+		if err == nil {
+			path := parsedURL.Path
+			path = strings.TrimPrefix(path, "/")
+
+			if strings.HasPrefix(path, s.cfg.MinIO.MinioBucketName+"/") {
+				objectName := strings.TrimPrefix(path, s.cfg.MinIO.MinioBucketName+"/")
+
+				if err := s.minio.DeleteFile(subCtx, s.cfg.MinIO.MinioBucketName, objectName); err != nil {
+					s.logger.Error("[UserService.ChangeAvatar]", zap.Error(err), zap.String("object", objectName))
+				}
 			}
-		}()
-	}
-
-	file, err := avatarFile.Open()
-	if err != nil {
-		return "", fmt.Errorf("failed to open avatar file: %w", err)
-	}
-	defer file.Close()
-
-	_, err = s.minio.UploadImage(subCtx, objectName, file, avatarFile.Size)
-	if err != nil {
-		return "", fmt.Errorf("failed to upload avatar: %w", err)
-	}
-
-	presignedURL, err := s.minio.GetPresignedURL(ctx, objectName, time.Hour*24*7)
-	if err != nil {
-		return "", fmt.Errorf("failed to generate presigned URL: %w", err)
-	}
-
-	wg.Wait()
-
-	newAvatarURL, err := s.userRepo.UpdateAvatar(subCtx, userUUID, presignedURL)
-	if err != nil {
-		rollbackCtx, rollbackCancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer rollbackCancel()
-		if errRollback := s.minio.DeleteFile(rollbackCtx, objectName); errRollback != nil {
-			s.logger.Error("Failed to rollback delete avatar",
-				zap.String("user_id", user.ID.String()),
-				zap.Error(errRollback),
-			)
 		}
-
-		return "", fmt.Errorf("failed to update avatar: %w", err)
 	}
 
-	return newAvatarURL, nil
-}
-func (s *UserService) GetAvatarURL(ctx context.Context, userID string) (string, error) {
-	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
-	defer cancel()
-
-	userUUID, err := uuid.Parse(userID)
+	uploadedPath, err := s.minio.UploadFile(subCtx, bucketName, objectName, src, file.Size, contentType)
 	if err != nil {
-		return "", fmt.Errorf("invalid user ID format: %w", err)
+		return "", err
 	}
-
-	user, err := s.userRepo.FindByID(subCtx, userUUID)
-	if err != nil || user == nil {
-		return "", dto.ErrUserNotFound
-	}
-	if !user.AvatarURL.Valid || user.AvatarURL.String == "" {
-		return "", errors.New("user has no avatar")
-	}
-
-	presignedUrl, err := s.minio.GetPresignedURL(ctx, user.AvatarURL.String, time.Hour*24*7)
+	newAvatarUrl, err := s.userRepo.UpdateAvatar(subCtx, user.ID, uploadedPath)
 	if err != nil {
-		return "", fmt.Errorf("failed to generate presigned URL: %w", err)
+		return "", err
 	}
 
-	return presignedUrl, nil
+	return newAvatarUrl, nil
 }
+
 func (s *UserService) UpdateProfile(ctx context.Context, userID string, req *dto.UpdateProfileRequest) (*entity.User, error) {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()

@@ -14,6 +14,7 @@ type MiddlewareFactory struct {
 	AuthMiddleware    *middleware.AuthMiddleware
 	CSRFMiddleware    *middleware.CSRFMiddleware
 	AdminMiddleware   *middleware.AdminMiddleware
+	ScopeMiddleware   *middleware.ScopeMiddleware
 }
 
 func NewMiddlewareFactory(cont *dependencies.Container) *MiddlewareFactory {
@@ -52,6 +53,10 @@ func NewMiddlewareFactory(cont *dependencies.Container) *MiddlewareFactory {
 			cont.Logger,
 		),
 		AdminMiddleware: middleware.NewAdminMiddleware(
+			ctxinject,
+			cont.Logger,
+		),
+		ScopeMiddleware: middleware.NewScopeMiddleware(
 			ctxinject,
 			cont.Logger,
 		),

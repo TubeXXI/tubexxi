@@ -22,6 +22,7 @@ func NewUserFactory(cont *dependencies.Container, mw *MiddlewareFactory) *UserFa
 		cont.SessionHelper,
 		cont.Logger,
 		cont.MinioClient,
+		cont.AppConfig,
 	)
 	handler := handler.NewUserHandler(
 		mw.ContextMiddleware,

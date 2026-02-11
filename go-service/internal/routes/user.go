@@ -36,6 +36,7 @@ func (r *UserRoutes) RegisterRoutes(parent fiber.Router) {
 	router := parent.Group(r.path)
 
 	protected := router.Group("/protected")
+	protected.Use(r.auth)
 
 	protected.Get("/current", r.handler.GetCurrentUser)
 	protected.Post("/logout", r.handler.Logout)
