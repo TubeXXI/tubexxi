@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import uuid
 import re
 from typing import List, Optional
+from datetime import datetime
 from entities import Movie, HomeScrapperResponse, MovieListResponse, Pagination, MovieDetail, PlayerUrl, MoviePerson, CountryMovie, Genre
 
 class BaseScraper:
@@ -238,68 +239,152 @@ class MovieListScraper(BaseScraper):
 class MovieDetailScraper(BaseScraper):
     def scrape(self, original_url: str) -> Optional[MovieDetail]:
         # Basic Info
-        title_h1 = self.soup.find('h1', class_='entry-title')
-        title = title_h1.get_text(strip=True) if title_h1 else "Unknown"
+        title = "Unknown"
+        title_h1 = self.soup.find('div', class_='movie-info')
+        if title_h1:
+            h1 = title_h1.find('h1')
+            if h1:
+                # Clean title: "Nonton The Wrecking Crew (2026) Sub Indo di Lk21" -> "The Wrecking Crew (2026)"
+                raw_title = h1.get_text(strip=True)
+                title = raw_title.replace("Nonton ", "").replace(" Sub Indo di Lk21", "")
         
         # Synopsis
         synopsis = ""
-        entry_content = self.soup.find('div', class_='entry-content')
-        if entry_content:
-            synopsis = entry_content.get_text(strip=True)
+        synopsis_div = self.soup.find('div', class_='synopsis')
+        if synopsis_div:
+            synopsis = synopsis_div.get('data-full') or synopsis_div.get_text(strip=True)
         
-        # Thumbnail
-        thumbnail = None
-        img_tag = self.soup.find('img', class_='attachment-post-thumbnail')
-        if img_tag:
-            thumbnail = img_tag.get('src')
-        
-        # Meta Data (Rating, Year, Duration, etc.)
-        # Usually found in .gmr-movie-data or similar
-        
+        # Meta Data from info-tag (Rating, Quality, Duration)
         rating = None
-        rating_tag = self.soup.find('span', class_='gmr-rating-value') # adjust selector if needed
-        if not rating_tag:
-             rating_tag = self.soup.find('span', itemprop='ratingValue')
-        if rating_tag:
-            try:
-                rating = float(rating_tag.get_text(strip=True))
-            except:
-                pass
-        
-        votes = None
-        votes_tag = self.soup.find('span', itemprop='ratingCount')
-        if votes_tag:
-            try:
-                votes = int(votes_tag.get_text(strip=True).replace(',', ''))
-            except:
-                pass
-
-        year = None
-        year_link = self.soup.find('a', href=re.compile(r'/year/'))
-        if year_link:
-            try:
-                year = int(year_link.get_text(strip=True))
-            except:
-                pass
-        
+        label_quality = None
         duration = None
-        duration_tag = self.soup.find('span', itemprop='duration') # content="PT..."
-        if duration_tag:
-             # Try parsing content attribute or text
-             # If content is PT2M11S, we need parsing. 
-             # Or look for text like "2h 4m"
-             dur_text = duration_tag.get_text(strip=True)
-             # Simple parsing logic for "2h 4m" or "124 min"
-             total_seconds = 0
-             h_match = re.search(r'(\d+)h', dur_text)
-             m_match = re.search(r'(\d+)m', dur_text)
-             if h_match:
-                 total_seconds += int(h_match.group(1)) * 3600
-             if m_match:
-                 total_seconds += int(m_match.group(1)) * 60
-             if total_seconds > 0:
-                 duration = total_seconds
         
+        info_tag = self.soup.find('div', class_='info-tag')
+        if info_tag:
+            spans = info_tag.find_all('span', recursive=False)
+            # 1. Rating
+            if len(spans) > 0:
+                try:
+                    rating_text = spans[0].get_text(strip=True)
+                    rating = float(rating_text)
+                except:
+                    pass
+            
+            # 2. Quality (e.g., WEBDL)
+            if len(spans) > 1:
+                label_quality = spans[1].get_text(strip=True)
+            
+            # 3. Resolution (e.g., 1080p) - optional, maybe append to quality?
+            
+            # 4. Duration (e.g., 2h 4m)
+            if len(spans) > 3:
+                dur_text = spans[3].get_text(strip=True)
+                total_seconds = 0
+                h_match = re.search(r'(\d+)h', dur_text)
+                m_match = re.search(r'(\d+)m', dur_text)
+                if h_match:
+                    total_seconds += int(h_match.group(1)) * 3600
+                if m_match:
+                    total_seconds += int(m_match.group(1)) * 60
+                if total_seconds > 0:
+                    duration = total_seconds
+
+        # Genres & Countries from tag-list
+        genres = []
+        countries = []
+        tag_list = self.soup.find('div', class_='tag-list')
+        if tag_list:
+            for a in tag_list.find_all('a'):
+                href = a.get('href', '')
+                text = a.get_text(strip=True)
+                if '/genre/' in href:
+                    genres.append(Genre(name=text, page_url=self._make_absolute_url(href)))
+                elif '/country/' in href:
+                    countries.append(CountryMovie(name=text, page_url=self._make_absolute_url(href)))
+
+        # Detailed Metadata (Directors, Cast, Votes, Release, Updated, Thumbnail)
+        directors = []
+        movie_stars = []
+        votes = None
+        release_date = None
+        updated_at = None
+        thumbnail = None
+        
+        detail_div = self.soup.find('div', class_='detail')
+        if detail_div:
+            # Thumbnail inside detail div
+            img_tag = detail_div.find('img', itemprop='image')
+            if img_tag:
+                thumbnail = img_tag.get('src')
+            
+            # Parse paragraphs
+            for p in detail_div.find_all('p'):
+                text = p.get_text(strip=True)
+                
+                if "Sutradara:" in text:
+                    for a in p.find_all('a'):
+                        directors.append(MoviePerson(name=a.get_text(strip=True), page_url=self._make_absolute_url(a['href'])))
+                
+                elif "Bintang Film:" in text:
+                    for a in p.find_all('a'):
+                        movie_stars.append(MoviePerson(name=a.get_text(strip=True), page_url=self._make_absolute_url(a['href'])))
+                
+                elif "Negara:" in text and not countries: # Fallback if not found in tag-list
+                    for a in p.find_all('a'):
+                        countries.append(CountryMovie(name=a.get_text(strip=True), page_url=self._make_absolute_url(a['href'])))
+                
+                elif "Votes:" in text:
+                    try:
+                        # "Votes: 170"
+                        votes_str = text.replace("Votes:", "").strip().replace(',', '')
+                        votes = int(votes_str)
+                    except:
+                        pass
+                
+                elif "Release:" in text:
+                    release_date = text.replace("Release:", "").strip()
+                
+                elif "Updated:" in text:
+                    updated_at = text.replace("Updated:", "").strip()
+
+        # Year (extract from title or release date if missing)
+        year = None
+        # Try from Release Date
+        if release_date:
+             year_match = re.search(r'\d{4}', release_date)
+             if year_match:
+                 year = int(year_match.group(0))
+        # Fallback to title
+        if not year:
+            year_match = re.search(r'\((\d{4})\)', title)
+            if year_match:
+                year = int(year_match.group(1))
+
+        # Date Parsing to ISO
+        iso_release_date = None
+        if release_date:
+             # "28 Jan 2026"
+             try:
+                 dt = datetime.strptime(release_date, "%d %b %Y")
+                 iso_release_date = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+             except:
+                 pass
+        
+        iso_updated_at = None
+        if updated_at:
+             # "01 Feb 2026 14:58:14"
+             try:
+                 dt = datetime.strptime(updated_at, "%d %b %Y %H:%M:%S")
+                 iso_updated_at = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+             except:
+                 pass
+
+        # Trailer URL
+        trailer_url = None
+        trailer_link = self.soup.find('a', class_='yt-lightbox')
+        if trailer_link:
+            trailer_url = trailer_link.get('href')
+
         # Player URLs
         player_urls = []
         player_list = self.soup.find('ul', id='player-list')
@@ -312,66 +397,42 @@ class MovieDetailScraper(BaseScraper):
                     if url:
                         player_urls.append(PlayerUrl(url=url, type=server))
         
-        # Directors
-        directors = []
-        # Find section for director
-        # This is tricky without exact HTML for meta section. Assuming links with rel="tag" or specific structure
-        # Often: Director: <a href="...">Name</a>
-        
-        # Stars
-        movie_stars = []
-        
-        # Countries
-        countries = []
-        
-        # Genres
-        genres = []
-        
-        # General Meta Parsing (loop through gmr-movie-inn or similar)
-        # Based on example site structure (not provided in full, but typical WP):
-        meta_items = self.soup.find_all('div', class_='gmr-moviedata')
-        for item in meta_items:
-            text = item.get_text(strip=True)
-            if "Director" in text or "Sutradara" in text:
-                for a in item.find_all('a'):
-                    directors.append(MoviePerson(name=a.get_text(strip=True), page_url=self._make_absolute_url(a['href'])))
-            elif "Cast" in text or "Bintang" in text or "Pemeran" in text:
-                for a in item.find_all('a'):
-                    movie_stars.append(MoviePerson(name=a.get_text(strip=True), page_url=self._make_absolute_url(a['href'])))
-            elif "Country" in text or "Negara" in text:
-                for a in item.find_all('a'):
-                    countries.append(CountryMovie(name=a.get_text(strip=True), page_url=self._make_absolute_url(a['href'])))
-            elif "Genre" in text:
-                for a in item.find_all('a'):
-                    genres.append(Genre(name=a.get_text(strip=True), page_url=self._make_absolute_url(a['href'])))
-            elif "Release" in text or "Rilis" in text:
-                 # Extract date
-                 pass
-
         # Similar Movies
         similar_movies = []
         related_content = self.soup.find('div', class_='related-content')
         if related_content:
-            for article in related_content.find_all('li'): # It's ul > li based on example
-                 # Need to adapt _parse_article or write new logic because structure might differ (li vs article)
-                 # Example: <li> <a href...><picture>... <div class="video-info">...
-                 a_tag = article.find('a')
-                 if a_tag:
-                     sim_url = self._make_absolute_url(a_tag['href'])
-                     sim_title_tag = article.find('span', class_='video-title')
-                     sim_title = sim_title_tag.get_text(strip=True) if sim_title_tag else "Unknown"
-                     sim_thumb_tag = article.find('img')
-                     sim_thumb = sim_thumb_tag['src'] if sim_thumb_tag else None
-                     sim_year_tag = article.find('span', class_='video-year')
-                     sim_year = int(sim_year_tag.get_text(strip=True)) if sim_year_tag and sim_year_tag.get_text(strip=True).isdigit() else None
-                     
-                     similar_movies.append(Movie(
-                         id=str(uuid.uuid4()),
-                         title=sim_title,
-                         original_page_url=sim_url,
-                         thumbnail=sim_thumb,
-                         year=sim_year
-                     ))
+             video_list = related_content.find('ul', class_='video-list')
+             if video_list:
+                for li in video_list.find_all('li'):
+                     a_tag = li.find('a')
+                     if a_tag:
+                         sim_url = self._make_absolute_url(a_tag['href'])
+                         
+                         sim_title = "Unknown"
+                         sim_title_tag = li.find('span', class_='video-title')
+                         if sim_title_tag:
+                             sim_title = sim_title_tag.get_text(strip=True)
+                         
+                         sim_thumb = None
+                         sim_thumb_tag = li.find('img')
+                         if sim_thumb_tag:
+                             sim_thumb = sim_thumb_tag.get('src')
+                         
+                         sim_year = None
+                         sim_year_tag = li.find('span', class_='video-year')
+                         if sim_year_tag:
+                             try:
+                                 sim_year = int(sim_year_tag.get_text(strip=True))
+                             except:
+                                 pass
+                         
+                         similar_movies.append(Movie(
+                             id=str(uuid.uuid4()),
+                             title=sim_title,
+                             original_page_url=sim_url,
+                             thumbnail=sim_thumb,
+                             year=sim_year
+                         ))
 
         # ID
         movie_id = str(uuid.uuid4())
@@ -385,17 +446,22 @@ class MovieDetailScraper(BaseScraper):
             duration=duration,
             year=year,
             original_page_url=original_url,
-            # Populate genre string from list
+            label_quality=label_quality,
+            date_published=iso_release_date, # Use release date as date_published
             genre=", ".join([g.name for g in genres]) if genres else None
         )
 
         return MovieDetail(
             movie=movie,
             votes=votes,
+            release_date=iso_release_date,
+            updated_at=iso_updated_at,
             player_urls=player_urls,
+            trailer_url=trailer_url,
             directors=directors,
             movie_stars=movie_stars,
             countries=countries,
             genres=genres,
             similar_movies=similar_movies
         )
+

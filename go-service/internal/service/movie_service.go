@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
+
 	"go.uber.org/zap"
 
 	"tubexxi/video-api/internal/entity"
@@ -197,7 +199,29 @@ func (s *MovieService) mapProtoToMovieDetail(resp *pb.MovieDetailResponse) *enti
 		votes = &v
 	}
 
+	var releaseDate *time.Time
+	if detail.ReleaseDate != "" {
+		if t, err := time.Parse(time.RFC3339, detail.ReleaseDate); err == nil {
+			releaseDate = &t
+		}
+	}
+
+	var updatedAt *time.Time
+	if detail.UpdatedAt != "" {
+		if t, err := time.Parse(time.RFC3339, detail.UpdatedAt); err == nil {
+			updatedAt = &t
+		}
+	}
+	
+	// Map trailer url
+	var trailerUrl *string
+	if detail.TrailerUrl != "" {
+		u := detail.TrailerUrl
+		trailerUrl = &u
+	}
+
 	var playerUrls []entity.PlayerUrl
+
 	for _, p := range detail.PlayerUrls {
 		u := p.Url
 		t := p.Type
@@ -255,6 +279,9 @@ func (s *MovieService) mapProtoToMovieDetail(resp *pb.MovieDetailResponse) *enti
 	return &entity.MovieDetail{
 		Movie:         movie,
 		Votes:         votes,
+		ReleaseDate:   releaseDate,
+		UpdatedAt:     updatedAt,
+		TrailerUrl:    trailerUrl,
 		PlayerUrl:     &playerUrls,
 		Director:      &directors,
 		MovieStar:     &stars,
@@ -263,5 +290,6 @@ func (s *MovieService) mapProtoToMovieDetail(resp *pb.MovieDetailResponse) *enti
 		SimilarMovies: &similarMovies,
 	}
 }
+
 
 
