@@ -205,7 +205,7 @@ class HomeScraper(BaseScraper):
         # Try finding view all link in parent section
         section = slider_wrapper.find_parent('section')
         if section:
-            see_all_link = section.find('a', string=re.compile(r"LIHAT SEMUA", re.IGNORECASE))
+            see_all_link = section.find('a', string=re.compile(r"SEMUA", re.IGNORECASE))
             if see_all_link:
                 view_all_url = self._make_absolute_url(see_all_link['href'])
         
@@ -213,7 +213,7 @@ class HomeScraper(BaseScraper):
         if not view_all_url:
              header_div = slider_wrapper.find_previous_sibling('div', class_='header')
              if header_div:
-                  see_all_link = header_div.find('a', string=re.compile(r"LIHAT SEMUA", re.IGNORECASE))
+                  see_all_link = header_div.find('a', string=re.compile(r"SEMUA", re.IGNORECASE))
                   if see_all_link:
                        view_all_url = self._make_absolute_url(see_all_link['href'])
 
