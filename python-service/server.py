@@ -99,14 +99,11 @@ class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
         return self._scrape_url(url, context)
 
     def SearchMovies(self, request, context):
-        page = request.page if request.page > 0 else 1
-        # Using query param 's' which is standard for WP, but user showed 'spiderman=am' which is weird.
-        # Assuming ?s={query} works or /search/{query}/page/{page}
-        # Let's try standard search query param
         query = urllib.parse.quote(request.query)
-        url = f"{self.BASE_URL}/search?s={query}&page={page}"
-        # Alternative from user input: https://tv8.lk21official.cc/search?spiderman=am&page=1
-        # If the above fails, we might need to investigate. But standard WP search is usually safe.
+        # Use standard WP search parameter /?s=query
+        url = f"{self.BASE_URL}/?s={query}"
+        if request.page > 1:
+            url = f"{url}&page={request.page}"
         return self._scrape_url(url, context)
 
     def GetMoviesByFeature(self, request, context):

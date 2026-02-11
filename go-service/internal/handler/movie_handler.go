@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"tubexxi/video-api/internal/middleware"
 	"tubexxi/video-api/internal/service"
+	"tubexxi/video-api/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
@@ -32,17 +33,15 @@ func NewMovieHandler(
 
 func (h *MovieHandler) GetHome(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	
-	response, err := h.service.GetHome(ctx)
+
+	result, err := h.service.GetHome(ctx)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(fiber.Map{
-		"data": response,
-	})
+	return response.Success(c, "Success fetch movies",
+		result,
+	)
 }
 
 func (h *MovieHandler) GetMoviesByGenre(c *fiber.Ctx) error {
@@ -50,16 +49,15 @@ func (h *MovieHandler) GetMoviesByGenre(c *fiber.Ctx) error {
 	slug := c.Params("slug")
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 
-	response, err := h.service.GetMoviesByGenre(ctx, slug, int32(page))
+	result, err := h.service.GetMoviesByGenre(ctx, slug, int32(page))
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(fiber.Map{
-		"data": response,
-	})
+	return response.SuccessWithMeta(c, "Success fetch movies",
+		result.Movies,
+		result.Pagination,
+	)
 }
 
 func (h *MovieHandler) SearchMovies(c *fiber.Ctx) error {
@@ -71,16 +69,14 @@ func (h *MovieHandler) SearchMovies(c *fiber.Ctx) error {
 	}
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 
-	response, err := h.service.SearchMovies(ctx, query, int32(page))
+	result, err := h.service.SearchMovies(ctx, query, int32(page))
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(fiber.Map{
-		"data": response,
-	})
+	return response.SuccessWithMeta(c, "Success fetch movies",
+		result.Movies,
+		result.Pagination)
 }
 
 func (h *MovieHandler) GetMoviesByFeature(c *fiber.Ctx) error {
@@ -88,16 +84,15 @@ func (h *MovieHandler) GetMoviesByFeature(c *fiber.Ctx) error {
 	featureType := c.Params("type")
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 
-	response, err := h.service.GetMoviesByFeature(ctx, featureType, int32(page))
+	result, err := h.service.GetMoviesByFeature(ctx, featureType, int32(page))
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(fiber.Map{
-		"data": response,
-	})
+	return response.SuccessWithMeta(c, "Success fetch movies",
+		result.Movies,
+		result.Pagination,
+	)
 }
 
 func (h *MovieHandler) GetMoviesByCountry(c *fiber.Ctx) error {
@@ -105,16 +100,15 @@ func (h *MovieHandler) GetMoviesByCountry(c *fiber.Ctx) error {
 	country := c.Params("country")
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 
-	response, err := h.service.GetMoviesByCountry(ctx, country, int32(page))
+	result, err := h.service.GetMoviesByCountry(ctx, country, int32(page))
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(fiber.Map{
-		"data": response,
-	})
+	return response.SuccessWithMeta(c, "Success fetch movies",
+		result.Movies,
+		result.Pagination,
+	)
 }
 
 func (h *MovieHandler) GetMoviesByYear(c *fiber.Ctx) error {
@@ -122,22 +116,19 @@ func (h *MovieHandler) GetMoviesByYear(c *fiber.Ctx) error {
 	yearStr := c.Params("year")
 	year, err := strconv.Atoi(yearStr)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "invalid year",
-		})
+		return response.Error(c, fiber.StatusBadRequest, "invalid year", nil)
 	}
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 
-	response, err := h.service.GetMoviesByYear(ctx, int32(year), int32(page))
+	result, err := h.service.GetMoviesByYear(ctx, int32(year), int32(page))
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(fiber.Map{
-		"data": response,
-	})
+	return response.SuccessWithMeta(c, "Success fetch movies",
+		result.Movies,
+		result.Pagination,
+	)
 }
 
 func (h *MovieHandler) GetSpecialPage(c *fiber.Ctx) error {
@@ -145,16 +136,15 @@ func (h *MovieHandler) GetSpecialPage(c *fiber.Ctx) error {
 	pageName := c.Params("page_name")
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 
-	response, err := h.service.GetSpecialPage(ctx, pageName, int32(page))
+	result, err := h.service.GetSpecialPage(ctx, pageName, int32(page))
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(fiber.Map{
-		"data": response,
-	})
+	return response.SuccessWithMeta(c, "Success fetch movies",
+		result.Movies,
+		result.Pagination,
+	)
 }
 
 func (h *MovieHandler) GetMovieDetail(c *fiber.Ctx) error {
@@ -163,28 +153,21 @@ func (h *MovieHandler) GetMovieDetail(c *fiber.Ctx) error {
 	if slug == "" {
 		slug = c.Query("url")
 	}
-    
-    if slug == "" {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "error": "slug or url is required",
-        })
-    }
 
-	response, err := h.service.GetMovieDetail(ctx, slug)
+	if slug == "" {
+		return response.Error(c, fiber.StatusBadRequest, "slug or url is required", nil)
+	}
+
+	result, err := h.service.GetMovieDetail(ctx, slug)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
-    
-    if response == nil {
-         return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-            "error": "movie not found",
-        })
-    }
 
-	return c.JSON(fiber.Map{
-		"data": response,
-	})
+	if result == nil {
+		return response.Error(c, fiber.StatusNotFound, "movie not found", nil)
+	}
+
+	return response.Success(c, "Success fetch movie", result)
 }
-
