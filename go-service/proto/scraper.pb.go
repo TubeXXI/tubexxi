@@ -206,10 +206,9 @@ func (x *SearchRequest) GetPage() int32 {
 }
 
 type FeatureRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// populer, most-commented, rating, release, latest
-	FeatureType   string `protobuf:"bytes,1,opt,name=feature_type,json=featureType,proto3" json:"feature_type,omitempty"`
-	Page          int32  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FeatureType   string                 `protobuf:"bytes,1,opt,name=feature_type,json=featureType,proto3" json:"feature_type,omitempty"`
+	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1558,6 +1557,914 @@ func (x *SeriesDetailResponse) GetDetail() *SeriesDetail {
 	return nil
 }
 
+type AnimeGenre struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnimeGenre) Reset() {
+	*x = AnimeGenre{}
+	mi := &file_proto_scraper_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimeGenre) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimeGenre) ProtoMessage() {}
+
+func (x *AnimeGenre) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimeGenre.ProtoReflect.Descriptor instead.
+func (*AnimeGenre) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *AnimeGenre) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AnimeGenre) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+type Anime struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Title           string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	TitleJapanese   string                 `protobuf:"bytes,2,opt,name=title_japanese,json=titleJapanese,proto3" json:"title_japanese,omitempty"`
+	OriginalPageUrl string                 `protobuf:"bytes,3,opt,name=original_page_url,json=originalPageUrl,proto3" json:"original_page_url,omitempty"`
+	Thumbnail       string                 `protobuf:"bytes,4,opt,name=thumbnail,proto3" json:"thumbnail,omitempty"`
+	Score           string                 `protobuf:"bytes,5,opt,name=score,proto3" json:"score,omitempty"`
+	Producer        string                 `protobuf:"bytes,6,opt,name=producer,proto3" json:"producer,omitempty"`
+	Type            string                 `protobuf:"bytes,7,opt,name=type,proto3" json:"type,omitempty"`
+	Status          string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	TotalEpisodes   string                 `protobuf:"bytes,9,opt,name=total_episodes,json=totalEpisodes,proto3" json:"total_episodes,omitempty"`
+	Duration        string                 `protobuf:"bytes,10,opt,name=duration,proto3" json:"duration,omitempty"`
+	ReleaseDate     string                 `protobuf:"bytes,11,opt,name=release_date,json=releaseDate,proto3" json:"release_date,omitempty"`
+	ReleasedDay     string                 `protobuf:"bytes,12,opt,name=released_day,json=releasedDay,proto3" json:"released_day,omitempty"`
+	Studio          string                 `protobuf:"bytes,13,opt,name=studio,proto3" json:"studio,omitempty"`
+	Genre           []*AnimeGenre          `protobuf:"bytes,14,rep,name=genre,proto3" json:"genre,omitempty"`
+	Rating          string                 `protobuf:"bytes,15,opt,name=rating,proto3" json:"rating,omitempty"`
+	Episodes        []*AnimeEpisode        `protobuf:"bytes,16,rep,name=episodes,proto3" json:"episodes,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *Anime) Reset() {
+	*x = Anime{}
+	mi := &file_proto_scraper_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Anime) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Anime) ProtoMessage() {}
+
+func (x *Anime) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Anime.ProtoReflect.Descriptor instead.
+func (*Anime) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *Anime) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Anime) GetTitleJapanese() string {
+	if x != nil {
+		return x.TitleJapanese
+	}
+	return ""
+}
+
+func (x *Anime) GetOriginalPageUrl() string {
+	if x != nil {
+		return x.OriginalPageUrl
+	}
+	return ""
+}
+
+func (x *Anime) GetThumbnail() string {
+	if x != nil {
+		return x.Thumbnail
+	}
+	return ""
+}
+
+func (x *Anime) GetScore() string {
+	if x != nil {
+		return x.Score
+	}
+	return ""
+}
+
+func (x *Anime) GetProducer() string {
+	if x != nil {
+		return x.Producer
+	}
+	return ""
+}
+
+func (x *Anime) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *Anime) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *Anime) GetTotalEpisodes() string {
+	if x != nil {
+		return x.TotalEpisodes
+	}
+	return ""
+}
+
+func (x *Anime) GetDuration() string {
+	if x != nil {
+		return x.Duration
+	}
+	return ""
+}
+
+func (x *Anime) GetReleaseDate() string {
+	if x != nil {
+		return x.ReleaseDate
+	}
+	return ""
+}
+
+func (x *Anime) GetReleasedDay() string {
+	if x != nil {
+		return x.ReleasedDay
+	}
+	return ""
+}
+
+func (x *Anime) GetStudio() string {
+	if x != nil {
+		return x.Studio
+	}
+	return ""
+}
+
+func (x *Anime) GetGenre() []*AnimeGenre {
+	if x != nil {
+		return x.Genre
+	}
+	return nil
+}
+
+func (x *Anime) GetRating() string {
+	if x != nil {
+		return x.Rating
+	}
+	return ""
+}
+
+func (x *Anime) GetEpisodes() []*AnimeEpisode {
+	if x != nil {
+		return x.Episodes
+	}
+	return nil
+}
+
+type AnimeEpisode struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Title              string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	PlayerUrl          string                 `protobuf:"bytes,2,opt,name=player_url,json=playerUrl,proto3" json:"player_url,omitempty"`
+	PageUrl            string                 `protobuf:"bytes,3,opt,name=page_url,json=pageUrl,proto3" json:"page_url,omitempty"`
+	PostedBy           string                 `protobuf:"bytes,4,opt,name=posted_by,json=postedBy,proto3" json:"posted_by,omitempty"`
+	PreviousEpisodeUrl string                 `protobuf:"bytes,5,opt,name=previous_episode_url,json=previousEpisodeUrl,proto3" json:"previous_episode_url,omitempty"`
+	NextEpisodeUrl     string                 `protobuf:"bytes,6,opt,name=next_episode_url,json=nextEpisodeUrl,proto3" json:"next_episode_url,omitempty"`
+	SeeAllEpisodesUrl  string                 `protobuf:"bytes,7,opt,name=see_all_episodes_url,json=seeAllEpisodesUrl,proto3" json:"see_all_episodes_url,omitempty"`
+	ReleaseDate        string                 `protobuf:"bytes,8,opt,name=release_date,json=releaseDate,proto3" json:"release_date,omitempty"`
+	ReleaseTime        string                 `protobuf:"bytes,9,opt,name=release_time,json=releaseTime,proto3" json:"release_time,omitempty"`
+	EpisodeNumber      string                 `protobuf:"bytes,10,opt,name=episode_number,json=episodeNumber,proto3" json:"episode_number,omitempty"`
+	ListEpisode        []*AnimeEpisodeItem    `protobuf:"bytes,11,rep,name=list_episode,json=listEpisode,proto3" json:"list_episode,omitempty"`
+	DownloadLinks      []*AnimeDownloadLink   `protobuf:"bytes,12,rep,name=download_links,json=downloadLinks,proto3" json:"download_links,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *AnimeEpisode) Reset() {
+	*x = AnimeEpisode{}
+	mi := &file_proto_scraper_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimeEpisode) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimeEpisode) ProtoMessage() {}
+
+func (x *AnimeEpisode) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimeEpisode.ProtoReflect.Descriptor instead.
+func (*AnimeEpisode) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *AnimeEpisode) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *AnimeEpisode) GetPlayerUrl() string {
+	if x != nil {
+		return x.PlayerUrl
+	}
+	return ""
+}
+
+func (x *AnimeEpisode) GetPageUrl() string {
+	if x != nil {
+		return x.PageUrl
+	}
+	return ""
+}
+
+func (x *AnimeEpisode) GetPostedBy() string {
+	if x != nil {
+		return x.PostedBy
+	}
+	return ""
+}
+
+func (x *AnimeEpisode) GetPreviousEpisodeUrl() string {
+	if x != nil {
+		return x.PreviousEpisodeUrl
+	}
+	return ""
+}
+
+func (x *AnimeEpisode) GetNextEpisodeUrl() string {
+	if x != nil {
+		return x.NextEpisodeUrl
+	}
+	return ""
+}
+
+func (x *AnimeEpisode) GetSeeAllEpisodesUrl() string {
+	if x != nil {
+		return x.SeeAllEpisodesUrl
+	}
+	return ""
+}
+
+func (x *AnimeEpisode) GetReleaseDate() string {
+	if x != nil {
+		return x.ReleaseDate
+	}
+	return ""
+}
+
+func (x *AnimeEpisode) GetReleaseTime() string {
+	if x != nil {
+		return x.ReleaseTime
+	}
+	return ""
+}
+
+func (x *AnimeEpisode) GetEpisodeNumber() string {
+	if x != nil {
+		return x.EpisodeNumber
+	}
+	return ""
+}
+
+func (x *AnimeEpisode) GetListEpisode() []*AnimeEpisodeItem {
+	if x != nil {
+		return x.ListEpisode
+	}
+	return nil
+}
+
+func (x *AnimeEpisode) GetDownloadLinks() []*AnimeDownloadLink {
+	if x != nil {
+		return x.DownloadLinks
+	}
+	return nil
+}
+
+type AnimeEpisodeItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	PageUrl       string                 `protobuf:"bytes,2,opt,name=page_url,json=pageUrl,proto3" json:"page_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnimeEpisodeItem) Reset() {
+	*x = AnimeEpisodeItem{}
+	mi := &file_proto_scraper_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimeEpisodeItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimeEpisodeItem) ProtoMessage() {}
+
+func (x *AnimeEpisodeItem) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimeEpisodeItem.ProtoReflect.Descriptor instead.
+func (*AnimeEpisodeItem) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *AnimeEpisodeItem) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AnimeEpisodeItem) GetPageUrl() string {
+	if x != nil {
+		return x.PageUrl
+	}
+	return ""
+}
+
+type AnimeDownloadLink struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	Size          string                 `protobuf:"bytes,3,opt,name=size,proto3" json:"size,omitempty"`
+	Quality       string                 `protobuf:"bytes,4,opt,name=quality,proto3" json:"quality,omitempty"`
+	Format        string                 `protobuf:"bytes,5,opt,name=format,proto3" json:"format,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnimeDownloadLink) Reset() {
+	*x = AnimeDownloadLink{}
+	mi := &file_proto_scraper_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimeDownloadLink) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimeDownloadLink) ProtoMessage() {}
+
+func (x *AnimeDownloadLink) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimeDownloadLink.ProtoReflect.Descriptor instead.
+func (*AnimeDownloadLink) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *AnimeDownloadLink) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AnimeDownloadLink) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *AnimeDownloadLink) GetSize() string {
+	if x != nil {
+		return x.Size
+	}
+	return ""
+}
+
+func (x *AnimeDownloadLink) GetQuality() string {
+	if x != nil {
+		return x.Quality
+	}
+	return ""
+}
+
+func (x *AnimeDownloadLink) GetFormat() string {
+	if x != nil {
+		return x.Format
+	}
+	return ""
+}
+
+type PaginationAnime struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	TotalPages      int32                  `protobuf:"varint,1,opt,name=total_pages,json=totalPages,proto3" json:"total_pages,omitempty"`
+	CurrentPage     int32                  `protobuf:"varint,2,opt,name=current_page,json=currentPage,proto3" json:"current_page,omitempty"`
+	HasNext         bool                   `protobuf:"varint,3,opt,name=has_next,json=hasNext,proto3" json:"has_next,omitempty"`
+	HasPrevious     bool                   `protobuf:"varint,4,opt,name=has_previous,json=hasPrevious,proto3" json:"has_previous,omitempty"`
+	NextPageUrl     string                 `protobuf:"bytes,5,opt,name=next_page_url,json=nextPageUrl,proto3" json:"next_page_url,omitempty"`
+	PreviousPageUrl string                 `protobuf:"bytes,6,opt,name=previous_page_url,json=previousPageUrl,proto3" json:"previous_page_url,omitempty"`
+	PageNumbers     []int32                `protobuf:"varint,7,rep,packed,name=page_numbers,json=pageNumbers,proto3" json:"page_numbers,omitempty"`
+	PerPage         int32                  `protobuf:"varint,8,opt,name=per_page,json=perPage,proto3" json:"per_page,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *PaginationAnime) Reset() {
+	*x = PaginationAnime{}
+	mi := &file_proto_scraper_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PaginationAnime) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PaginationAnime) ProtoMessage() {}
+
+func (x *PaginationAnime) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PaginationAnime.ProtoReflect.Descriptor instead.
+func (*PaginationAnime) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *PaginationAnime) GetTotalPages() int32 {
+	if x != nil {
+		return x.TotalPages
+	}
+	return 0
+}
+
+func (x *PaginationAnime) GetCurrentPage() int32 {
+	if x != nil {
+		return x.CurrentPage
+	}
+	return 0
+}
+
+func (x *PaginationAnime) GetHasNext() bool {
+	if x != nil {
+		return x.HasNext
+	}
+	return false
+}
+
+func (x *PaginationAnime) GetHasPrevious() bool {
+	if x != nil {
+		return x.HasPrevious
+	}
+	return false
+}
+
+func (x *PaginationAnime) GetNextPageUrl() string {
+	if x != nil {
+		return x.NextPageUrl
+	}
+	return ""
+}
+
+func (x *PaginationAnime) GetPreviousPageUrl() string {
+	if x != nil {
+		return x.PreviousPageUrl
+	}
+	return ""
+}
+
+func (x *PaginationAnime) GetPageNumbers() []int32 {
+	if x != nil {
+		return x.PageNumbers
+	}
+	return nil
+}
+
+func (x *PaginationAnime) GetPerPage() int32 {
+	if x != nil {
+		return x.PerPage
+	}
+	return 0
+}
+
+type AnimeListResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Animes        []*Anime               `protobuf:"bytes,1,rep,name=animes,proto3" json:"animes,omitempty"`
+	Pagination    *PaginationAnime       `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Query         string                 `protobuf:"bytes,3,opt,name=query,proto3" json:"query,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnimeListResponse) Reset() {
+	*x = AnimeListResponse{}
+	mi := &file_proto_scraper_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimeListResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimeListResponse) ProtoMessage() {}
+
+func (x *AnimeListResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimeListResponse.ProtoReflect.Descriptor instead.
+func (*AnimeListResponse) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *AnimeListResponse) GetAnimes() []*Anime {
+	if x != nil {
+		return x.Animes
+	}
+	return nil
+}
+
+func (x *AnimeListResponse) GetPagination() *PaginationAnime {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+func (x *AnimeListResponse) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+type AnimeGenresResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Genres        []*AnimeGenre          `protobuf:"bytes,1,rep,name=genres,proto3" json:"genres,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnimeGenresResponse) Reset() {
+	*x = AnimeGenresResponse{}
+	mi := &file_proto_scraper_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimeGenresResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimeGenresResponse) ProtoMessage() {}
+
+func (x *AnimeGenresResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimeGenresResponse.ProtoReflect.Descriptor instead.
+func (*AnimeGenresResponse) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *AnimeGenresResponse) GetGenres() []*AnimeGenre {
+	if x != nil {
+		return x.Genres
+	}
+	return nil
+}
+
+type AnimePageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnimePageRequest) Reset() {
+	*x = AnimePageRequest{}
+	mi := &file_proto_scraper_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimePageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimePageRequest) ProtoMessage() {}
+
+func (x *AnimePageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimePageRequest.ProtoReflect.Descriptor instead.
+func (*AnimePageRequest) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *AnimePageRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+type AnimeSearchRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnimeSearchRequest) Reset() {
+	*x = AnimeSearchRequest{}
+	mi := &file_proto_scraper_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimeSearchRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimeSearchRequest) ProtoMessage() {}
+
+func (x *AnimeSearchRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimeSearchRequest.ProtoReflect.Descriptor instead.
+func (*AnimeSearchRequest) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *AnimeSearchRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+func (x *AnimeSearchRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+type AnimeUrlRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnimeUrlRequest) Reset() {
+	*x = AnimeUrlRequest{}
+	mi := &file_proto_scraper_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimeUrlRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimeUrlRequest) ProtoMessage() {}
+
+func (x *AnimeUrlRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimeUrlRequest.ProtoReflect.Descriptor instead.
+func (*AnimeUrlRequest) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *AnimeUrlRequest) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+type AnimeDetailResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Anime         *Anime                 `protobuf:"bytes,1,opt,name=anime,proto3" json:"anime,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnimeDetailResponse) Reset() {
+	*x = AnimeDetailResponse{}
+	mi := &file_proto_scraper_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimeDetailResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimeDetailResponse) ProtoMessage() {}
+
+func (x *AnimeDetailResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimeDetailResponse.ProtoReflect.Descriptor instead.
+func (*AnimeDetailResponse) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *AnimeDetailResponse) GetAnime() *Anime {
+	if x != nil {
+		return x.Anime
+	}
+	return nil
+}
+
+type AnimeEpisodeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Episode       *AnimeEpisode          `protobuf:"bytes,1,opt,name=episode,proto3" json:"episode,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnimeEpisodeResponse) Reset() {
+	*x = AnimeEpisodeResponse{}
+	mi := &file_proto_scraper_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnimeEpisodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnimeEpisodeResponse) ProtoMessage() {}
+
+func (x *AnimeEpisodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_scraper_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnimeEpisodeResponse.ProtoReflect.Descriptor instead.
+func (*AnimeEpisodeResponse) Descriptor() ([]byte, []int) {
+	return file_proto_scraper_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *AnimeEpisodeResponse) GetEpisode() *AnimeEpisode {
+	if x != nil {
+		return x.Episode
+	}
+	return nil
+}
+
 var File_proto_scraper_proto protoreflect.FileDescriptor
 
 const file_proto_scraper_proto_rawDesc = "" +
@@ -1697,7 +2604,82 @@ const file_proto_scraper_proto_rawDesc = "" +
 	"\vseason_list\x18\x04 \x03(\v2\x13.scraper.SeasonListR\n" +
 	"seasonList\"E\n" +
 	"\x14SeriesDetailResponse\x12-\n" +
-	"\x06detail\x18\x01 \x01(\v2\x15.scraper.SeriesDetailR\x06detail2\xd3\t\n" +
+	"\x06detail\x18\x01 \x01(\v2\x15.scraper.SeriesDetailR\x06detail\"2\n" +
+	"\n" +
+	"AnimeGenre\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x10\n" +
+	"\x03url\x18\x02 \x01(\tR\x03url\"\x83\x04\n" +
+	"\x05Anime\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12%\n" +
+	"\x0etitle_japanese\x18\x02 \x01(\tR\rtitleJapanese\x12*\n" +
+	"\x11original_page_url\x18\x03 \x01(\tR\x0foriginalPageUrl\x12\x1c\n" +
+	"\tthumbnail\x18\x04 \x01(\tR\tthumbnail\x12\x14\n" +
+	"\x05score\x18\x05 \x01(\tR\x05score\x12\x1a\n" +
+	"\bproducer\x18\x06 \x01(\tR\bproducer\x12\x12\n" +
+	"\x04type\x18\a \x01(\tR\x04type\x12\x16\n" +
+	"\x06status\x18\b \x01(\tR\x06status\x12%\n" +
+	"\x0etotal_episodes\x18\t \x01(\tR\rtotalEpisodes\x12\x1a\n" +
+	"\bduration\x18\n" +
+	" \x01(\tR\bduration\x12!\n" +
+	"\frelease_date\x18\v \x01(\tR\vreleaseDate\x12!\n" +
+	"\freleased_day\x18\f \x01(\tR\vreleasedDay\x12\x16\n" +
+	"\x06studio\x18\r \x01(\tR\x06studio\x12)\n" +
+	"\x05genre\x18\x0e \x03(\v2\x13.scraper.AnimeGenreR\x05genre\x12\x16\n" +
+	"\x06rating\x18\x0f \x01(\tR\x06rating\x121\n" +
+	"\bepisodes\x18\x10 \x03(\v2\x15.scraper.AnimeEpisodeR\bepisodes\"\xf6\x03\n" +
+	"\fAnimeEpisode\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x1d\n" +
+	"\n" +
+	"player_url\x18\x02 \x01(\tR\tplayerUrl\x12\x19\n" +
+	"\bpage_url\x18\x03 \x01(\tR\apageUrl\x12\x1b\n" +
+	"\tposted_by\x18\x04 \x01(\tR\bpostedBy\x120\n" +
+	"\x14previous_episode_url\x18\x05 \x01(\tR\x12previousEpisodeUrl\x12(\n" +
+	"\x10next_episode_url\x18\x06 \x01(\tR\x0enextEpisodeUrl\x12/\n" +
+	"\x14see_all_episodes_url\x18\a \x01(\tR\x11seeAllEpisodesUrl\x12!\n" +
+	"\frelease_date\x18\b \x01(\tR\vreleaseDate\x12!\n" +
+	"\frelease_time\x18\t \x01(\tR\vreleaseTime\x12%\n" +
+	"\x0eepisode_number\x18\n" +
+	" \x01(\tR\repisodeNumber\x12<\n" +
+	"\flist_episode\x18\v \x03(\v2\x19.scraper.AnimeEpisodeItemR\vlistEpisode\x12A\n" +
+	"\x0edownload_links\x18\f \x03(\v2\x1a.scraper.AnimeDownloadLinkR\rdownloadLinks\"A\n" +
+	"\x10AnimeEpisodeItem\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x19\n" +
+	"\bpage_url\x18\x02 \x01(\tR\apageUrl\"\x7f\n" +
+	"\x11AnimeDownloadLink\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x10\n" +
+	"\x03url\x18\x02 \x01(\tR\x03url\x12\x12\n" +
+	"\x04size\x18\x03 \x01(\tR\x04size\x12\x18\n" +
+	"\aquality\x18\x04 \x01(\tR\aquality\x12\x16\n" +
+	"\x06format\x18\x05 \x01(\tR\x06format\"\xa1\x02\n" +
+	"\x0fPaginationAnime\x12\x1f\n" +
+	"\vtotal_pages\x18\x01 \x01(\x05R\n" +
+	"totalPages\x12!\n" +
+	"\fcurrent_page\x18\x02 \x01(\x05R\vcurrentPage\x12\x19\n" +
+	"\bhas_next\x18\x03 \x01(\bR\ahasNext\x12!\n" +
+	"\fhas_previous\x18\x04 \x01(\bR\vhasPrevious\x12\"\n" +
+	"\rnext_page_url\x18\x05 \x01(\tR\vnextPageUrl\x12*\n" +
+	"\x11previous_page_url\x18\x06 \x01(\tR\x0fpreviousPageUrl\x12!\n" +
+	"\fpage_numbers\x18\a \x03(\x05R\vpageNumbers\x12\x19\n" +
+	"\bper_page\x18\b \x01(\x05R\aperPage\"\x8b\x01\n" +
+	"\x11AnimeListResponse\x12&\n" +
+	"\x06animes\x18\x01 \x03(\v2\x0e.scraper.AnimeR\x06animes\x128\n" +
+	"\n" +
+	"pagination\x18\x02 \x01(\v2\x18.scraper.PaginationAnimeR\n" +
+	"pagination\x12\x14\n" +
+	"\x05query\x18\x03 \x01(\tR\x05query\"B\n" +
+	"\x13AnimeGenresResponse\x12+\n" +
+	"\x06genres\x18\x01 \x03(\v2\x13.scraper.AnimeGenreR\x06genres\"&\n" +
+	"\x10AnimePageRequest\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x05R\x04page\">\n" +
+	"\x12AnimeSearchRequest\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\x12\x12\n" +
+	"\x04page\x18\x02 \x01(\x05R\x04page\"#\n" +
+	"\x0fAnimeUrlRequest\x12\x10\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\";\n" +
+	"\x13AnimeDetailResponse\x12$\n" +
+	"\x05anime\x18\x01 \x01(\v2\x0e.scraper.AnimeR\x05anime\"G\n" +
+	"\x14AnimeEpisodeResponse\x12/\n" +
+	"\aepisode\x18\x01 \x01(\v2\x15.scraper.AnimeEpisodeR\aepisode2\x84\r\n" +
 	"\x0eScraperService\x123\n" +
 	"\n" +
 	"ScrapeHome\x12\x0e.scraper.Empty\x1a\x15.scraper.HomeResponse\x129\n" +
@@ -1718,7 +2700,13 @@ const file_proto_scraper_proto_rawDesc = "" +
 	"\x0fGetSeriesByYear\x12\x14.scraper.YearRequest\x1a\x15.scraper.ListResponse\x12J\n" +
 	"\x14GetSeriesSpecialPage\x12\x1b.scraper.SpecialPageRequest\x1a\x15.scraper.ListResponse\x12M\n" +
 	"\x0fGetSeriesDetail\x12\x1b.scraper.MovieDetailRequest\x1a\x1d.scraper.SeriesDetailResponse\x12Q\n" +
-	"\x10GetSeriesEpisode\x12\x1d.scraper.SeriesEpisodeRequest\x1a\x1e.scraper.SeriesEpisodeResponseB\x19Z\x17tubexxi/video-api/protob\x06proto3"
+	"\x10GetSeriesEpisode\x12\x1d.scraper.SeriesEpisodeRequest\x1a\x1e.scraper.SeriesEpisodeResponse\x12G\n" +
+	"\x0eGetAnimeLatest\x12\x19.scraper.AnimePageRequest\x1a\x1a.scraper.AnimeListResponse\x12F\n" +
+	"\vSearchAnime\x12\x1b.scraper.AnimeSearchRequest\x1a\x1a.scraper.AnimeListResponse\x12H\n" +
+	"\x0fGetAnimeOngoing\x12\x19.scraper.AnimePageRequest\x1a\x1a.scraper.AnimeListResponse\x12>\n" +
+	"\x0eGetAnimeGenres\x12\x0e.scraper.Empty\x1a\x1c.scraper.AnimeGenresResponse\x12H\n" +
+	"\x0eGetAnimeDetail\x12\x18.scraper.AnimeUrlRequest\x1a\x1c.scraper.AnimeDetailResponse\x12J\n" +
+	"\x0fGetAnimeEpisode\x12\x18.scraper.AnimeUrlRequest\x1a\x1d.scraper.AnimeEpisodeResponseB\x19Z\x17tubexxi/video-api/protob\x06proto3"
 
 var (
 	file_proto_scraper_proto_rawDescOnce sync.Once
@@ -1732,7 +2720,7 @@ func file_proto_scraper_proto_rawDescGZIP() []byte {
 	return file_proto_scraper_proto_rawDescData
 }
 
-var file_proto_scraper_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_proto_scraper_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
 var file_proto_scraper_proto_goTypes = []any{
 	(*Empty)(nil),                 // 0: scraper.Empty
 	(*ListRequest)(nil),           // 1: scraper.ListRequest
@@ -1760,6 +2748,19 @@ var file_proto_scraper_proto_goTypes = []any{
 	(*SeasonList)(nil),            // 23: scraper.SeasonList
 	(*SeriesDetail)(nil),          // 24: scraper.SeriesDetail
 	(*SeriesDetailResponse)(nil),  // 25: scraper.SeriesDetailResponse
+	(*AnimeGenre)(nil),            // 26: scraper.AnimeGenre
+	(*Anime)(nil),                 // 27: scraper.Anime
+	(*AnimeEpisode)(nil),          // 28: scraper.AnimeEpisode
+	(*AnimeEpisodeItem)(nil),      // 29: scraper.AnimeEpisodeItem
+	(*AnimeDownloadLink)(nil),     // 30: scraper.AnimeDownloadLink
+	(*PaginationAnime)(nil),       // 31: scraper.PaginationAnime
+	(*AnimeListResponse)(nil),     // 32: scraper.AnimeListResponse
+	(*AnimeGenresResponse)(nil),   // 33: scraper.AnimeGenresResponse
+	(*AnimePageRequest)(nil),      // 34: scraper.AnimePageRequest
+	(*AnimeSearchRequest)(nil),    // 35: scraper.AnimeSearchRequest
+	(*AnimeUrlRequest)(nil),       // 36: scraper.AnimeUrlRequest
+	(*AnimeDetailResponse)(nil),   // 37: scraper.AnimeDetailResponse
+	(*AnimeEpisodeResponse)(nil),  // 38: scraper.AnimeEpisodeResponse
 }
 var file_proto_scraper_proto_depIdxs = []int32{
 	9,  // 0: scraper.HomeSection.value:type_name -> scraper.Movie
@@ -1780,47 +2781,68 @@ var file_proto_scraper_proto_depIdxs = []int32{
 	18, // 15: scraper.SeriesDetail.movie_detail:type_name -> scraper.MovieDetail
 	23, // 16: scraper.SeriesDetail.season_list:type_name -> scraper.SeasonList
 	24, // 17: scraper.SeriesDetailResponse.detail:type_name -> scraper.SeriesDetail
-	0,  // 18: scraper.ScraperService.ScrapeHome:input_type -> scraper.Empty
-	1,  // 19: scraper.ScraperService.ScrapeList:input_type -> scraper.ListRequest
-	2,  // 20: scraper.ScraperService.GetMoviesByGenre:input_type -> scraper.GenreRequest
-	3,  // 21: scraper.ScraperService.SearchMovies:input_type -> scraper.SearchRequest
-	4,  // 22: scraper.ScraperService.GetMoviesByFeature:input_type -> scraper.FeatureRequest
-	5,  // 23: scraper.ScraperService.GetMoviesByCountry:input_type -> scraper.CountryRequest
-	6,  // 24: scraper.ScraperService.GetMoviesByYear:input_type -> scraper.YearRequest
-	7,  // 25: scraper.ScraperService.GetSpecialPage:input_type -> scraper.SpecialPageRequest
-	8,  // 26: scraper.ScraperService.GetMovieDetail:input_type -> scraper.MovieDetailRequest
-	0,  // 27: scraper.ScraperService.GetSeriesHome:input_type -> scraper.Empty
-	2,  // 28: scraper.ScraperService.GetSeriesByGenre:input_type -> scraper.GenreRequest
-	3,  // 29: scraper.ScraperService.SearchSeries:input_type -> scraper.SearchRequest
-	4,  // 30: scraper.ScraperService.GetSeriesByFeature:input_type -> scraper.FeatureRequest
-	5,  // 31: scraper.ScraperService.GetSeriesByCountry:input_type -> scraper.CountryRequest
-	6,  // 32: scraper.ScraperService.GetSeriesByYear:input_type -> scraper.YearRequest
-	7,  // 33: scraper.ScraperService.GetSeriesSpecialPage:input_type -> scraper.SpecialPageRequest
-	8,  // 34: scraper.ScraperService.GetSeriesDetail:input_type -> scraper.MovieDetailRequest
-	20, // 35: scraper.ScraperService.GetSeriesEpisode:input_type -> scraper.SeriesEpisodeRequest
-	11, // 36: scraper.ScraperService.ScrapeHome:output_type -> scraper.HomeResponse
-	13, // 37: scraper.ScraperService.ScrapeList:output_type -> scraper.ListResponse
-	13, // 38: scraper.ScraperService.GetMoviesByGenre:output_type -> scraper.ListResponse
-	13, // 39: scraper.ScraperService.SearchMovies:output_type -> scraper.ListResponse
-	13, // 40: scraper.ScraperService.GetMoviesByFeature:output_type -> scraper.ListResponse
-	13, // 41: scraper.ScraperService.GetMoviesByCountry:output_type -> scraper.ListResponse
-	13, // 42: scraper.ScraperService.GetMoviesByYear:output_type -> scraper.ListResponse
-	13, // 43: scraper.ScraperService.GetSpecialPage:output_type -> scraper.ListResponse
-	19, // 44: scraper.ScraperService.GetMovieDetail:output_type -> scraper.MovieDetailResponse
-	11, // 45: scraper.ScraperService.GetSeriesHome:output_type -> scraper.HomeResponse
-	13, // 46: scraper.ScraperService.GetSeriesByGenre:output_type -> scraper.ListResponse
-	13, // 47: scraper.ScraperService.SearchSeries:output_type -> scraper.ListResponse
-	13, // 48: scraper.ScraperService.GetSeriesByFeature:output_type -> scraper.ListResponse
-	13, // 49: scraper.ScraperService.GetSeriesByCountry:output_type -> scraper.ListResponse
-	13, // 50: scraper.ScraperService.GetSeriesByYear:output_type -> scraper.ListResponse
-	13, // 51: scraper.ScraperService.GetSeriesSpecialPage:output_type -> scraper.ListResponse
-	25, // 52: scraper.ScraperService.GetSeriesDetail:output_type -> scraper.SeriesDetailResponse
-	21, // 53: scraper.ScraperService.GetSeriesEpisode:output_type -> scraper.SeriesEpisodeResponse
-	36, // [36:54] is the sub-list for method output_type
-	18, // [18:36] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	26, // 18: scraper.Anime.genre:type_name -> scraper.AnimeGenre
+	28, // 19: scraper.Anime.episodes:type_name -> scraper.AnimeEpisode
+	29, // 20: scraper.AnimeEpisode.list_episode:type_name -> scraper.AnimeEpisodeItem
+	30, // 21: scraper.AnimeEpisode.download_links:type_name -> scraper.AnimeDownloadLink
+	27, // 22: scraper.AnimeListResponse.animes:type_name -> scraper.Anime
+	31, // 23: scraper.AnimeListResponse.pagination:type_name -> scraper.PaginationAnime
+	26, // 24: scraper.AnimeGenresResponse.genres:type_name -> scraper.AnimeGenre
+	27, // 25: scraper.AnimeDetailResponse.anime:type_name -> scraper.Anime
+	28, // 26: scraper.AnimeEpisodeResponse.episode:type_name -> scraper.AnimeEpisode
+	0,  // 27: scraper.ScraperService.ScrapeHome:input_type -> scraper.Empty
+	1,  // 28: scraper.ScraperService.ScrapeList:input_type -> scraper.ListRequest
+	2,  // 29: scraper.ScraperService.GetMoviesByGenre:input_type -> scraper.GenreRequest
+	3,  // 30: scraper.ScraperService.SearchMovies:input_type -> scraper.SearchRequest
+	4,  // 31: scraper.ScraperService.GetMoviesByFeature:input_type -> scraper.FeatureRequest
+	5,  // 32: scraper.ScraperService.GetMoviesByCountry:input_type -> scraper.CountryRequest
+	6,  // 33: scraper.ScraperService.GetMoviesByYear:input_type -> scraper.YearRequest
+	7,  // 34: scraper.ScraperService.GetSpecialPage:input_type -> scraper.SpecialPageRequest
+	8,  // 35: scraper.ScraperService.GetMovieDetail:input_type -> scraper.MovieDetailRequest
+	0,  // 36: scraper.ScraperService.GetSeriesHome:input_type -> scraper.Empty
+	2,  // 37: scraper.ScraperService.GetSeriesByGenre:input_type -> scraper.GenreRequest
+	3,  // 38: scraper.ScraperService.SearchSeries:input_type -> scraper.SearchRequest
+	4,  // 39: scraper.ScraperService.GetSeriesByFeature:input_type -> scraper.FeatureRequest
+	5,  // 40: scraper.ScraperService.GetSeriesByCountry:input_type -> scraper.CountryRequest
+	6,  // 41: scraper.ScraperService.GetSeriesByYear:input_type -> scraper.YearRequest
+	7,  // 42: scraper.ScraperService.GetSeriesSpecialPage:input_type -> scraper.SpecialPageRequest
+	8,  // 43: scraper.ScraperService.GetSeriesDetail:input_type -> scraper.MovieDetailRequest
+	20, // 44: scraper.ScraperService.GetSeriesEpisode:input_type -> scraper.SeriesEpisodeRequest
+	34, // 45: scraper.ScraperService.GetAnimeLatest:input_type -> scraper.AnimePageRequest
+	35, // 46: scraper.ScraperService.SearchAnime:input_type -> scraper.AnimeSearchRequest
+	34, // 47: scraper.ScraperService.GetAnimeOngoing:input_type -> scraper.AnimePageRequest
+	0,  // 48: scraper.ScraperService.GetAnimeGenres:input_type -> scraper.Empty
+	36, // 49: scraper.ScraperService.GetAnimeDetail:input_type -> scraper.AnimeUrlRequest
+	36, // 50: scraper.ScraperService.GetAnimeEpisode:input_type -> scraper.AnimeUrlRequest
+	11, // 51: scraper.ScraperService.ScrapeHome:output_type -> scraper.HomeResponse
+	13, // 52: scraper.ScraperService.ScrapeList:output_type -> scraper.ListResponse
+	13, // 53: scraper.ScraperService.GetMoviesByGenre:output_type -> scraper.ListResponse
+	13, // 54: scraper.ScraperService.SearchMovies:output_type -> scraper.ListResponse
+	13, // 55: scraper.ScraperService.GetMoviesByFeature:output_type -> scraper.ListResponse
+	13, // 56: scraper.ScraperService.GetMoviesByCountry:output_type -> scraper.ListResponse
+	13, // 57: scraper.ScraperService.GetMoviesByYear:output_type -> scraper.ListResponse
+	13, // 58: scraper.ScraperService.GetSpecialPage:output_type -> scraper.ListResponse
+	19, // 59: scraper.ScraperService.GetMovieDetail:output_type -> scraper.MovieDetailResponse
+	11, // 60: scraper.ScraperService.GetSeriesHome:output_type -> scraper.HomeResponse
+	13, // 61: scraper.ScraperService.GetSeriesByGenre:output_type -> scraper.ListResponse
+	13, // 62: scraper.ScraperService.SearchSeries:output_type -> scraper.ListResponse
+	13, // 63: scraper.ScraperService.GetSeriesByFeature:output_type -> scraper.ListResponse
+	13, // 64: scraper.ScraperService.GetSeriesByCountry:output_type -> scraper.ListResponse
+	13, // 65: scraper.ScraperService.GetSeriesByYear:output_type -> scraper.ListResponse
+	13, // 66: scraper.ScraperService.GetSeriesSpecialPage:output_type -> scraper.ListResponse
+	25, // 67: scraper.ScraperService.GetSeriesDetail:output_type -> scraper.SeriesDetailResponse
+	21, // 68: scraper.ScraperService.GetSeriesEpisode:output_type -> scraper.SeriesEpisodeResponse
+	32, // 69: scraper.ScraperService.GetAnimeLatest:output_type -> scraper.AnimeListResponse
+	32, // 70: scraper.ScraperService.SearchAnime:output_type -> scraper.AnimeListResponse
+	32, // 71: scraper.ScraperService.GetAnimeOngoing:output_type -> scraper.AnimeListResponse
+	33, // 72: scraper.ScraperService.GetAnimeGenres:output_type -> scraper.AnimeGenresResponse
+	37, // 73: scraper.ScraperService.GetAnimeDetail:output_type -> scraper.AnimeDetailResponse
+	38, // 74: scraper.ScraperService.GetAnimeEpisode:output_type -> scraper.AnimeEpisodeResponse
+	51, // [51:75] is the sub-list for method output_type
+	27, // [27:51] is the sub-list for method input_type
+	27, // [27:27] is the sub-list for extension type_name
+	27, // [27:27] is the sub-list for extension extendee
+	0,  // [0:27] is the sub-list for field type_name
 }
 
 func init() { file_proto_scraper_proto_init() }
@@ -1838,7 +2860,7 @@ func file_proto_scraper_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_scraper_proto_rawDesc), len(file_proto_scraper_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   26,
+			NumMessages:   39,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

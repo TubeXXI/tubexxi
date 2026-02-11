@@ -3,5 +3,7 @@ android
 ios
 .env
 .env.test
-backup/*.env
-backup/*.sql
+go-service/*.env
+go-service/*.sql
+go-service/service-account.json
+python-service/results/*.json

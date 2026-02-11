@@ -37,6 +37,12 @@ const (
 	ScraperService_GetSeriesSpecialPage_FullMethodName = "/scraper.ScraperService/GetSeriesSpecialPage"
 	ScraperService_GetSeriesDetail_FullMethodName      = "/scraper.ScraperService/GetSeriesDetail"
 	ScraperService_GetSeriesEpisode_FullMethodName     = "/scraper.ScraperService/GetSeriesEpisode"
+	ScraperService_GetAnimeLatest_FullMethodName       = "/scraper.ScraperService/GetAnimeLatest"
+	ScraperService_SearchAnime_FullMethodName          = "/scraper.ScraperService/SearchAnime"
+	ScraperService_GetAnimeOngoing_FullMethodName      = "/scraper.ScraperService/GetAnimeOngoing"
+	ScraperService_GetAnimeGenres_FullMethodName       = "/scraper.ScraperService/GetAnimeGenres"
+	ScraperService_GetAnimeDetail_FullMethodName       = "/scraper.ScraperService/GetAnimeDetail"
+	ScraperService_GetAnimeEpisode_FullMethodName      = "/scraper.ScraperService/GetAnimeEpisode"
 )
 
 // ScraperServiceClient is the client API for ScraperService service.
@@ -45,16 +51,13 @@ const (
 type ScraperServiceClient interface {
 	ScrapeHome(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HomeResponse, error)
 	ScrapeList(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
-	// New RPCs
 	GetMoviesByGenre(ctx context.Context, in *GenreRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	SearchMovies(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	GetMoviesByFeature(ctx context.Context, in *FeatureRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	GetMoviesByCountry(ctx context.Context, in *CountryRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	GetMoviesByYear(ctx context.Context, in *YearRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	GetSpecialPage(ctx context.Context, in *SpecialPageRequest, opts ...grpc.CallOption) (*ListResponse, error)
-	// Detail
 	GetMovieDetail(ctx context.Context, in *MovieDetailRequest, opts ...grpc.CallOption) (*MovieDetailResponse, error)
-	// Series RPCs
 	GetSeriesHome(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HomeResponse, error)
 	GetSeriesByGenre(ctx context.Context, in *GenreRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	SearchSeries(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*ListResponse, error)
@@ -62,9 +65,14 @@ type ScraperServiceClient interface {
 	GetSeriesByCountry(ctx context.Context, in *CountryRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	GetSeriesByYear(ctx context.Context, in *YearRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	GetSeriesSpecialPage(ctx context.Context, in *SpecialPageRequest, opts ...grpc.CallOption) (*ListResponse, error)
-	// Series Detail
 	GetSeriesDetail(ctx context.Context, in *MovieDetailRequest, opts ...grpc.CallOption) (*SeriesDetailResponse, error)
 	GetSeriesEpisode(ctx context.Context, in *SeriesEpisodeRequest, opts ...grpc.CallOption) (*SeriesEpisodeResponse, error)
+	GetAnimeLatest(ctx context.Context, in *AnimePageRequest, opts ...grpc.CallOption) (*AnimeListResponse, error)
+	SearchAnime(ctx context.Context, in *AnimeSearchRequest, opts ...grpc.CallOption) (*AnimeListResponse, error)
+	GetAnimeOngoing(ctx context.Context, in *AnimePageRequest, opts ...grpc.CallOption) (*AnimeListResponse, error)
+	GetAnimeGenres(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*AnimeGenresResponse, error)
+	GetAnimeDetail(ctx context.Context, in *AnimeUrlRequest, opts ...grpc.CallOption) (*AnimeDetailResponse, error)
+	GetAnimeEpisode(ctx context.Context, in *AnimeUrlRequest, opts ...grpc.CallOption) (*AnimeEpisodeResponse, error)
 }
 
 type scraperServiceClient struct {
@@ -255,22 +263,79 @@ func (c *scraperServiceClient) GetSeriesEpisode(ctx context.Context, in *SeriesE
 	return out, nil
 }
 
+func (c *scraperServiceClient) GetAnimeLatest(ctx context.Context, in *AnimePageRequest, opts ...grpc.CallOption) (*AnimeListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AnimeListResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetAnimeLatest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) SearchAnime(ctx context.Context, in *AnimeSearchRequest, opts ...grpc.CallOption) (*AnimeListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AnimeListResponse)
+	err := c.cc.Invoke(ctx, ScraperService_SearchAnime_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) GetAnimeOngoing(ctx context.Context, in *AnimePageRequest, opts ...grpc.CallOption) (*AnimeListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AnimeListResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetAnimeOngoing_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) GetAnimeGenres(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*AnimeGenresResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AnimeGenresResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetAnimeGenres_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) GetAnimeDetail(ctx context.Context, in *AnimeUrlRequest, opts ...grpc.CallOption) (*AnimeDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AnimeDetailResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetAnimeDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scraperServiceClient) GetAnimeEpisode(ctx context.Context, in *AnimeUrlRequest, opts ...grpc.CallOption) (*AnimeEpisodeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AnimeEpisodeResponse)
+	err := c.cc.Invoke(ctx, ScraperService_GetAnimeEpisode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ScraperServiceServer is the server API for ScraperService service.
 // All implementations must embed UnimplementedScraperServiceServer
 // for forward compatibility.
 type ScraperServiceServer interface {
 	ScrapeHome(context.Context, *Empty) (*HomeResponse, error)
 	ScrapeList(context.Context, *ListRequest) (*ListResponse, error)
-	// New RPCs
 	GetMoviesByGenre(context.Context, *GenreRequest) (*ListResponse, error)
 	SearchMovies(context.Context, *SearchRequest) (*ListResponse, error)
 	GetMoviesByFeature(context.Context, *FeatureRequest) (*ListResponse, error)
 	GetMoviesByCountry(context.Context, *CountryRequest) (*ListResponse, error)
 	GetMoviesByYear(context.Context, *YearRequest) (*ListResponse, error)
 	GetSpecialPage(context.Context, *SpecialPageRequest) (*ListResponse, error)
-	// Detail
 	GetMovieDetail(context.Context, *MovieDetailRequest) (*MovieDetailResponse, error)
-	// Series RPCs
 	GetSeriesHome(context.Context, *Empty) (*HomeResponse, error)
 	GetSeriesByGenre(context.Context, *GenreRequest) (*ListResponse, error)
 	SearchSeries(context.Context, *SearchRequest) (*ListResponse, error)
@@ -278,9 +343,14 @@ type ScraperServiceServer interface {
 	GetSeriesByCountry(context.Context, *CountryRequest) (*ListResponse, error)
 	GetSeriesByYear(context.Context, *YearRequest) (*ListResponse, error)
 	GetSeriesSpecialPage(context.Context, *SpecialPageRequest) (*ListResponse, error)
-	// Series Detail
 	GetSeriesDetail(context.Context, *MovieDetailRequest) (*SeriesDetailResponse, error)
 	GetSeriesEpisode(context.Context, *SeriesEpisodeRequest) (*SeriesEpisodeResponse, error)
+	GetAnimeLatest(context.Context, *AnimePageRequest) (*AnimeListResponse, error)
+	SearchAnime(context.Context, *AnimeSearchRequest) (*AnimeListResponse, error)
+	GetAnimeOngoing(context.Context, *AnimePageRequest) (*AnimeListResponse, error)
+	GetAnimeGenres(context.Context, *Empty) (*AnimeGenresResponse, error)
+	GetAnimeDetail(context.Context, *AnimeUrlRequest) (*AnimeDetailResponse, error)
+	GetAnimeEpisode(context.Context, *AnimeUrlRequest) (*AnimeEpisodeResponse, error)
 	mustEmbedUnimplementedScraperServiceServer()
 }
 
@@ -344,6 +414,24 @@ func (UnimplementedScraperServiceServer) GetSeriesDetail(context.Context, *Movie
 }
 func (UnimplementedScraperServiceServer) GetSeriesEpisode(context.Context, *SeriesEpisodeRequest) (*SeriesEpisodeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSeriesEpisode not implemented")
+}
+func (UnimplementedScraperServiceServer) GetAnimeLatest(context.Context, *AnimePageRequest) (*AnimeListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAnimeLatest not implemented")
+}
+func (UnimplementedScraperServiceServer) SearchAnime(context.Context, *AnimeSearchRequest) (*AnimeListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchAnime not implemented")
+}
+func (UnimplementedScraperServiceServer) GetAnimeOngoing(context.Context, *AnimePageRequest) (*AnimeListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAnimeOngoing not implemented")
+}
+func (UnimplementedScraperServiceServer) GetAnimeGenres(context.Context, *Empty) (*AnimeGenresResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAnimeGenres not implemented")
+}
+func (UnimplementedScraperServiceServer) GetAnimeDetail(context.Context, *AnimeUrlRequest) (*AnimeDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAnimeDetail not implemented")
+}
+func (UnimplementedScraperServiceServer) GetAnimeEpisode(context.Context, *AnimeUrlRequest) (*AnimeEpisodeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAnimeEpisode not implemented")
 }
 func (UnimplementedScraperServiceServer) mustEmbedUnimplementedScraperServiceServer() {}
 func (UnimplementedScraperServiceServer) testEmbeddedByValue()                        {}
@@ -690,6 +778,114 @@ func _ScraperService_GetSeriesEpisode_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ScraperService_GetAnimeLatest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AnimePageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetAnimeLatest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetAnimeLatest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetAnimeLatest(ctx, req.(*AnimePageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_SearchAnime_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AnimeSearchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).SearchAnime(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_SearchAnime_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).SearchAnime(ctx, req.(*AnimeSearchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_GetAnimeOngoing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AnimePageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetAnimeOngoing(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetAnimeOngoing_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetAnimeOngoing(ctx, req.(*AnimePageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_GetAnimeGenres_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetAnimeGenres(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetAnimeGenres_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetAnimeGenres(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_GetAnimeDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AnimeUrlRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetAnimeDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetAnimeDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetAnimeDetail(ctx, req.(*AnimeUrlRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ScraperService_GetAnimeEpisode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AnimeUrlRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ScraperServiceServer).GetAnimeEpisode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ScraperService_GetAnimeEpisode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ScraperServiceServer).GetAnimeEpisode(ctx, req.(*AnimeUrlRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ScraperService_ServiceDesc is the grpc.ServiceDesc for ScraperService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -768,6 +964,30 @@ var ScraperService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSeriesEpisode",
 			Handler:    _ScraperService_GetSeriesEpisode_Handler,
+		},
+		{
+			MethodName: "GetAnimeLatest",
+			Handler:    _ScraperService_GetAnimeLatest_Handler,
+		},
+		{
+			MethodName: "SearchAnime",
+			Handler:    _ScraperService_SearchAnime_Handler,
+		},
+		{
+			MethodName: "GetAnimeOngoing",
+			Handler:    _ScraperService_GetAnimeOngoing_Handler,
+		},
+		{
+			MethodName: "GetAnimeGenres",
+			Handler:    _ScraperService_GetAnimeGenres_Handler,
+		},
+		{
+			MethodName: "GetAnimeDetail",
+			Handler:    _ScraperService_GetAnimeDetail_Handler,
+		},
+		{
+			MethodName: "GetAnimeEpisode",
+			Handler:    _ScraperService_GetAnimeEpisode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

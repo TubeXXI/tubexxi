@@ -11,6 +11,7 @@ import (
 	asynqclient "tubexxi/video-api/internal/infrastructure/asynq-client"
 	"tubexxi/video-api/internal/infrastructure/centrifugo"
 	"tubexxi/video-api/internal/infrastructure/contextpool"
+	firebaseclient "tubexxi/video-api/internal/infrastructure/firebase-client"
 	"tubexxi/video-api/internal/infrastructure/metrics"
 	minioclient "tubexxi/video-api/internal/infrastructure/minio-client"
 	redisclient "tubexxi/video-api/internal/infrastructure/redis-client"
@@ -34,6 +35,7 @@ type Container struct {
 	CentrifugoClient *centrifugo.CentrifugoClient
 	MinioClient      *minioclient.MinioClient
 	ScraperClient    *scraper_client.ScraperClient
+	FirebaseClient   *firebaseclient.FirebaseClient
 	UserRepo         repository.UserRepository
 	UserHelper       *helpers.UserHelper
 	SessionHelper    *helpers.SessionHelper
@@ -84,6 +86,10 @@ func NewContainer(ctx context.Context) (*Container, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create scraper client: %w", err)
 	}
+	firebaseClient, err := firebaseclient.NewFirebaseClient(ctx, logger, &init.App)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create firebase client: %w", err)
+	}
 
 	userRepo := repository.NewUserRepository(dbPool.Pool, logger)
 
@@ -102,11 +108,12 @@ func NewContainer(ctx context.Context) (*Container, error) {
 		AsynqClient:      asynqClient,
 		CentrifugoClient: centrifugoClient,
 		MinioClient:      minio,
+		ScraperClient:    scraperClient,
+		FirebaseClient:   firebaseClient,
 		UserRepo:         userRepo,
 		UserHelper:       userHelper,
 		SessionHelper:    sessionHelper,
 		EmailHelper:      emailHelper,
-		ScraperClient:    scraperClient,
 	}, nil
 
 }
@@ -222,6 +229,14 @@ func (cont *Container) Close() error {
 			cont.Logger.Error("Asynq shutdown error", zap.Error(err))
 		} else {
 			cont.Logger.Info("Asynq closed successfully")
+		}
+	}
+	if cont.FirebaseClient != nil {
+		if err := cont.FirebaseClient.Close(); err != nil {
+			cont.Logger.Error("Firebase shutdown error", zap.Error(err))
+			errs = append(errs, fmt.Errorf("firebase shutdown error: %w", err))
+		} else {
+			cont.Logger.Info("✅ Firebase connection closed successfully")
 		}
 	}
 	if cont.Logger != nil {

@@ -15,4 +15,7 @@ func RegisterApiRoutes(router fiber.Router, cont *dependencies.Container, mw *fa
 	movieFactory := factory.NewMovieFactory(cont, mw)
 	movieFactory.GetRoutes(router)
 
+	animeFactory := factory.NewAnimeFactory(cont, mw)
+	animeFactory.GetRoutes(router)
+
 }

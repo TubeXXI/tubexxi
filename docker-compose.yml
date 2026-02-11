@@ -61,9 +61,12 @@ services:
       - SMTP_FROM_ADDRESS=${SMTP_FROM_ADDRESS}
       - SCRAPER_HOST=${SCRAPER_HOST}
       - SCRAPER_PORT=${SCRAPER_PORT}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
     networks:
       - tubexxi-network
       - shared-network
+    volumes:
+      - ./go-service/service-account.json:/app/service-account.json
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT}/health"]
       interval: 30s

@@ -261,8 +261,6 @@ class MovieListScraper(BaseScraper):
             if movie:
                 movies.append(movie)
                 
-        # Pagination Logic
-        pagination_div = self.soup.find('div', class_='pagination')
         current_page = 1
         total_page = 1
         has_next = False
@@ -270,37 +268,102 @@ class MovieListScraper(BaseScraper):
         next_page_url = None
         prev_page_url = None
 
+        def extract_page_number(href: Optional[str]) -> Optional[int]:
+            if not href:
+                return None
+            m = re.search(r"/page/(\d+)", href)
+            if not m:
+                return None
+            try:
+                return int(m.group(1))
+            except Exception:
+                return None
+
+        pagination_div = self.soup.find('div', class_='pagination')
         if pagination_div:
-            # Current Page
             current_span = pagination_div.find('span', class_='current')
             if current_span:
                 try:
                     current_page = int(current_span.get_text(strip=True))
-                except:
+                except Exception:
                     pass
-            
-            # Next Page
+
             next_link = pagination_div.find('a', class_='next page-numbers')
-            if next_link:
+            if next_link and next_link.get('href'):
                 has_next = True
                 next_page_url = self._make_absolute_url(next_link['href'])
-            
-            # Prev Page
+
             prev_link = pagination_div.find('a', class_='prev page-numbers')
-            if prev_link:
+            if prev_link and prev_link.get('href'):
                 has_prev = True
                 prev_page_url = self._make_absolute_url(prev_link['href'])
 
-            # Total Page
             page_numbers = pagination_div.find_all('a', class_='page-numbers')
-            numeric_pages = [p for p in page_numbers if p.get_text(strip=True).isdigit()]
-            if numeric_pages:
-                last_page_num = int(numeric_pages[-1].get_text(strip=True))
-                if last_page_num > total_page:
-                    total_page = last_page_num
-            
-            if current_page > total_page:
-                total_page = current_page
+            max_page = 1
+            for p in page_numbers:
+                txt = p.get_text(strip=True)
+                href = p.get('href')
+                if txt.isdigit():
+                    try:
+                        max_page = max(max_page, int(txt))
+                    except Exception:
+                        pass
+                page_num = extract_page_number(href)
+                if page_num:
+                    max_page = max(max_page, page_num)
+            total_page = max(total_page, max_page, current_page)
+        else:
+            pagination_ul = None
+            wrapper = self.soup.find('nav', class_='pagination-wrapper')
+            if wrapper:
+                pagination_ul = wrapper.find('ul', class_='pagination')
+            if not pagination_ul:
+                pagination_ul = self.soup.find('ul', class_='pagination')
+
+            if pagination_ul:
+                links = pagination_ul.find_all('a', href=True)
+                page_to_url: dict[int, str] = {}
+                max_page = 1
+                for a in links:
+                    href = self._make_absolute_url(a.get('href'))
+                    if not href:
+                        continue
+                    page_num = extract_page_number(href)
+                    if page_num:
+                        page_to_url[page_num] = href
+                        max_page = max(max_page, page_num)
+                    txt = a.get_text(strip=True)
+                    if txt.isdigit():
+                        try:
+                            max_page = max(max_page, int(txt))
+                        except Exception:
+                            pass
+                total_page = max(total_page, max_page)
+
+                active_li = pagination_ul.find('li', class_=re.compile(r"\bactive\b", re.IGNORECASE))
+                if active_li:
+                    active_a = active_li.find('a')
+                    if active_a:
+                        txt = active_a.get_text(strip=True)
+                        if txt.isdigit():
+                            current_page = int(txt)
+                        else:
+                            page_num = extract_page_number(active_a.get('href'))
+                            if page_num:
+                                current_page = page_num
+                current_page = max(1, current_page)
+                total_page = max(total_page, current_page)
+
+                if (current_page + 1) in page_to_url:
+                    has_next = True
+                    next_page_url = page_to_url[current_page+1]
+                elif current_page < total_page:
+                    has_next = True
+                if (current_page - 1) in page_to_url:
+                    has_prev = True
+                    prev_page_url = page_to_url[current_page-1]
+                elif current_page > 1:
+                    has_prev = True
 
         return MovieListResponse(
             movies=movies,

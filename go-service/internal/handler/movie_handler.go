@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"net/url"
 	"strconv"
+	"strings"
 	"tubexxi/video-api/internal/middleware"
 	"tubexxi/video-api/internal/service"
 	"tubexxi/video-api/pkg/response"
@@ -31,6 +33,26 @@ func NewMovieHandler(
 	}
 }
 
+func parsePathParamAndPage(raw string, defaultPage int) (string, int) {
+	if raw == "" {
+		return raw, defaultPage
+	}
+	parts := strings.SplitN(raw, "&", 2)
+	clean := parts[0]
+	page := defaultPage
+	if len(parts) == 2 {
+		vals, err := url.ParseQuery(parts[1])
+		if err == nil {
+			if p := vals.Get("page"); p != "" {
+				if n, err := strconv.Atoi(p); err == nil {
+					page = n
+				}
+			}
+		}
+	}
+	return clean, page
+}
+
 func (h *MovieHandler) GetHome(c *fiber.Ctx) error {
 	ctx := c.UserContext()
 
@@ -46,8 +68,8 @@ func (h *MovieHandler) GetHome(c *fiber.Ctx) error {
 
 func (h *MovieHandler) GetMoviesByGenre(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	slug := c.Params("slug")
-	page, _ := strconv.Atoi(c.Query("page", "1"))
+	slug, pageFromParam := parsePathParamAndPage(c.Params("slug"), 1)
+	page, _ := strconv.Atoi(c.Query("page", strconv.Itoa(pageFromParam)))
 
 	result, err := h.service.GetMoviesByGenre(ctx, slug, int32(page))
 	if err != nil {
@@ -81,8 +103,8 @@ func (h *MovieHandler) SearchMovies(c *fiber.Ctx) error {
 
 func (h *MovieHandler) GetMoviesByFeature(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	featureType := c.Params("type")
-	page, _ := strconv.Atoi(c.Query("page", "1"))
+	featureType, pageFromParam := parsePathParamAndPage(c.Params("type"), 1)
+	page, _ := strconv.Atoi(c.Query("page", strconv.Itoa(pageFromParam)))
 
 	result, err := h.service.GetMoviesByFeature(ctx, featureType, int32(page))
 	if err != nil {
@@ -97,8 +119,8 @@ func (h *MovieHandler) GetMoviesByFeature(c *fiber.Ctx) error {
 
 func (h *MovieHandler) GetMoviesByCountry(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	country := c.Params("country")
-	page, _ := strconv.Atoi(c.Query("page", "1"))
+	country, pageFromParam := parsePathParamAndPage(c.Params("country"), 1)
+	page, _ := strconv.Atoi(c.Query("page", strconv.Itoa(pageFromParam)))
 
 	result, err := h.service.GetMoviesByCountry(ctx, country, int32(page))
 	if err != nil {
@@ -113,12 +135,12 @@ func (h *MovieHandler) GetMoviesByCountry(c *fiber.Ctx) error {
 
 func (h *MovieHandler) GetMoviesByYear(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	yearStr := c.Params("year")
+	yearStr, pageFromParam := parsePathParamAndPage(c.Params("year"), 1)
 	year, err := strconv.Atoi(yearStr)
 	if err != nil {
 		return response.Error(c, fiber.StatusBadRequest, "invalid year", nil)
 	}
-	page, _ := strconv.Atoi(c.Query("page", "1"))
+	page, _ := strconv.Atoi(c.Query("page", strconv.Itoa(pageFromParam)))
 
 	result, err := h.service.GetMoviesByYear(ctx, int32(year), int32(page))
 	if err != nil {
@@ -133,8 +155,8 @@ func (h *MovieHandler) GetMoviesByYear(c *fiber.Ctx) error {
 
 func (h *MovieHandler) GetSpecialPage(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	pageName := c.Params("page_name")
-	page, _ := strconv.Atoi(c.Query("page", "1"))
+	pageName, pageFromParam := parsePathParamAndPage(c.Params("page_name"), 1)
+	page, _ := strconv.Atoi(c.Query("page", strconv.Itoa(pageFromParam)))
 
 	result, err := h.service.GetSpecialPage(ctx, pageName, int32(page))
 	if err != nil {
@@ -189,8 +211,8 @@ func (h *MovieHandler) GetSeriesHome(c *fiber.Ctx) error {
 
 func (h *MovieHandler) GetSeriesByGenre(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	slug := c.Params("slug")
-	page, _ := strconv.Atoi(c.Query("page", "1"))
+	slug, pageFromParam := parsePathParamAndPage(c.Params("slug"), 1)
+	page, _ := strconv.Atoi(c.Query("page", strconv.Itoa(pageFromParam)))
 
 	result, err := h.service.GetSeriesByGenre(ctx, slug, int32(page))
 	if err != nil {
@@ -223,8 +245,8 @@ func (h *MovieHandler) SearchSeries(c *fiber.Ctx) error {
 
 func (h *MovieHandler) GetSeriesByFeature(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	featureType := c.Params("type")
-	page, _ := strconv.Atoi(c.Query("page", "1"))
+	featureType, pageFromParam := parsePathParamAndPage(c.Params("type"), 1)
+	page, _ := strconv.Atoi(c.Query("page", strconv.Itoa(pageFromParam)))
 
 	result, err := h.service.GetSeriesByFeature(ctx, featureType, int32(page))
 	if err != nil {
@@ -239,8 +261,8 @@ func (h *MovieHandler) GetSeriesByFeature(c *fiber.Ctx) error {
 
 func (h *MovieHandler) GetSeriesByCountry(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	country := c.Params("country")
-	page, _ := strconv.Atoi(c.Query("page", "1"))
+	country, pageFromParam := parsePathParamAndPage(c.Params("country"), 1)
+	page, _ := strconv.Atoi(c.Query("page", strconv.Itoa(pageFromParam)))
 
 	result, err := h.service.GetSeriesByCountry(ctx, country, int32(page))
 	if err != nil {
@@ -255,12 +277,12 @@ func (h *MovieHandler) GetSeriesByCountry(c *fiber.Ctx) error {
 
 func (h *MovieHandler) GetSeriesByYear(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	yearStr := c.Params("year")
+	yearStr, pageFromParam := parsePathParamAndPage(c.Params("year"), 1)
 	year, err := strconv.Atoi(yearStr)
 	if err != nil {
 		return response.Error(c, fiber.StatusBadRequest, "invalid year", nil)
 	}
-	page, _ := strconv.Atoi(c.Query("page", "1"))
+	page, _ := strconv.Atoi(c.Query("page", strconv.Itoa(pageFromParam)))
 
 	result, err := h.service.GetSeriesByYear(ctx, int32(year), int32(page))
 	if err != nil {
@@ -275,8 +297,8 @@ func (h *MovieHandler) GetSeriesByYear(c *fiber.Ctx) error {
 
 func (h *MovieHandler) GetSeriesSpecialPage(c *fiber.Ctx) error {
 	ctx := c.UserContext()
-	pageName := c.Params("page_name")
-	page, _ := strconv.Atoi(c.Query("page", "1"))
+	pageName, pageFromParam := parsePathParamAndPage(c.Params("page_name"), 1)
+	page, _ := strconv.Atoi(c.Query("page", strconv.Itoa(pageFromParam)))
 
 	result, err := h.service.GetSeriesSpecialPage(ctx, pageName, int32(page))
 	if err != nil {

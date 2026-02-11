@@ -147,3 +147,41 @@ func (s *ScraperClient) GetSeriesEpisode(ctx context.Context, url string) (*pb.S
 	defer cancel()
 	return s.client.GetSeriesEpisode(ctx, &pb.SeriesEpisodeRequest{Url: url})
 }
+
+// Anime methods
+
+func (s *ScraperClient) GetAnimeLatest(ctx context.Context, page int32) (*pb.AnimeListResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetAnimeLatest(ctx, &pb.AnimePageRequest{Page: page})
+}
+
+func (s *ScraperClient) SearchAnime(ctx context.Context, query string, page int32) (*pb.AnimeListResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.SearchAnime(ctx, &pb.AnimeSearchRequest{Query: query, Page: page})
+}
+
+func (s *ScraperClient) GetAnimeOngoing(ctx context.Context, page int32) (*pb.AnimeListResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetAnimeOngoing(ctx, &pb.AnimePageRequest{Page: page})
+}
+
+func (s *ScraperClient) GetAnimeGenres(ctx context.Context) (*pb.AnimeGenresResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetAnimeGenres(ctx, &pb.Empty{})
+}
+
+func (s *ScraperClient) GetAnimeDetail(ctx context.Context, url string) (*pb.AnimeDetailResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetAnimeDetail(ctx, &pb.AnimeUrlRequest{Url: url})
+}
+
+func (s *ScraperClient) GetAnimeEpisode(ctx context.Context, url string) (*pb.AnimeEpisodeResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return s.client.GetAnimeEpisode(ctx, &pb.AnimeUrlRequest{Url: url})
+}

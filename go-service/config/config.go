@@ -22,13 +22,14 @@ type Config struct {
 	Scraper    ScraperConfig
 }
 type AppConfig struct {
-	AppName    string
-	AppEnv     string
-	IsDebug    bool
-	Port       string
-	URL        string
-	ClientUrl  string
-	AdminEmail string
+	AppName           string
+	AppEnv            string
+	IsDebug           bool
+	Port              string
+	URL               string
+	ClientUrl         string
+	AdminEmail        string
+	FirebaseProjectID string
 }
 
 type DatabaseConfig struct {
@@ -108,13 +109,14 @@ func Load() (*Config, error) {
 
 	config := &Config{
 		App: AppConfig{
-			AppName:    getEnv("APP_NAME", "go-service"),
-			AppEnv:     getEnv("APP_ENV", "development"),
-			IsDebug:    getEnvAsBool("APP_DEBUG", true),
-			Port:       getEnv("APP_PORT", "8080"),
-			URL:        getEnv("APP_URL", "http://localhost:8080"),
-			ClientUrl:  getEnv("APP_CLIENT_URL", "http://localhost:3000"),
-			AdminEmail: getEnv("APP_ADMIN_EMAIL", "premiumwatchdevice@gmail.com"),
+			AppName:           getEnv("APP_NAME", "go-service"),
+			AppEnv:            getEnv("APP_ENV", "development"),
+			IsDebug:           getEnvAsBool("APP_DEBUG", true),
+			Port:              getEnv("APP_PORT", "8080"),
+			URL:               getEnv("APP_URL", "http://localhost:8080"),
+			ClientUrl:         getEnv("APP_CLIENT_URL", "http://localhost:3000"),
+			AdminEmail:        getEnv("APP_ADMIN_EMAIL", "premiumwatchdevice@gmail.com"),
+			FirebaseProjectID: getEnv("FIREBASE_PROJECT_ID", ""),
 		},
 		Database: DatabaseConfig{
 			DbHost:            getEnv("DB_HOST", "localhost"),

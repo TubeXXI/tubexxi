@@ -1,0 +1,282 @@
+syntax = "proto3";
+
+package scraper;
+
+option go_package = "tubexxi/video-api/proto";
+
+message Empty {}
+
+message ListRequest {
+  string url = 1;
+}
+
+message GenreRequest {
+  string slug = 1;
+  int32 page = 2;
+}
+
+message SearchRequest {
+  string query = 1;
+  int32 page = 2;
+}
+
+message FeatureRequest {
+  string feature_type = 1;
+  int32 page = 2;
+}
+
+message CountryRequest {
+  string country_slug = 1;
+  int32 page = 2;
+}
+
+message YearRequest {
+  int32 year = 1;
+  int32 page = 2;
+}
+
+message SpecialPageRequest {
+  string page_name = 1;
+  int32 page = 2;
+}
+
+message MovieDetailRequest {
+  string slug = 1;
+}
+
+message Movie {
+  string id = 1;
+  string title = 2;
+  optional string original_title = 3;
+  optional string thumbnail = 4;
+  optional string synopsis = 5;
+  optional float rating = 6;
+  optional int64 duration = 7;
+  optional int32 year = 8;
+  optional string date_published = 9;
+  optional string label_quality = 10;
+  optional string genre = 11;
+  optional string original_page_url = 12;
+}
+
+message HomeSection {
+  string key = 1;
+  repeated Movie value = 2;
+  optional string view_all_url = 3;
+}
+
+message HomeResponse {
+  repeated HomeSection sections = 1;
+}
+
+message Pagination {
+  int32 current_page = 1;
+  int32 total_page = 2;
+  bool has_next = 3;
+  bool has_prev = 4;
+  optional string next_page_url = 5;
+  optional string prev_page_url = 6;
+}
+
+message ListResponse {
+  repeated Movie movies = 1;
+  Pagination pagination = 2;
+}
+
+message PlayerUrl {
+  string url = 1;
+  string type = 2;
+}
+
+message MoviePerson {
+  string name = 1;
+  string page_url = 2;
+}
+
+message CountryMovie {
+  string name = 1;
+  string page_url = 2;
+}
+
+message Genre {
+  string name = 1;
+  string page_url = 2;
+}
+
+message MovieDetail {
+  Movie movie = 1;
+  int64 votes = 2;
+  string release_date = 3;
+  string updated_at = 4;
+  repeated PlayerUrl player_urls = 5;
+  string trailer_url = 6;
+  repeated MoviePerson directors = 7;
+  repeated MoviePerson movie_stars = 8;
+  repeated CountryMovie countries = 9;
+  repeated Genre genres = 10;
+  repeated Movie similar_movies = 11;
+}
+
+message MovieDetailResponse {
+  MovieDetail detail = 1;
+}
+
+message SeriesEpisodeRequest {
+  string url = 1;
+}
+
+message SeriesEpisodeResponse {
+  int32 episode_number = 1;
+  repeated PlayerUrl player_urls = 2;
+  string trailer_url = 3;
+  optional string download_url = 4;
+}
+
+message EpisodeList {
+  int32 episode_number = 1;
+  string episode_url = 2;
+  repeated PlayerUrl player_urls = 3;
+  string trailer_url = 4;
+}
+
+message SeasonList {
+  int32 current_season = 1;
+  int32 total_season = 2;
+  repeated EpisodeList episode_list = 3;
+}
+
+message SeriesDetail {
+  MovieDetail movie_detail = 1;
+  string season_name = 2;
+  string status = 3;
+  repeated SeasonList season_list = 4;
+}
+
+message SeriesDetailResponse {
+  SeriesDetail detail = 1;
+}
+
+message AnimeGenre {
+  string name = 1;
+  string url = 2;
+}
+
+message Anime {
+  string title = 1;
+  string title_japanese = 2;
+  string original_page_url = 3;
+  string thumbnail = 4;
+  string score = 5;
+  string producer = 6;
+  string type = 7;
+  string status = 8;
+  string total_episodes = 9;
+  string duration = 10;
+  string release_date = 11;
+  string released_day = 12;
+  string studio = 13;
+  repeated AnimeGenre genre = 14;
+  string rating = 15;
+  repeated AnimeEpisode episodes = 16;
+}
+
+message AnimeEpisode {
+  string title = 1;
+  string player_url = 2;
+  string page_url = 3;
+  string posted_by = 4;
+  string previous_episode_url = 5;
+  string next_episode_url = 6;
+  string see_all_episodes_url = 7;
+  string release_date = 8;
+  string release_time = 9;
+  string episode_number = 10;
+  repeated AnimeEpisodeItem list_episode = 11;
+  repeated AnimeDownloadLink download_links = 12;
+}
+
+message AnimeEpisodeItem {
+  string name = 1;
+  string page_url = 2;
+}
+
+message AnimeDownloadLink {
+  string name = 1;
+  string url = 2;
+  string size = 3;
+  string quality = 4;
+  string format = 5;
+}
+
+message PaginationAnime {
+  int32 total_pages = 1;
+  int32 current_page = 2;
+  bool has_next = 3;
+  bool has_previous = 4;
+  string next_page_url = 5;
+  string previous_page_url = 6;
+  repeated int32 page_numbers = 7;
+  int32 per_page = 8;
+}
+
+message AnimeListResponse {
+  repeated Anime animes = 1;
+  PaginationAnime pagination = 2;
+  string query = 3;
+}
+
+message AnimeGenresResponse {
+  repeated AnimeGenre genres = 1;
+}
+
+message AnimePageRequest {
+  int32 page = 1;
+}
+
+message AnimeSearchRequest {
+  string query = 1;
+  int32 page = 2;
+}
+
+message AnimeUrlRequest {
+  string url = 1;
+}
+
+message AnimeDetailResponse {
+  Anime anime = 1;
+}
+
+message AnimeEpisodeResponse {
+  AnimeEpisode episode = 1;
+}
+
+service ScraperService {
+  rpc ScrapeHome(Empty) returns (HomeResponse);
+  rpc ScrapeList(ListRequest) returns (ListResponse);
+
+  rpc GetMoviesByGenre(GenreRequest) returns (ListResponse);
+  rpc SearchMovies(SearchRequest) returns (ListResponse);
+  rpc GetMoviesByFeature(FeatureRequest) returns (ListResponse);
+  rpc GetMoviesByCountry(CountryRequest) returns (ListResponse);
+  rpc GetMoviesByYear(YearRequest) returns (ListResponse);
+  rpc GetSpecialPage(SpecialPageRequest) returns (ListResponse);
+  rpc GetMovieDetail(MovieDetailRequest) returns (MovieDetailResponse);
+
+  rpc GetSeriesHome(Empty) returns (HomeResponse);
+  rpc GetSeriesByGenre(GenreRequest) returns (ListResponse);
+  rpc SearchSeries(SearchRequest) returns (ListResponse);
+  rpc GetSeriesByFeature(FeatureRequest) returns (ListResponse);
+  rpc GetSeriesByCountry(CountryRequest) returns (ListResponse);
+  rpc GetSeriesByYear(YearRequest) returns (ListResponse);
+  rpc GetSeriesSpecialPage(SpecialPageRequest) returns (ListResponse);
+  rpc GetSeriesDetail(MovieDetailRequest) returns (SeriesDetailResponse);
+  rpc GetSeriesEpisode(SeriesEpisodeRequest) returns (SeriesEpisodeResponse);
+
+  rpc GetAnimeLatest(AnimePageRequest) returns (AnimeListResponse);
+  rpc SearchAnime(AnimeSearchRequest) returns (AnimeListResponse);
+  rpc GetAnimeOngoing(AnimePageRequest) returns (AnimeListResponse);
+  rpc GetAnimeGenres(Empty) returns (AnimeGenresResponse);
+  rpc GetAnimeDetail(AnimeUrlRequest) returns (AnimeDetailResponse);
+  rpc GetAnimeEpisode(AnimeUrlRequest) returns (AnimeEpisodeResponse);
+}
+

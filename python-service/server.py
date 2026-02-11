@@ -1,9 +1,9 @@
 from concurrent import futures
 import logging
 import grpc
-import scraper_pb2
-import scraper_pb2_grpc
+from proto import scraper_pb2, scraper_pb2_grpc
 from scraper import HomeScraper, MovieListScraper, MovieDetailScraper, SeriesDetailScraper, SeriesEpisodeScraper
+from anime_scraper import OtakuDesuScraper
 from fetcher import fetch_html
 import urllib.parse
 import os
@@ -19,7 +19,7 @@ load_dotenv()
 class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
     BASE_URL = os.getenv("MOVIE_BASE_URL", "https://tv8.lk21official.cc")
     SERIES_BASE_URL = os.getenv("SERIES_BASE_URL", "https://tv3.nontondrama.my")
-    ANIME_BASE_URL = os.getenv("ANIME_BASE_URL", "https://tv3.nontondrama.my")
+    ANIME_BASE_URL = os.getenv("ANIME_BASE_URL", "https://otakudesu.best")
 
     def ScrapeHome(self, request, context):
         try:
@@ -122,6 +122,173 @@ class ScraperService(scraper_pb2_grpc.ScraperServiceServicer):
         # Feature types: populer, most-commented, rating, release, latest
         url = f"{self.BASE_URL}/{request.feature_type}/page/{page}"
         return self._scrape_url(url, context)
+
+    def GetAnimeLatest(self, request, context):
+        try:
+            page = request.page if request.page > 0 else 1
+            scraper = OtakuDesuScraper(base_url=self.ANIME_BASE_URL)
+            result = scraper.get_latest(page=page)
+
+            animes = [self._map_anime(a) for a in result.animes]
+            pagination = scraper_pb2.PaginationAnime(
+                total_pages=result.pagination.total_pages,
+                current_page=result.pagination.current_page,
+                has_next=result.pagination.has_next,
+                has_previous=result.pagination.has_previous,
+                next_page_url=result.pagination.next_page_url or "",
+                previous_page_url=result.pagination.previous_page_url or "",
+                page_numbers=result.pagination.page_numbers,
+                per_page=result.pagination.per_page,
+            )
+            return scraper_pb2.AnimeListResponse(animes=animes, pagination=pagination, query="")
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return scraper_pb2.AnimeListResponse()
+
+    def SearchAnime(self, request, context):
+        try:
+            page = request.page if request.page > 0 else 1
+            scraper = OtakuDesuScraper(base_url=self.ANIME_BASE_URL)
+            result = scraper.search(query=request.query, page=page)
+
+            animes = [self._map_anime(a) for a in result.animes]
+            pagination = scraper_pb2.PaginationAnime(
+                total_pages=result.pagination.total_pages,
+                current_page=result.pagination.current_page,
+                has_next=result.pagination.has_next,
+                has_previous=result.pagination.has_previous,
+                next_page_url=result.pagination.next_page_url or "",
+                previous_page_url=result.pagination.previous_page_url or "",
+                page_numbers=result.pagination.page_numbers,
+                per_page=result.pagination.per_page,
+            )
+            return scraper_pb2.AnimeListResponse(animes=animes, pagination=pagination, query=result.query or "")
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return scraper_pb2.AnimeListResponse()
+
+    def GetAnimeOngoing(self, request, context):
+        try:
+            page = request.page if request.page > 0 else 1
+            scraper = OtakuDesuScraper(base_url=self.ANIME_BASE_URL)
+            result = scraper.get_ongoing(page=page)
+
+            animes = [self._map_anime(a) for a in result.animes]
+            pagination = scraper_pb2.PaginationAnime(
+                total_pages=result.pagination.total_pages,
+                current_page=result.pagination.current_page,
+                has_next=result.pagination.has_next,
+                has_previous=result.pagination.has_previous,
+                next_page_url=result.pagination.next_page_url or "",
+                previous_page_url=result.pagination.previous_page_url or "",
+                page_numbers=result.pagination.page_numbers,
+                per_page=result.pagination.per_page,
+            )
+            return scraper_pb2.AnimeListResponse(animes=animes, pagination=pagination, query="")
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return scraper_pb2.AnimeListResponse()
+
+    def GetAnimeGenres(self, request, context):
+        try:
+            scraper = OtakuDesuScraper(base_url=self.ANIME_BASE_URL)
+            genres = scraper.get_genres()
+            mapped = [scraper_pb2.AnimeGenre(name=g.name or "", url=g.url or "") for g in genres]
+            return scraper_pb2.AnimeGenresResponse(genres=mapped)
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return scraper_pb2.AnimeGenresResponse()
+
+    def GetAnimeDetail(self, request, context):
+        try:
+            if not request.url:
+                context.set_details("URL is required")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return scraper_pb2.AnimeDetailResponse()
+
+            scraper = OtakuDesuScraper(base_url=self.ANIME_BASE_URL)
+            anime = scraper.get_detail(request.url)
+            if not anime:
+                context.set_details("Failed to scrape anime detail")
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                return scraper_pb2.AnimeDetailResponse()
+
+            return scraper_pb2.AnimeDetailResponse(anime=self._map_anime(anime))
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return scraper_pb2.AnimeDetailResponse()
+
+    def GetAnimeEpisode(self, request, context):
+        try:
+            if not request.url:
+                context.set_details("URL is required")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return scraper_pb2.AnimeEpisodeResponse()
+
+            scraper = OtakuDesuScraper(base_url=self.ANIME_BASE_URL)
+            episode = scraper.get_episode(request.url)
+            if not episode:
+                context.set_details("Failed to scrape anime episode")
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                return scraper_pb2.AnimeEpisodeResponse()
+
+            return scraper_pb2.AnimeEpisodeResponse(episode=self._map_anime_episode(episode))
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return scraper_pb2.AnimeEpisodeResponse()
+
+    def _map_anime(self, a):
+        genres = [scraper_pb2.AnimeGenre(name=g.name or "", url=g.url or "") for g in (a.genre or [])]
+        episodes = [self._map_anime_episode(ep) for ep in (a.episodes or [])]
+        return scraper_pb2.Anime(
+            title=a.title or "",
+            title_japanese=a.title_japanese or "",
+            original_page_url=a.original_page_url or "",
+            thumbnail=a.thumbnail or "",
+            score=a.score or "",
+            producer=a.producer or "",
+            type=a.type or "",
+            status=a.status or "",
+            total_episodes=a.total_episodes or "",
+            duration=a.duration or "",
+            release_date=a.release_date or "",
+            released_day=a.released_day or "",
+            studio=a.studio or "",
+            genre=genres,
+            rating=a.rating or "",
+            episodes=episodes,
+        )
+
+    def _map_anime_episode(self, ep):
+        list_episode = [scraper_pb2.AnimeEpisodeItem(name=i.name or "", page_url=i.page_url or "") for i in (ep.list_episode or [])]
+        download_links = [scraper_pb2.AnimeDownloadLink(
+            name=d.name or "",
+            url=d.url or "",
+            size=d.size or "",
+            quality=d.quality or "",
+            format=d.format or "",
+        ) for d in (ep.download_links or [])]
+
+        return scraper_pb2.AnimeEpisode(
+            title=ep.title or "",
+            player_url=ep.player_url or "",
+            page_url=ep.page_url or "",
+            posted_by=ep.posted_by or "",
+            previous_episode_url=ep.previous_episode_url or "",
+            next_episode_url=ep.next_episode_url or "",
+            see_all_episodes_url=ep.see_all_episodes_url or "",
+            release_date=ep.release_date or "",
+            release_time=ep.release_time or "",
+            episode_number=ep.episode_number or "",
+            list_episode=list_episode,
+            download_links=download_links,
+        )
 
     def GetMoviesByCountry(self, request, context):
         page = request.page if request.page > 0 else 1

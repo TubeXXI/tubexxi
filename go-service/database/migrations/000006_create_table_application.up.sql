@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS applications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     key VARCHAR(255) UNIQUE NOT NULL,
-    package_name     TEXT NOT NULL DEFAULT 'default',
+    package_name TEXT NOT NULL DEFAULT 'default',
     value TEXT,
     description TEXT,
     group_name VARCHAR(50) NOT NULL,

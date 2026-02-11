@@ -221,7 +221,14 @@ func (s *MovieService) GetSeriesEpisode(ctx context.Context, url string) (*entit
 		s.logger.Error("failed to get series episode", zap.String("url", url), zap.Error(err))
 		return nil, err
 	}
-	return s.mapProtoToSeriesEpisode(resp), nil
+	result := s.mapProtoToSeriesEpisode(resp)
+	if result == nil {
+		return nil, nil
+	}
+
+	u := url
+	result.EpisodeUrl = &u
+	return result, nil
 }
 
 func (s *MovieService) mapProtoToMovie(m *pb.Movie) entity.Movie {
