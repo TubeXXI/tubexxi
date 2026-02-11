@@ -1,4 +1,6 @@
 docs
+android
+ios
 .env
 .env.test
 backup/*.env
