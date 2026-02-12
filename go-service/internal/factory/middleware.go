@@ -54,9 +54,10 @@ func NewMiddlewareFactory(cont *dependencies.Container) *MiddlewareFactory {
 			!cont.AppConfig.App.IsDevelopment(),
 		),
 		CSRFMiddleware: middleware.NewCSRFMiddleware(
+			&cont.AppConfig.App,
 			cont.Notifier,
 			ctxinject,
-			cont.SessionHelper,
+			cont.RedisClient,
 			cont.Logger,
 		),
 		AdminMiddleware: middleware.NewAdminMiddleware(

@@ -220,19 +220,22 @@ declare global {
 		path: string;
 		valid: boolean;
 	}
-	interface BlogPost {
-		meta: PostSchema
-		component?: any;
-		path: string
-		readingTime: number
-		words: number
-		headings: {
-			depth: number;
-			value: string;
-			slug: string;
-		}[]
-	}
+	type SocialProvider = 'google' | 'facebook' | 'github' | 'twitter' | 'email';
 
+	interface FirebaseUser {
+		uid: string;
+		email: string | null;
+		displayName: string | null;
+		photoURL: string | null;
+		emailVerified: boolean;
+		providerId: string;
+		providerData: any[];
+	}
+	interface AuthState {
+		user: User | null;
+		loading: boolean;
+		error: string | null;
+	}
 }
 
 export { };

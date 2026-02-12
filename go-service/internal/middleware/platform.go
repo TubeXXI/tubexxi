@@ -29,6 +29,7 @@ var platformMiddlewareExcludedPrefixes = []string{
 	"/api/openapi",
 	"/api/swagger",
 	"/api/ws",
+	"/api/token/csrf",
 }
 
 func NewPlatformMiddleware(

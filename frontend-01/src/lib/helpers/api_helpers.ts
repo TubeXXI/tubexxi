@@ -1,4 +1,4 @@
-import { PUBLIC_API_URL } from '$env/static/public';
+import { PUBLIC_API_URL, PUBLIC_API_KEY } from '$env/static/public';
 import type { RequestEvent } from '@sveltejs/kit';
 import { BaseHelper } from './base_helper';
 
@@ -62,7 +62,7 @@ export class ApiClientHandler extends BaseHelper implements ApiClient {
 			if (cookieString) {
 				headers.set('Cookie', cookieString);
 			}
-			headers.set('X-Platform', 'browser');
+			headers.set('X-Platform', 'web');
 			const response = await fetch(`${this.baseUrl}/token/csrf`, {
 				method: 'GET',
 				headers,
@@ -108,9 +108,11 @@ export class ApiClientHandler extends BaseHelper implements ApiClient {
 			headers?: Record<string, string>;
 		}
 	): Promise<ApiResponse<T>> {
-		// console.log('🔍 [ApiClient] Request:', method, path, options);
+
 		const headers = this.getSecureHeaders();
-		headers.set('X-Platform', 'browser');
+		headers.set('X-Platform', 'web');
+		headers.set('X-API-Key', PUBLIC_API_KEY);
+		headers.set('X-Scope', 'default');
 
 		if (!(options.data instanceof FormData)) {
 			headers.set('Content-Type', 'application/json');
@@ -236,7 +238,9 @@ export class ApiClientHandler extends BaseHelper implements ApiClient {
 		}
 	): Promise<ApiResponse<T>> {
 		const headers = this.getSecureHeaders();
-		headers.set('X-Platform', 'browser');
+		headers.set('X-Platform', 'web');
+		headers.set('X-API-Key', PUBLIC_API_KEY);
+		headers.set('X-Scope', 'default');
 
 		if (options.headers) {
 			for (const [key, value] of Object.entries(options.headers)) {

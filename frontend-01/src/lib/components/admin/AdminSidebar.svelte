@@ -53,18 +53,6 @@
 				icon: 'tdesign:app-filled'
 			},
 			{
-				id: 4,
-				title: 'Downloads',
-				url: localizeHref('/download'),
-				icon: 'ic:baseline-download'
-			},
-			{
-				id: 5,
-				title: 'Subscriptions',
-				url: localizeHref('/subscription'),
-				icon: 'mdi:payment-clock'
-			},
-			{
 				id: 7,
 				title: 'Users',
 				url: localizeHref('/users'),
