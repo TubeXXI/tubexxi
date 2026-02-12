@@ -90,9 +90,11 @@ declare global {
 		current_page: number;
 		limit: number;
 		total_items: number;
-		total_pages: number;
+		total_page?: number;
 		has_prev: boolean;
 		has_next: boolean;
+		next_page_url?: string | null;
+		prev_page_url?: string | null;
 		[key: string]: any;
 	}
 	interface ApiError {
@@ -189,13 +191,14 @@ declare global {
 		data: T[];
 		pagination: {
 			current_page: number;
-			total_pages: number;
-			total_items: number;
-			has_next: boolean;
-			has_prev: boolean;
 			limit: number;
-			next_page?: number;
-			prev_page?: number;
+			total_items: number;
+			total_page?: number;
+			has_prev: boolean;
+			has_next: boolean;
+			next_page_url?: string | null;
+			prev_page_url?: string | null;
+			[key: string]: any;
 		};
 	}
 	interface QueryBuilderOptions<T> {
@@ -235,6 +238,18 @@ declare global {
 		user: User | null;
 		loading: boolean;
 		error: string | null;
+	}
+
+	type FirebaseAuthResponse = {
+		user?: User | null;
+		firebase_uid?: string | null;
+		email?: string | null;
+		email_verified?: boolean | null;
+	}
+	interface HomeScrapperResponse<T = any> {
+		key?: string | null;
+		value?: T[] | null;
+		view_all_url?: string | null;
 	}
 }
 

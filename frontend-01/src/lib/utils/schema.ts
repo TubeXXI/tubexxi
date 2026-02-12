@@ -17,17 +17,22 @@ export const loginSchema = z.object({
 		.transform((value) => value.replaceAll(/\s+/g, '')),
 	remember_me: z.boolean().default(false)
 });
-export const authGoogleSchema = z.object({
-	credential: z.string().nonempty('Credential is required')
+export const registerSchema = z.object({
+	id_token: z.string().nonempty('ID token is required'),
+	email: z.string().email('Email is not valid').optional(),
+	password: z.string().min(6, 'Password must be at least 6 characters').optional(),
+	full_name: z.string().optional(),
+	phone: z.string().optional(),
+	avatar_url: z.string().optional()
 });
-export const forgotSchema = z.object({
+export const resetPasswordSchema = z.object({
 	email: z
 		.string({ error: 'Email is required' })
 		.email('Email is not valid')
 		.min(3, 'Email must be at least 3 characters long')
 		.nonempty('Email is required')
 });
-export const resetPasswordSchema = z
+export const changePasswordSchema = z
 	.object({
 		new_password: z
 			.string()
@@ -37,7 +42,6 @@ export const resetPasswordSchema = z
 			.string()
 			.nonempty('Confirm password is required')
 			.transform((value) => value.replaceAll(/\s+/g, '')),
-		token: z.string().nonempty('Token is required')
 	})
 	.superRefine((data, ctx) => {
 		if (data.new_password != data.confirm_password) {
@@ -48,6 +52,13 @@ export const resetPasswordSchema = z
 			});
 		}
 	});
+export const verifyEmailSchema = z.object({
+	email: z
+		.string({ error: 'Email is required' })
+		.email('Email is not valid')
+		.min(3, 'Email must be at least 3 characters long')
+		.nonempty('Email is required')
+});
 
 export const contactSchema = z.object({
 	name: z.string().nonempty('Name is required'),
@@ -64,6 +75,13 @@ export const downloadVideoSchema = z.object({
 	app_id: z.string().optional().or(z.literal(''))
 });
 
+// Admin
+export const setRoleSchema = z.object({
+	user_id: z.string().nonempty('User ID is required'),
+	email: z.string().email('Email is not valid').nonempty('Email is required'),
+	role: z.enum(['user', 'admin', 'superadmin']).default('user'),
+	sync_firebase: z.boolean().optional().default(true)
+});
 
 // Website
 export const updateSettingWeb = z.object({
@@ -130,6 +148,7 @@ export const updateProfileSchema = z.object({
 		.string({ error: 'Email is required' })
 		.email('Email is not valid')
 		.nonempty('Email is required'),
+	phone: z.string().optional().or(z.literal('')).default(''),
 });
 export const updatePasswordSchema = z.object({
 	current_password: z
@@ -309,11 +328,15 @@ export const webErrorReportSchema = z.object({
 
 
 export type LoginSchema = z.infer<typeof loginSchema>;
-export type AuthGoogleSchema = z.infer<typeof authGoogleSchema>;
-export type ForgotSchema = z.infer<typeof forgotSchema>;
+export type RegisterSchema = z.infer<typeof registerSchema>;
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
+export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;
+export type VerifyEmailSchema = z.infer<typeof verifyEmailSchema>;
 export type ContactSchema = z.infer<typeof contactSchema>;
 export type DownloadVideoSchema = z.infer<typeof downloadVideoSchema>;
+
+// Admin
+export type SetRoleSchema = z.infer<typeof setRoleSchema>;
 
 // Settings
 export type UpdateSettingWebSchema = z.infer<typeof updateSettingWeb>;

@@ -52,7 +52,10 @@ func (h *AnimeHandler) GetLatest(c *fiber.Ctx) error {
 	if err != nil {
 		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
-	return response.Success(c, "Success fetch anime latest", result)
+	return response.SuccessWithMeta(c, "Success fetch anime latest",
+		result.Animes,
+		result.Pagination,
+	)
 }
 
 func (h *AnimeHandler) Search(c *fiber.Ctx) error {
@@ -67,7 +70,10 @@ func (h *AnimeHandler) Search(c *fiber.Ctx) error {
 	if err != nil {
 		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
-	return response.Success(c, "Success search anime", result)
+	return response.SuccessWithMeta(c, "Success search anime",
+		result.Animes,
+		result.Pagination,
+	)
 }
 
 func (h *AnimeHandler) GetOngoing(c *fiber.Ctx) error {
@@ -81,7 +87,9 @@ func (h *AnimeHandler) GetOngoing(c *fiber.Ctx) error {
 	if err != nil {
 		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
-	return response.Success(c, "Success fetch anime ongoing", result)
+	return response.SuccessWithMeta(c, "Success fetch anime ongoing",
+		result.Animes,
+		result.Pagination)
 }
 
 func (h *AnimeHandler) GetGenres(c *fiber.Ctx) error {
@@ -140,4 +148,3 @@ func (h *AnimeHandler) GetEpisode(c *fiber.Ctx) error {
 	}
 	return response.Success(c, "Success fetch anime episode", result)
 }
-

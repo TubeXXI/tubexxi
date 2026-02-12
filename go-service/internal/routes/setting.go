@@ -38,10 +38,10 @@ func (r *SettingRoutes) RegisterRoutes(parent fiber.Router) {
 	router.Use(r.scope.SettingsScopeMiddleware())
 
 	router.Get("/public", r.handler.GetPublicSettings)
-	router.Get("/all", r.handler.GetAllSettings)
 
 	protected := router.Group("/protected")
 	protected.Use(r.auth.FirebaseAuth())
-	protected.Post("/update", r.csrf.CSRFProtect(), r.handler.UpdateSettingsBulk)
-	protected.Put("/upload", r.csrf.CSRFProtect(), r.handler.UploadFile)
+	protected.Get("/all", r.handler.GetAllSettings)
+	protected.Put("/bulk-update", r.csrf.CSRFProtect(), r.handler.UpdateSettingsBulk)
+	protected.Post("/upload", r.csrf.CSRFProtect(), r.handler.UploadFile)
 }

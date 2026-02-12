@@ -1,7 +1,11 @@
 import type {
+	RegisterSchema,
+	ResetPasswordSchema,
+	VerifyEmailSchema,
+	ChangePasswordSchema,
+	SetRoleSchema,
 	UpdateProfileSchema,
 	UpdatePasswordSchema,
-	ResetPasswordSchema,
 	ContactSchema,
 	RegisterAppSchema,
 	UpdateApplicationSchema,
@@ -412,6 +416,58 @@ declare global {
 	// ==========================================
 	// Service Interfaces
 	// ==========================================
+	interface SettingService {
+		getPublicSettings(): Promise<SettingsValue | Error>;
+		getAllSettings(): Promise<Setting[] | Error>;
+		updateBulkSetting(settings: { key: string; value: string; description?: string; group_name: string }[]): Promise<void | Error>;
+		updateFavicon(favicon: File): Promise<string | Error>;
+		updateLogo(logo: File): Promise<string | Error>;
+	}
+	interface AuthService {
+		Login(idToken: string): Promise<FirebaseAuthResponse | Error>;
+		Register(data: RegisterAppSchema): Promise<FirebaseAuthResponse | Error>;
+		ResetPassword(data: ResetPasswordSchema): Promise<string | Error>;
+		VerifyEmail(data: VerifyEmailSchema): Promise<string | Error>;
+		ChangePassword(data: ChangePasswordSchema): Promise<string | Error>;
+	}
+	interface AdminService {
+		SetRole(data: SetRoleSchema): Promise<string | Error>;
+	}
+	interface UserService {
+		UpdateProfile(data: UpdateProfileSchema): Promise<User | Error>;
+		CurrentUser(): Promise<User | Error>;
+		UpdateAvatar(file: File): Promise<string | Error>;
+		UpdatePassword(data: UpdatePasswordSchema): Promise<string | Error>;
+		Logout(): Promise<string | Error>;
+	}
+	interface MovieService {
+		GetHome(): Promise<HomeScrapperResponse | Error>;
+		GetMoviesByGenre(slug: string, page: number): Promise<PaginatedResult<Movie>>;
+		GetMoviesByCountry(country: string, page: number): Promise<PaginatedResult<Movie>>;
+		GetMoviesByYear(year: number, page: number): Promise<PaginatedResult<Movie>>;
+		SearchMovies(query: string, page: number): Promise<PaginatedResult<Movie>>;
+		GetSpecialPage(path: string, page: number): Promise<PaginatedResult<Movie>>;
+		GetMovieDetail(slug: string): Promise<MovieDetail | null>;
+	}
+	interface SeriesService {
+		GetSeriesHome(): Promise<HomeScrapperResponse | Error>;
+		GetSeriesByGenre(slug: string, page: number): Promise<PaginatedResult<Movie>>;
+		GetSeriesByCountry(country: string, page: number): Promise<PaginatedResult<Movie>>;
+		GetSeriesByYear(year: number, page?: number): Promise<PaginatedResult<Movie>>
+		SearchSeries(query: string, page?: number): Promise<PaginatedResult<Movie>>
+		GetSeriesByFeature(type: string, page?: number): Promise<PaginatedResult<Movie>>
+		GetSeriesSpecialPage(path: string, page?: number): Promise<PaginatedResult<Movie>>
+		GetSeriesDetail(slug: string): Promise<SeriesDetail | null>
+		GetSeriesEpisode(url: string): Promise<SeriesEpisode | null>;
+	}
+	interface AnimeService {
+		GetLatest(page: number): Promise<PaginatedResult<Anime>>;
+		Search(q: string, page: number): Promise<PaginatedResult<Anime>>;
+		GetOngoing(page: number): Promise<PaginatedResult<Anime>>;
+		GetGenres(): Promise<AnimeGenre[]>;
+		GetDetail(url: string): Promise<Anime>;
+		GetEpisode(url: string): Promise<AnimeEpisode[]>;
+	}
 
 
 	// ==========================================
