@@ -37,6 +37,7 @@ func NewSettingFactory(cont *dependencies.Container, mw *MiddlewareFactory) *Set
 			mw.ContextMiddleware,
 			mw.AuthMiddleware,
 			mw.CSRFMiddleware,
+			mw.ScopeMiddleware,
 		),
 	}
 }

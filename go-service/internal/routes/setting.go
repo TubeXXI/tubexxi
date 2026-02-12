@@ -13,6 +13,7 @@ type SettingRoutes struct {
 	ctxinject *middleware.ContextMiddleware
 	auth      *middleware.AuthMiddleware
 	csrf      *middleware.CSRFMiddleware
+	scope     *middleware.ScopeMiddleware
 }
 
 func NewSettingRoutes(
@@ -20,18 +21,21 @@ func NewSettingRoutes(
 	ctxinject *middleware.ContextMiddleware,
 	auth *middleware.AuthMiddleware,
 	csrf *middleware.CSRFMiddleware,
+	scope *middleware.ScopeMiddleware,
 ) *SettingRoutes {
 	return &SettingRoutes{
-		path:      "/web-client/settings",
+		path:      "/settings",
 		handler:   handler,
 		ctxinject: ctxinject,
 		auth:      auth,
 		csrf:      csrf,
+		scope:     scope,
 	}
 }
 
 func (r *SettingRoutes) RegisterRoutes(parent fiber.Router) {
 	router := parent.Group(r.path)
+	router.Use(r.scope.SettingsScopeMiddleware())
 
 	router.Get("/public", r.handler.GetPublicSettings)
 	router.Get("/all", r.handler.GetAllSettings)

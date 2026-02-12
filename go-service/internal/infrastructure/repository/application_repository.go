@@ -14,11 +14,14 @@ import (
 
 type ApplicationRepository interface {
 	BaseRepository
+	Create(ctx context.Context, app *entity.Application) error
 	GetAll(ctx context.Context, packageName string) ([]entity.Application, error)
 	GetByGroup(ctx context.Context, packageName string, groupName string) ([]entity.Application, error)
 	GetByKey(ctx context.Context, packageName string, key string) (*entity.Application, error)
 	UpdateByKey(ctx context.Context, packageName string, key string, value string) error
 	UpdateBulk(ctx context.Context, packageName string, settings []entity.Application) error
+	FindByPackageName(ctx context.Context, packageName string) ([]entity.Application, error)
+	FindByAPIKey(ctx context.Context, apiKey string) (*entity.Application, error)
 }
 
 type applicationRepository struct {
@@ -33,6 +36,19 @@ func NewApplicationRepository(db *pgxpool.Pool, logger *zap.Logger) ApplicationR
 		).(*baseRepository),
 	}
 }
+func (r *applicationRepository) Create(ctx context.Context, app *entity.Application) error {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	query := `INSERT INTO applications (id, package_name, key, value, description, group_name, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+	_, err := r.db.Exec(subCtx, query, app.ID, app.PackageName, app.Key, app.Value, app.Description, app.GroupName, app.CreatedAt, app.UpdatedAt)
+	if err != nil {
+		r.logger.Error("[ApplicationRepository.Create]", zap.Error(err))
+		return err
+	}
+	return nil
+}
+
 func (r *applicationRepository) GetAll(ctx context.Context, packageName string) ([]entity.Application, error) {
 
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
@@ -152,4 +168,62 @@ func (r *applicationRepository) UpdateBulk(ctx context.Context, packageName stri
 	}
 
 	return tx.Commit(subCtx)
+}
+
+func (r *applicationRepository) FindByPackageName(ctx context.Context, packageName string) ([]entity.Application, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	if packageName == "" {
+		packageName = "default"
+	}
+
+	query := `SELECT id, package_name, key, value, description, group_name, created_at, updated_at FROM applications WHERE package_name = $1 ORDER BY group_name, key`
+	rows, err := r.db.Query(subCtx, query, packageName)
+	if err != nil {
+		r.logger.Error("[ApplicationRepository.FindByPackageName]", zap.Error(err))
+		return nil, err
+	}
+	defer rows.Close()
+
+	var applications []entity.Application
+	for rows.Next() {
+		var a entity.Application
+		if err := rows.Scan(&a.ID, &a.PackageName, &a.Key, &a.Value, &a.Description, &a.GroupName, &a.CreatedAt, &a.UpdatedAt); err != nil {
+			r.logger.Error("[ApplicationRepository.FindByPackageName]", zap.Error(err))
+			return nil, err
+		}
+		applications = append(applications, a)
+	}
+	return applications, nil
+}
+
+func (r *applicationRepository) FindByAPIKey(ctx context.Context, apiKey string) (*entity.Application, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	if apiKey == "" {
+		return nil, fmt.Errorf("apiKey is required")
+	}
+
+	query := `SELECT id, package_name, key, value, description, group_name, created_at, updated_at FROM applications WHERE package_name = $1 AND key = $2`
+	var a entity.Application
+	err := r.db.QueryRow(subCtx, query, "default", "api_key").Scan(
+		&a.ID,
+		&a.PackageName,
+		&a.Key,
+		&a.Value,
+		&a.Description,
+		&a.GroupName,
+		&a.CreatedAt,
+		&a.UpdatedAt)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			r.logger.Error("[ApplicationRepository.FindByAPIKey]", zap.Error(err))
+			return nil, nil
+		}
+		r.logger.Error("[ApplicationRepository.FindByAPIKey]", zap.Error(err))
+		return nil, err
+	}
+	return &a, nil
 }

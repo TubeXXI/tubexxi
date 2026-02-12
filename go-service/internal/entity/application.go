@@ -55,3 +55,16 @@ type UpdateApplicationBulkRequest struct {
 	Description string `json:"description" validate:"omitempty"`
 	GroupName   string `json:"group_name" validate:"required"`
 }
+
+type AppCacheRedisKey struct {
+	ApiKey      string `json:"api_key"`
+	PackageName string `json:"package_name"`
+}
+
+type RegisterNewApplicationRequest struct {
+	PackageName string `json:"package_name" validate:"required"`
+	Key         string `json:"key" validate:"required"`
+	Value       string `json:"value" validate:"required"`
+	Description string `json:"description" validate:"omitempty"`
+	GroupName   string `json:"group_name" validate:"required"`
+}

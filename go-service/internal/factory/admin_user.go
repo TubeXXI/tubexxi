@@ -14,9 +14,18 @@ type AdminUserFactory struct {
 }
 
 func NewAdminUserFactory(cont *dependencies.Container, mw *MiddlewareFactory) *AdminUserFactory {
-	svc := service.NewAdminUserService(cont.Logger, cont.UserRepo, cont.FirebaseClient)
+	svc := service.NewAdminUserService(
+		cont.Logger,
+		cont.UserRepo,
+		cont.FirebaseClient,
+	)
 	h := handler.NewAdminUserHandler(mw.ContextMiddleware, svc)
-	r := routes.NewAdminUserRoutes(h, mw.AuthMiddleware, mw.AdminMiddleware, mw.RateLimiter)
+	r := routes.NewAdminUserRoutes(
+		h, mw.AuthMiddleware,
+		mw.AdminMiddleware,
+		mw.CSRFMiddleware,
+		mw.RateLimiter,
+	)
 	return &AdminUserFactory{routes: r}
 }
 

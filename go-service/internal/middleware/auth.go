@@ -149,8 +149,8 @@ func (m *AuthMiddleware) FirebaseAuth() fiber.Handler {
 			}
 		}
 
-		roleLevel := entity.RoleLevelUser
-		roleName := entity.RoleUser
+		var roleLevel int
+		var roleName string
 		if user.Role != nil && user.Role.ID != uuid.Nil {
 			roleLevel = int(user.Role.Level)
 			roleName = user.Role.Name

@@ -32,8 +32,11 @@ func NewMiddlewareFactory(cont *dependencies.Container) *MiddlewareFactory {
 			cont.Logger,
 		),
 		ApiMiddleware: middleware.NewApiMiddleware(
+			ctxinject,
 			&cont.AppConfig.App,
 			cont.Logger,
+			cont.RedisClient,
+			cont.ApplicationRepo,
 		),
 		LoggerMiddleware: middleware.NewLoggerMiddleware(
 			cont.Logger,

@@ -13,11 +13,25 @@ type AdminUserRoutes struct {
 	h       *handler.AdminUserHandler
 	auth    *middleware.AuthMiddleware
 	admin   *middleware.AdminMiddleware
+	csrf    *middleware.CSRFMiddleware
 	limiter *middleware.RateLimiterMiddleware
 }
 
-func NewAdminUserRoutes(h *handler.AdminUserHandler, auth *middleware.AuthMiddleware, admin *middleware.AdminMiddleware, limiter *middleware.RateLimiterMiddleware) *AdminUserRoutes {
-	return &AdminUserRoutes{path: "/admin/users", h: h, auth: auth, admin: admin, limiter: limiter}
+func NewAdminUserRoutes(
+	h *handler.AdminUserHandler,
+	auth *middleware.AuthMiddleware,
+	admin *middleware.AdminMiddleware,
+	csrf *middleware.CSRFMiddleware,
+	limiter *middleware.RateLimiterMiddleware,
+) *AdminUserRoutes {
+	return &AdminUserRoutes{
+		path:    "/admin/users",
+		h:       h,
+		auth:    auth,
+		admin:   admin,
+		csrf:    csrf,
+		limiter: limiter,
+	}
 }
 
 func (r *AdminUserRoutes) RegisterRoutes(parent fiber.Router) {
@@ -25,5 +39,8 @@ func (r *AdminUserRoutes) RegisterRoutes(parent fiber.Router) {
 	protected := router.Group("/protected")
 	protected.Use(r.auth.FirebaseAuth())
 	protected.Use(r.admin.Handler())
-	protected.Post("/set-role", r.limiter.BlockLimiter("admin_set_role", 30, 30*time.Minute), r.h.SetRole)
+	protected.Post("/set-role",
+		r.csrf.CSRFProtect(),
+		r.limiter.BlockLimiter("admin_set_role", 30, 30*time.Minute),
+		r.h.SetRole)
 }

@@ -28,19 +28,31 @@ func NewApplicationService(
 		logger:          logger,
 	}
 }
+func (s *ApplicationService) RegisterApplication(ctx context.Context, req *entity.RegisterNewApplicationRequest) error {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	return s.applicationRepo.Create(subCtx, &entity.Application{
+		PackageName: req.PackageName,
+		Key:         req.Key,
+		Value:       req.Value,
+		Description: req.Description,
+		GroupName:   req.GroupName,
+	})
+}
 
 func (s *ApplicationService) GetPublicAppConfig(ctx context.Context, packageName string) (*entity.ApplicationResponse, error) {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()
 
-	settings, err := s.applicationRepo.GetAll(subCtx, packageName)
+	apps, err := s.applicationRepo.GetAll(subCtx, packageName)
 	if err != nil {
 		return nil, err
 	}
 
 	response := &entity.ApplicationResponse{}
 
-	for _, item := range settings {
+	for _, item := range apps {
 		switch item.GroupName {
 		case "CONFIG":
 			s.mapAppConfigSetting(&response.CONFIG, item)
@@ -78,6 +90,7 @@ func (s *ApplicationService) UpdateAppConfigBulk(ctx context.Context, packageNam
 	return s.applicationRepo.UpdateBulk(subCtx, packageName, payload)
 }
 
+// Helpers
 func (s *ApplicationService) mapAppConfigSetting(target *entity.ApplicationConfig, parent entity.Application) {
 
 	switch parent.Key {
