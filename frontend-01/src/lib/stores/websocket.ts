@@ -6,34 +6,20 @@ import { derived, writable } from 'svelte/store';
 interface WsConfig {
 	url?: string;
 	userId?: string;
-	username?: string;
+	email?: string;
 	avatar_url?: string;
 	reconnect?: boolean;
 	reconnectAttempts?: number;
 	reconnectDelay?: number;
-	onMessage?: (message: DownloadState) => void;
+	onMessage?: (message: any) => void;
 }
 
 interface WSStoreState {
 	connected: boolean;
-	messages: DownloadState[];
+	messages: any[];
 	identified: boolean;
 	error: string | null;
 	reconnecting: boolean;
 }
-
-export type DownloadTaskView = {
-	id: string;
-	status: string;
-	progress: number;
-	title?: string | null;
-	thumbnail_url?: string | null;
-	created_at?: string | null;
-	file_path?: string | null;
-};
-
-export type DownloadState = {
-	tasks: Record<string, DownloadTaskView>;
-};
 
 export function createWebSocketStore(config: WsConfig = {}) { }

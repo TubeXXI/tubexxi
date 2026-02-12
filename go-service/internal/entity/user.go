@@ -28,8 +28,7 @@ type User struct {
 
 type UserWithRole struct {
 	User
-	Role     *Role      `json:"role,omitempty"`
-	TenantID *uuid.UUID `json:"tenant_id,omitempty"`
+	Role *Role `json:"role,omitempty"`
 }
 
 func (User) TableName() string {

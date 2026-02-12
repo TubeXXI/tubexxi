@@ -26,7 +26,6 @@ func main() {
 		// Check if we can access the logger, otherwise use standard log
 		log.Fatalf("Failed to initialize dependencies: %v", err)
 	}
-	defer cont.Close()
 
 	go func() {
 		app.Start(cont)
@@ -36,7 +35,9 @@ func main() {
 	stop()
 	log.Println("⚠️ Shutdown signal received")
 
-	cleanup(ctx, cont)
+	shutdownCtx, cancelShutdown := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancelShutdown()
+	cleanup(shutdownCtx, cont)
 }
 func cleanup(ctx context.Context, cont *dependencies.Container) {
 
@@ -46,8 +47,12 @@ func cleanup(ctx context.Context, cont *dependencies.Container) {
 
 	cont.Logger.Info("Shutting down services...")
 
+	if err := cont.CacheHelper.InvalidateAllClient(ctx); err != nil {
+		cont.Logger.Error("Failed to invalidate all client cache", zap.Error(err))
+	}
+
 	if err := cont.Close(); err != nil {
-		log.Fatalf("failed to close dependencies system %v", err)
+		cont.Logger.Error("Failed to close dependencies system", zap.Error(err))
 	}
 
 	cont.Logger.Info("All services shut down gracefully ✅")

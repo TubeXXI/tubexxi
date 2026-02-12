@@ -49,6 +49,7 @@
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.14.0",
+		"firebase": "^12.9.0",
 		"globals": "^17.3.0",
 		"jsrepo": "^3.3.0",
 		"katex": "^0.16.28",

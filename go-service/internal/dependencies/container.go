@@ -40,6 +40,7 @@ type Container struct {
 	UserRepo         repository.UserRepository
 	SettingRepo      repository.SettingRepository
 	ApplicationRepo  repository.ApplicationRepository
+	CacheHelper      *helpers.CacheHelper
 	UserHelper       *helpers.UserHelper
 	SessionHelper    *helpers.SessionHelper
 	EmailHelper      *helpers.MailHelper
@@ -102,6 +103,10 @@ func NewContainer(ctx context.Context) (*Container, error) {
 	applicationRepo := repository.NewApplicationRepository(dbPool.Pool, logger)
 
 	// Initialize helper
+	cacheHelper := helpers.NewCacheHelper(logger, redis, applicationRepo, settingRepo)
+	if err := cacheHelper.LoadAllClientToCache(ctx); err != nil {
+		logger.Error("[CacheHelper.LoadAllClientToCache]", zap.Error(err))
+	}
 	userHelper := helpers.NewUserHelper(redis, userRepo)
 	sessionHelper := helpers.NewSessionHelper(redis, logger)
 	emailHelper := helpers.NewMailHelper(userHelper, sessionHelper, &init.App, &init.Email, logger)
@@ -123,6 +128,7 @@ func NewContainer(ctx context.Context) (*Container, error) {
 		UserRepo:         userRepo,
 		SettingRepo:      settingRepo,
 		ApplicationRepo:  applicationRepo,
+		CacheHelper:      cacheHelper,
 		UserHelper:       userHelper,
 		SessionHelper:    sessionHelper,
 		EmailHelper:      emailHelper,
@@ -243,6 +249,7 @@ func (cont *Container) Close() error {
 			cont.Logger.Info("Asynq closed successfully")
 		}
 	}
+
 	if cont.FirebaseClient != nil {
 		if err := cont.FirebaseClient.Close(); err != nil {
 			cont.Logger.Error("Firebase shutdown error", zap.Error(err))

@@ -200,6 +200,8 @@ func (s *SettingService) mapSystemSetting(target *entity.SettingSystem, parent e
 	switch parent.Key {
 	case "api_key":
 		target.ApiKey = parent.Value
+	case "theme":
+		target.Theme = parent.Value
 	case "enable_documentation":
 		target.EnableDocumentation = parent.Value == "true"
 	case "maintenance_mode":

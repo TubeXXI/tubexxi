@@ -124,6 +124,7 @@ func main() {
 	('from_name', 'default', 'Simontok', 'From Name', 'EMAIL'),
 
 	('api_key', 'default', 'd87eead46e14ec1df9857525be7c7d89c25309f543365200827d08c60e489910', 'TubeXXI API Key', 'SYSTEM'),
+	('theme', 'default', 'default', 'Website Theme (light/dark)', 'SYSTEM'),
 	('enable_documentation', 'default', 'false', 'Enable Documentation', 'SYSTEM'),
 	('maintenance_mode', 'default', 'false', 'Enable Maintenance Mode', 'SYSTEM'),
 	('maintenance_message', 'default', 'We are currently performing maintenance. Please check back later.', 'Maintenance Message', 'SYSTEM'),

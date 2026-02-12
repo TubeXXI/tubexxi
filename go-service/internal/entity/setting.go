@@ -50,6 +50,7 @@ type SettingEmail struct {
 
 type SettingSystem struct {
 	ApiKey              string `json:"api_key"`
+	Theme               string `json:"theme"`
 	EnableDocumentation bool   `json:"enable_documentation"`
 	MaintenanceMode     bool   `json:"maintenance_mode"`
 	MaintenanceMessage  string `json:"maintenance_message"`

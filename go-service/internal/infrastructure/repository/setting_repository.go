@@ -15,6 +15,7 @@ import (
 type SettingRepository interface {
 	BaseRepository
 	GetAll(ctx context.Context, scope string) ([]entity.Setting, error)
+	ListScopes(ctx context.Context) ([]string, error)
 	GetByGroup(ctx context.Context, scope string, groupName string) ([]entity.Setting, error)
 	GetByKey(ctx context.Context, scope string, key string) (*entity.Setting, error)
 	UpdateByKey(ctx context.Context, scope string, key string, value string) error
@@ -61,6 +62,30 @@ func (r *settingRepository) GetAll(ctx context.Context, scope string) ([]entity.
 		settings = append(settings, s)
 	}
 	return settings, nil
+}
+
+func (r *settingRepository) ListScopes(ctx context.Context) ([]string, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	query := `SELECT DISTINCT scope FROM settings ORDER BY scope`
+	rows, err := r.db.Query(subCtx, query)
+	if err != nil {
+		r.logger.Error("[SettingRepository.ListScopes]", zap.Error(err))
+		return nil, err
+	}
+	defer rows.Close()
+
+	var scopes []string
+	for rows.Next() {
+		var scope string
+		if err := rows.Scan(&scope); err != nil {
+			r.logger.Error("[SettingRepository.ListScopes]", zap.Error(err))
+			return nil, err
+		}
+		scopes = append(scopes, scope)
+	}
+	return scopes, nil
 }
 func (r *settingRepository) GetByGroup(ctx context.Context, scope string, groupName string) ([]entity.Setting, error) {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)

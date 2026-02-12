@@ -6,19 +6,24 @@ import (
 )
 
 type MiddlewareFactory struct {
-	ContextMiddleware *middleware.ContextMiddleware
-	Recovery          *middleware.RecoveryMiddleware
-	ApiMiddleware     *middleware.ApiMiddleware
-	RateLimiter       *middleware.RateLimiterMiddleware
-	LoggerMiddleware  *middleware.LoggerMiddleware
-	AuthMiddleware    *middleware.AuthMiddleware
-	CSRFMiddleware    *middleware.CSRFMiddleware
-	AdminMiddleware   *middleware.AdminMiddleware
-	ScopeMiddleware   *middleware.ScopeMiddleware
+	ContextMiddleware  *middleware.ContextMiddleware
+	Recovery           *middleware.RecoveryMiddleware
+	ScopeMiddleware    *middleware.ScopeMiddleware
+	ApiMiddleware      *middleware.ApiMiddleware
+	RateLimiter        *middleware.RateLimiterMiddleware
+	LoggerMiddleware   *middleware.LoggerMiddleware
+	AuthMiddleware     *middleware.AuthMiddleware
+	CSRFMiddleware     *middleware.CSRFMiddleware
+	AdminMiddleware    *middleware.AdminMiddleware
+	PlatformMiddleware *middleware.PlatformMiddleware
 }
 
 func NewMiddlewareFactory(cont *dependencies.Container) *MiddlewareFactory {
 	ctxinject := middleware.NewContextMiddleware(cont.Logger)
+	scope := middleware.NewScopeMiddleware(
+		ctxinject,
+		cont.Logger,
+	)
 	return &MiddlewareFactory{
 		ContextMiddleware: ctxinject,
 		Recovery: middleware.NewRecoveryMiddleware(
@@ -35,8 +40,6 @@ func NewMiddlewareFactory(cont *dependencies.Container) *MiddlewareFactory {
 			ctxinject,
 			&cont.AppConfig.App,
 			cont.Logger,
-			cont.RedisClient,
-			cont.ApplicationRepo,
 		),
 		LoggerMiddleware: middleware.NewLoggerMiddleware(
 			cont.Logger,
@@ -60,9 +63,12 @@ func NewMiddlewareFactory(cont *dependencies.Container) *MiddlewareFactory {
 			ctxinject,
 			cont.Logger,
 		),
-		ScopeMiddleware: middleware.NewScopeMiddleware(
+		ScopeMiddleware: scope,
+		PlatformMiddleware: middleware.NewPlatformMiddleware(
 			ctxinject,
+			scope,
 			cont.Logger,
+			cont.CacheHelper,
 		),
 	}
 }

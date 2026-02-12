@@ -16,6 +16,7 @@ type ApplicationRepository interface {
 	BaseRepository
 	Create(ctx context.Context, app *entity.Application) error
 	GetAll(ctx context.Context, packageName string) ([]entity.Application, error)
+	ListPackageNames(ctx context.Context) ([]string, error)
 	GetByGroup(ctx context.Context, packageName string, groupName string) ([]entity.Application, error)
 	GetByKey(ctx context.Context, packageName string, key string) (*entity.Application, error)
 	UpdateByKey(ctx context.Context, packageName string, key string, value string) error
@@ -76,6 +77,30 @@ func (r *applicationRepository) GetAll(ctx context.Context, packageName string) 
 		applications = append(applications, a)
 	}
 	return applications, nil
+}
+
+func (r *applicationRepository) ListPackageNames(ctx context.Context) ([]string, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	query := `SELECT DISTINCT package_name FROM applications ORDER BY package_name`
+	rows, err := r.db.Query(subCtx, query)
+	if err != nil {
+		r.logger.Error("[ApplicationRepository.ListPackageNames]", zap.Error(err))
+		return nil, err
+	}
+	defer rows.Close()
+
+	var names []string
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			r.logger.Error("[ApplicationRepository.ListPackageNames]", zap.Error(err))
+			return nil, err
+		}
+		names = append(names, name)
+	}
+	return names, nil
 }
 func (r *applicationRepository) GetByGroup(ctx context.Context, packageName string, groupName string) ([]entity.Application, error) {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
@@ -206,9 +231,9 @@ func (r *applicationRepository) FindByAPIKey(ctx context.Context, apiKey string)
 		return nil, fmt.Errorf("apiKey is required")
 	}
 
-	query := `SELECT id, package_name, key, value, description, group_name, created_at, updated_at FROM applications WHERE package_name = $1 AND key = $2`
+	query := `SELECT id, package_name, key, value, description, group_name, created_at, updated_at FROM applications WHERE key = 'api_key' AND value = $1 LIMIT 1`
 	var a entity.Application
-	err := r.db.QueryRow(subCtx, query, "default", "api_key").Scan(
+	err := r.db.QueryRow(subCtx, query, apiKey).Scan(
 		&a.ID,
 		&a.PackageName,
 		&a.Key,

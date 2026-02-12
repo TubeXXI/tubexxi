@@ -3,7 +3,7 @@ import adapter from '@sveltejs/adapter-node';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	kit: { 
+	kit: {
 		adapter: adapter({
 			out: 'build',
 			precompress: true,
@@ -15,14 +15,14 @@ const config = {
 		csrf: {
 			trustedOrigins:
 				process.env.NODE_ENV === 'production'
-					? ['https://simontokz.com', 'https://www.simontokz.com']
+					? ['https://tubexxi.com', 'https://www.tubexxi.com']
 					: ['*']
 		},
 		alias: {
 			'@': './src/lib',
 			'@/*': './src/lib/*'
 		}
-	 },
+	},
 	preprocess: [mdsvex()],
 	extensions: ['.svelte', '.svx']
 };

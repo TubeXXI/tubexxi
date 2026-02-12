@@ -17,8 +17,8 @@ type Anime struct {
 	ReleaseDate     *string       `json:"release_date" validate:"omitempty"`
 	ReleasedDay     *string       `json:"released_day" validate:"omitempty"`
 	Studio          *string       `json:"studio" validate:"omitempty"`
-	Genre           *[]AnimeGenre `json:"genre" validate:"omitempty"`
 	Rating          *string       `json:"rating" validate:"omitempty"`
+	Genre           *[]AnimeGenre `json:"genre" validate:"omitempty"`
 	Episodes        *[]Episode    `json:"episodes" validate:"omitempty"`
 }
 

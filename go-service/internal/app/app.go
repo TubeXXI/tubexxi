@@ -55,7 +55,7 @@ func setupMiddlewares(app *fiber.App, cont *dependencies.Container) {
 		middleware.ApiMiddleware.SetupCompression(),
 		middleware.ApiMiddleware.SetupCORS(),
 		middleware.LoggerMiddleware.RequestLogger(),
-		middleware.ApiMiddleware.SetupRequestID(),
+		middleware.PlatformMiddleware.ClientPlatformMiddleware(),
 		middleware.ApiMiddleware.SetupMetrics(cont.Logger),
 		metrics.HTTPMetrics(metrics.GetAppMetrics()),
 	)
