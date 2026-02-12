@@ -76,8 +76,9 @@ function createAuthStore() {
 					// Send token ke server untuk create session
 					await fetch('/api/auth/session', {
 						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ idToken })
+						headers: { 'Content-Type': 'application/json', 'X-Platform': 'web' },
+						credentials: 'include',
+						body: JSON.stringify({ idToken, rememberMe: false })
 					});
 
 					update((state) => ({
@@ -196,8 +197,9 @@ function createAuthStore() {
 				// Send token ke server untuk create session
 				await fetch('/api/auth/session', {
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ idToken })
+					headers: { 'Content-Type': 'application/json', 'X-Platform': 'web' },
+					credentials: 'include',
+					body: JSON.stringify({ idToken, rememberMe: false })
 				});
 
 				update((state) => ({

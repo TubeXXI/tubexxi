@@ -127,7 +127,7 @@ func (s *AuthService) LoginWithIDToken(ctx context.Context, idToken string) (*dt
 	}, nil
 }
 
-func (s *AuthService) RegisterWithEmail(ctx context.Context, req *dto.FirebaseRegisterRequest) (*dto.FirebaseAuthResponse, error) {
+func (s *AuthService) RegisterWithEmail(ctx context.Context, req *dto.FirebaseRegisterRequest, clientOrigin string) (*dto.FirebaseAuthResponse, error) {
 	if strings.TrimSpace(req.Email) == "" || strings.TrimSpace(req.Password) == "" {
 		return nil, fmt.Errorf("email and password are required")
 	}
@@ -150,7 +150,7 @@ func (s *AuthService) RegisterWithEmail(ctx context.Context, req *dto.FirebaseRe
 				Token: oobCode,
 				Type:  dto.EmailVerification,
 				To:    req.Email,
-			})
+			}, clientOrigin)
 		}
 	}
 
@@ -191,7 +191,7 @@ func (s *AuthService) RegisterWithEmail(ctx context.Context, req *dto.FirebaseRe
 	return &dto.FirebaseAuthResponse{User: user, Email: user.Email, EmailVerified: user.IsVerified}, nil
 }
 
-func (s *AuthService) SendResetPassword(ctx context.Context, email string) error {
+func (s *AuthService) SendResetPassword(ctx context.Context, email string, clientOrigin string) error {
 	link, err := s.firebase.PasswordResetLink(ctx, email)
 	if err != nil {
 		return err
@@ -200,10 +200,10 @@ func (s *AuthService) SendResetPassword(ctx context.Context, email string) error
 	if oobCode == "" {
 		return fmt.Errorf("failed to extract oobCode")
 	}
-	return s.mail.SendEmail(&dto.SendMailMetaData{Token: oobCode, Type: dto.ResetPassword, To: email})
+	return s.mail.SendEmail(&dto.SendMailMetaData{Token: oobCode, Type: dto.ResetPassword, To: email}, clientOrigin)
 }
 
-func (s *AuthService) SendVerifyEmail(ctx context.Context, email string) error {
+func (s *AuthService) SendVerifyEmail(ctx context.Context, email string, clientOrigin string) error {
 	link, err := s.firebase.EmailVerificationLink(ctx, email)
 	if err != nil {
 		return err
@@ -212,7 +212,7 @@ func (s *AuthService) SendVerifyEmail(ctx context.Context, email string) error {
 	if oobCode == "" {
 		return fmt.Errorf("failed to extract oobCode")
 	}
-	return s.mail.SendEmail(&dto.SendMailMetaData{Token: oobCode, Type: dto.EmailVerification, To: email})
+	return s.mail.SendEmail(&dto.SendMailMetaData{Token: oobCode, Type: dto.EmailVerification, To: email}, clientOrigin)
 }
 
 func (s *AuthService) ChangePassword(ctx context.Context, firebaseUID string, userID string, newPassword string) error {

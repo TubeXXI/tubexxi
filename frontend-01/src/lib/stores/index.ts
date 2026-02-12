@@ -12,4 +12,5 @@ export * from './based-repeat-on-scroll';
 export * from './translate';
 export * from './ads-store';
 export * from './modal-dialog';
+export * from "./firebase-store"
 

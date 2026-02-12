@@ -1,6 +1,7 @@
-@import "tailwindcss";
-
-@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin '@tailwindcss/forms';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -109,6 +110,482 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+	--animate-accordion-down: accordion-down 0.2s ease-out;
+	--animate-accordion-up: accordion-up 0.2s ease-out;
+	--animate-grid: grid 15s linear infinite;
+	--animate-wiggle: wiggle 0.75s infinite;
+	--animate-spinner: spinner 1.2s linear infinite;
+	--animate-blink: blink 1.4s infinite both;
+	--animate-shimmer: shimmer 5s infinite;
+	--animate-border-beam: border-beam calc(var(--duration, 2) * 1s) infinite linear;
+	--animate-image-glow: image-glow 4s ease-out 0.6s forwards;
+	--animate-marquee: marquee var(--duration, 30s) linear infinite;
+	--animate-flip: flip 6s infinite steps(2, end);
+	--animate-rotate: rotate 3s linear infinite both;
+	--animate-caret-blink: caret-blink 1.25s ease-out infinite;
+	--animate-loading: loading 0.5s linear infinite;
+	--animate-page-grow: grow 1s ease-out;
+	--animate-woosh: woosh 1.5s infinite cubic-bezier(0.445, 0.05, 0.55, 0.95) alternate;
+	--animate-boom-circle: boom-circle 1s ease-out infinite;
+	--animate-boom-triangle-big: boom-triangle-big 1s ease-out infinite;
+	--animate-boom-triangle: boom-triangle 1s ease-out infinite;
+	--animate-boom-disc: boom-disc 1s ease-out infinite;
+	--animate-page-fade-in: fadeIn 0.5s ease-in forwards;
+	--animate-page-fade-out: fadeOut 0.5s ease-out forwards;
+	--animate-page-fade-in-left: fadeInLeft 0.5s ease-in forwards;
+	--animate-page-fade-out-left: fadeOutLeft 0.5s ease-out forwards;
+	--animate-page-fade-in-right: fadeInRight 0.5s ease-in forwards;
+	--animate-page-fade-out-right: fadeOutRight 0.5s ease-out forwards;
+	--animate-page-fade-in-right: fadeInRight 0.5s ease-out forwards;
+	--animate-page-fade-in-up: fadeInUp 0.5s ease-in forwards;
+	--animate-page-fade-out-up: fadeOutUp 0.5s ease-out forwards;
+	--animate-page-fade-in-down: fadeInDown 0.5s ease-in forwards;
+	--animate-page-fade-out-down: fadeOutDown 0.5s ease-out forwards;
+	--animate-slide-down: slideDown 300ms ease-out forwards;
+	--animate-slide-up: slideUp 300ms ease-out forwards;
+	--animate-slide-in-up: slide-in-up 0.3s ease-out forwards;
+	--animate-slide-mobile: slide-mobile;
+	--animate-slide-desktop: slide-desktop;
+	--animate-fadeUp: fadeUp 0.6s ease-in-out forwards;
+	--animate-fadeInScale: fadeInScale 9s ease-in infinite;
+
+
+	/* Keyframes Definitions */
+	@keyframes accordion-down {
+		from {
+			height: 0;
+		}
+		to {
+			height: var(--radix-accordion-content-height);
+		}
+	}
+	@keyframes accordion-up {
+		from {
+			height: var(--radix-accordion-content-height);
+		}
+		to {
+			height: 0;
+		}
+	}
+	@keyframes grid {
+		0% {
+			transform: translateY(-50%);
+		}
+		100% {
+			transform: translateY(0);
+		}
+	}
+	@keyframes wiggle {
+		0%,
+		100% {
+			transform: translateX(0%);
+			transform-origin: 50% 50%;
+		}
+		15% {
+			transform: translateX(-4px) rotate(-4deg);
+		}
+		30% {
+			transform: translateX(6px) rotate(4deg);
+		}
+		45% {
+			transform: translateX(-6px) rotate(-2.4deg);
+		}
+		60% {
+			transform: translateX(2px) rotate(1.6deg);
+		}
+		75% {
+			transform: translateX(-1px) rotate(-0.8deg);
+		}
+	}
+	@keyframes spinner {
+		0% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+		}
+	}
+	@keyframes blink {
+		0% {
+			opacity: 0.2;
+		}
+		20% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0.2;
+		}
+	}
+	@keyframes shimmer {
+		0%,
+		90%,
+		100% {
+			background-position: calc(-100% - var(--shimmer-width, 100px)) 0;
+		}
+		30%,
+		60% {
+			background-position: calc(100% + var(--shimmer-width, 100px)) 0;
+		}
+	}
+	@keyframes image-glow {
+		0% {
+			opacity: 0;
+			animation-timing-function: cubic-bezier(0.74, 0.25, 0.76, 1);
+		}
+		10% {
+			opacity: 0.5;
+			animation-timing-function: cubic-bezier(0.12, 0.01, 0.08, 0.99);
+		}
+		100% {
+			opacity: 0.7;
+		}
+	}
+	@keyframes border-beam {
+		100% {
+			offset-distance: 100%;
+		}
+	}
+	@keyframes marquee {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(calc(-100% - var(--gap, 1rem)));
+		}
+	}
+	@keyframes flip {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	@keyframes rotate {
+		to {
+			transform: rotate(90deg);
+		}
+	}
+	@keyframes caret-blink {
+		0%,
+		70%,
+		100% {
+			opacity: 1;
+		}
+		20%,
+		50% {
+			opacity: 0;
+		}
+	}
+	@keyframes loading {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+	@keyframes float {
+		0%,
+		100% {
+			transform: translateY(0px);
+		}
+
+		50% {
+			transform: translateY(-20px);
+		}
+	}
+	@keyframes glow {
+		0% {
+			box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+		}
+
+		100% {
+			box-shadow: 0 0 30px rgba(34, 197, 94, 0.8);
+		}
+	}
+	@keyframes pulse-slow {
+		0%,
+		100% {
+			opacity: 1;
+		}
+
+		50% {
+			opacity: 0.7;
+		}
+	}
+	@keyframes grow {
+		0% {
+			transform: scale(0.2);
+		}
+		100% {
+			transform: scale(1);
+		}
+	}
+	@keyframes woosh {
+		0% {
+			width: 12px;
+			transform: translate(0px, 0px) rotate(-35deg);
+		}
+		15% {
+			width: 50px;
+		}
+		30% {
+			width: 12px;
+			transform: translate(214px, -150px) rotate(-35deg);
+		}
+		30.1% {
+			transform: translate(214px, -150px) rotate(46deg);
+		}
+		50% {
+			width: 110px;
+		}
+		70% {
+			width: 12px;
+			transform: translate(500px, 150px) rotate(46deg);
+		}
+		70.1% {
+			transform: translate(500px, 150px) rotate(-37deg);
+		}
+		85% {
+			width: 50px;
+		}
+		100% {
+			width: 12px;
+			transform: translate(700px, 0) rotate(-37deg);
+		}
+	}
+	@keyframes boom-circle {
+		0% {
+			opacity: 0;
+		}
+		5% {
+			opacity: 1;
+		}
+		30% {
+			opacity: 0;
+			transform: scale(3);
+		}
+		100% {
+		}
+	}
+	@keyframes boom-triangle-big {
+		0% {
+			opacity: 0;
+		}
+		5% {
+			opacity: 1;
+		}
+		40% {
+			opacity: 0;
+			transform: scale(2.5) translate(50px, -50px) rotate(360deg);
+		}
+		100% {
+		}
+	}
+	@keyframes boom-triangle {
+		0% {
+			opacity: 0;
+		}
+		5% {
+			opacity: 1;
+		}
+		30% {
+			opacity: 0;
+			transform: scale(3) translate(20px, 40px) rotate(360deg);
+		}
+		100% {
+		}
+	}
+	@keyframes boom-disc {
+		0% {
+			opacity: 0;
+		}
+		5% {
+			opacity: 1;
+		}
+		40% {
+			opacity: 0;
+			transform: scale(2) translate(-70px, -30px);
+		}
+		100% {
+		}
+	}
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+	@keyframes fadeOut {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
+	}
+	@keyframes fadeInLeft {
+		0% {
+			opacity: 0;
+			transform: translateX(-20px); /* Adjust the value for desired starting position */
+		}
+		100% {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+	@keyframes fadeOutLeft {
+		0% {
+			opacity: 1;
+			transform: translateX(0);
+		}
+		100% {
+			opacity: 0;
+			transform: translateX(-20px); /* Adjust the value for desired ending position */
+		}
+	}
+	@keyframes fadeOutRight {
+		0% {
+			opacity: 1;
+			transform: translateX(0);
+		}
+
+		100% {
+			opacity: 0;
+			transform: translateX(20px); /* Adjust the value for desired ending position */
+		}
+	}
+	@keyframes fadeInRight {
+		0% {
+			opacity: 0;
+			transform: translateX(20px); /* Adjust the value for desired starting position */
+		}
+		100% {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+	@keyframes fadeInUp {
+		0% {
+			opacity: 0;
+			transform: translateY(20px); /* Adjust the value for desired starting position */
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	@keyframes fadeOutUp {
+		0% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		100% {
+			opacity: 0;
+			transform: translateY(-20px); /* Adjust the value for desired ending position */
+		}
+	}
+	@keyframes fadeInDown {
+		0% {
+			opacity: 0;
+			transform: translateY(-20px); /* Adjust the value for desired starting position */
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	@keyframes fadeOutDown {
+		0% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		100% {
+			opacity: 0;
+			transform: translateY(20px); /* Adjust the value for desired ending position */
+		}
+	}
+	@keyframes slideDown {
+		from {
+			height: 0;
+		}
+		to {
+			height: var(--radix-collapsible-content-height);
+		}
+	}
+
+	@keyframes slideUp {
+		from {
+			height: var(--radix-collapsible-content-height);
+		}
+		to {
+			height: 0;
+		}
+	}
+
+	@keyframes slide-in-up {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes slide-mobile {
+		0% {
+			transform: translate(0);
+		}
+		to {
+			transform: translate(-300%);
+		}
+	}
+	@keyframes slide-desktop {
+		0% {
+			transform: translate(0);
+		}
+		to {
+			transform: translate(-100%);
+		}
+	}
+	@keyframes fadeUp {
+		0% {
+			opacity: 0;
+			transform: translateY(50px);
+		}
+		70% {
+			opacity: 1;
+			transform: translateY(-5px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	@keyframes fadeInScale {
+		0% {
+			opacity: 0;
+			scale: 0;
+		}
+		50% {
+			opacity: 0;
+		}
+		60% {
+			opacity: 1;
+		}
+		80% {
+			opacity: 1;
+		}
+		85% {
+			opacity: 0;
+		}
+		to {
+			opacity: 0;
+			transform: scale(7) translate(var(--x), var(--y));
+		}
+	}
 }
 
 @layer base {
@@ -116,6 +593,33 @@
     @apply border-border outline-ring/50;
   }
   body {
+		font-family: 'Inter', sans-serif !important;
     @apply bg-background text-foreground;
   }
+	::selection {
+		background-color: rgba(168, 85, 247, 0.2);
+		color: hsl(var(--foreground));
+	}
+	::-webkit-scrollbar {
+		display: none;
+		width: 0px;
+		background: transparent;
+	}
+	::-webkit-scrollbar-button {
+		display: none;
+		width: 0px;
+		background: transparent;
+	}
+	::-moz-scrollbar {
+		display: none;
+		width: 0px;
+		background: transparent;
+	}
+}
+@utility faded-bottom {
+	@apply after:pointer-events-none after:absolute after:start-0 after:bottom-0 after:hidden after:h-32 after:w-full after:rounded-b-2xl after:bg-[linear-gradient(180deg,transparent_10%,var(--background)_70%)] md:after:block;
+}
+@utility mock-to-top {
+	@apply bg-[linear-gradient(to_top,black_30%,transparent)];
+	-webkit-mask-image: linear-gradient(to_top, black_30%, transparent);
 }

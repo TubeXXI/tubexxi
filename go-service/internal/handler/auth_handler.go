@@ -56,7 +56,13 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 		return response.Success(c, "Register success", res)
 	}
 
-	res, err := h.authService.RegisterWithEmail(ctx, &req)
+	origin, ok := c.Locals("client_origin").(string)
+	if !ok || origin == "" {
+		// fallback to local host
+		origin = "http://localhost:5173"
+	}
+
+	res, err := h.authService.RegisterWithEmail(ctx, &req, origin)
 	if err != nil {
 		return response.Error(c, fiber.StatusBadRequest, err.Error(), nil)
 	}
@@ -74,7 +80,13 @@ func (h *AuthHandler) ResetPassword(c *fiber.Ctx) error {
 		return response.Error(c, fiber.StatusUnprocessableEntity, response.ValidationErrors{Errors: errs}.Error(), nil)
 	}
 
-	if err := h.authService.SendResetPassword(ctx, req.Email); err != nil {
+	origin, ok := c.Locals("client_origin").(string)
+	if !ok || origin == "" {
+		// fallback to local host
+		origin = "http://localhost:5173"
+	}
+
+	if err := h.authService.SendResetPassword(ctx, req.Email, origin); err != nil {
 		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 	return response.Success(c, "Reset password email sent", nil)
@@ -93,7 +105,13 @@ func (h *AuthHandler) VerifyEmail(c *fiber.Ctx) error {
 		return response.Error(c, fiber.StatusUnprocessableEntity, response.ValidationErrors{Errors: errs}.Error(), nil)
 	}
 
-	if err := h.authService.SendVerifyEmail(ctx, req.Email); err != nil {
+	origin, ok := c.Locals("client_origin").(string)
+	if !ok || origin == "" {
+		// fallback to local host
+		origin = "http://localhost:5173"
+	}
+
+	if err := h.authService.SendVerifyEmail(ctx, req.Email, origin); err != nil {
 		return response.Error(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 	return response.Success(c, "Verification email sent", nil)

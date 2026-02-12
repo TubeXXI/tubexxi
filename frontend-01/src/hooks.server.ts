@@ -112,7 +112,7 @@ const dependenciesInject: Handle = async ({ event, resolve }) => {
 				return null;
 			}
 
-			const user = await event.locals.deps.userService.getCurrentUser();
+			const user = await event.locals.deps.userService.CurrentUser();
 			if (user instanceof Error) {
 				return null;
 			}

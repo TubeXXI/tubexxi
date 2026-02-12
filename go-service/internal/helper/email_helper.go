@@ -30,23 +30,23 @@ func NewMailHelper(userHelper *UserHelper, sessionHelper *SessionHelper, appConf
 		logger:        logger,
 	}
 }
-func (h *MailHelper) SendEmail(payload *dto.SendMailMetaData) error {
+func (h *MailHelper) SendEmail(payload *dto.SendMailMetaData, clientOrigin string) error {
 	switch payload.Type {
 	case dto.ResetPassword:
-		return h.SendResetPasswordEmail(payload)
+		return h.SendResetPasswordEmail(payload, clientOrigin)
 	case dto.EmailVerification:
-		return h.SendVerificationEmail(payload)
+		return h.SendVerificationEmail(payload, clientOrigin)
 	case dto.RegistrationInfo:
-		return h.SendRegistrationInfo(payload)
+		return h.SendRegistrationInfo(payload, clientOrigin)
 	default:
 		return fmt.Errorf("unknown email type: %s", payload.Type)
 	}
 }
 
-func (h *MailHelper) SendVerificationEmail(payload *dto.SendMailMetaData) error {
-	url := payload.GetURL(h.appConfig.ClientUrl)
+func (h *MailHelper) SendVerificationEmail(payload *dto.SendMailMetaData, clientOrigin string) error {
+	url := payload.GetURL(clientOrigin)
 	if url == "" {
-		url = fmt.Sprintf("https://%s/verify-email?token=%s", h.appConfig.ClientUrl, payload.Token)
+		url = fmt.Sprintf("%s/auth/verify-email?token=%s", clientOrigin, payload.Token)
 	}
 
 	username := payload.To
@@ -73,10 +73,10 @@ func (h *MailHelper) SendVerificationEmail(payload *dto.SendMailMetaData) error 
 	return h.sendHTMLEmail(payload.To, subject, body)
 }
 
-func (h *MailHelper) SendResetPasswordEmail(payload *dto.SendMailMetaData) error {
-	url := payload.GetURL(h.appConfig.ClientUrl)
+func (h *MailHelper) SendResetPasswordEmail(payload *dto.SendMailMetaData, clientOrigin string) error {
+	url := payload.GetURL(clientOrigin)
 	if url == "" {
-		url = fmt.Sprintf("https://%s/reset?token=%s", h.appConfig.ClientUrl, payload.Token)
+		url = fmt.Sprintf("%s/auth/reset-password?token=%s", clientOrigin, payload.Token)
 	}
 
 	username := payload.To
@@ -103,7 +103,7 @@ func (h *MailHelper) SendResetPasswordEmail(payload *dto.SendMailMetaData) error
 	return h.sendHTMLEmail(payload.To, subject, body)
 }
 
-func (h *MailHelper) SendRegistrationInfo(payload *dto.SendMailMetaData) error {
+func (h *MailHelper) SendRegistrationInfo(payload *dto.SendMailMetaData, clientOrigin string) error {
 	username := payload.To
 	if payload.User != nil && payload.User.FullName != "" {
 		username = payload.User.FullName
@@ -119,7 +119,7 @@ func (h *MailHelper) SendRegistrationInfo(payload *dto.SendMailMetaData) error {
 		Username: username,
 		Email:    payload.To,
 		Password: payload.Password,
-		LoginURL: fmt.Sprintf("https://%s/sign-in", h.appConfig.ClientUrl),
+		LoginURL: fmt.Sprintf("%s/auth/login", clientOrigin),
 		Year:     time.Now().Year(),
 	}
 

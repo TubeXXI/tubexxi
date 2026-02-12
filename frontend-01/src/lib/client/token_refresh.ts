@@ -19,6 +19,7 @@ export async function checkAndRefreshToken(): Promise<boolean> {
 		const updateResponse = await fetch('/api/auth/refresh', {
 			method: 'PUT',
 			headers: { 'Content-Type': 'application/json', 'X-Platform': 'web' },
+			credentials: 'include',
 			body: JSON.stringify({ idToken: newToken })
 		});
 		if (!updateResponse.ok) {
@@ -27,7 +28,7 @@ export async function checkAndRefreshToken(): Promise<boolean> {
 
 			if (updateResponse.status === 401) {
 				await firebaseClient.signOut();
-				await goto(localizeHref('/auth/sign-in?session=expired'));
+				await goto(localizeHref('/auth/login?session=expired'));
 			}
 			return false;
 		}

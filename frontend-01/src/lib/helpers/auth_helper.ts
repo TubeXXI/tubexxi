@@ -19,7 +19,7 @@ export class AuthHelper extends BaseHelper {
 
 	handleUnauthorized() {
 		this.clearAuthCookies();
-		throw redirect(302, '/login');
+		throw redirect(302, '/auth/login');
 	}
 
 	getSessionByTokenType(tokenType: SessionType) {

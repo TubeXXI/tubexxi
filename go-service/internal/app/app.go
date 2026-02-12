@@ -7,6 +7,7 @@ import (
 	"tubexxi/video-api/internal/dependencies"
 	"tubexxi/video-api/internal/factory"
 	"tubexxi/video-api/internal/infrastructure/metrics"
+	"tubexxi/video-api/pkg/utils"
 
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
@@ -46,6 +47,9 @@ func setupMiddlewares(app *fiber.App, cont *dependencies.Container) {
 		if ip == "" {
 			ip = c.IP()
 		}
+		origin := utils.GetOriginHost(c)
+
+		c.Locals("client_origin", origin)
 		c.Locals("real_ip", ip)
 		return c.Next()
 	})

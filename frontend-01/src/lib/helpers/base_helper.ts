@@ -8,6 +8,6 @@ export class BaseHelper {
 	}
 
 	protected static redirectToLogin() {
-		throw redirect(302, '/auth/sign-in');
+		throw redirect(302, '/auth/login');
 	}
 }

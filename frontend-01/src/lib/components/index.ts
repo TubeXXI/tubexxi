@@ -10,7 +10,6 @@ import ProgressBarIndicator from './ProgressBarIndicator.svelte';
 import PageLoading from './PageLoading.svelte';
 import ToastContent from './toast/ToastContent.svelte';
 import Toast from './toast/Toast.svelte';
-import AuthLayout from './AuthLayout.svelte';
 import DataTabelBulkAction from './data-table/DataTabelBulkAction.svelte';
 import DataTableCell from './data-table/DataTableCell.svelte';
 import DataTableFacetedFilter from './data-table/DataTableFacetedFilter.svelte';
@@ -29,7 +28,6 @@ export {
 	PageLoading,
 	ToastContent,
 	Toast,
-	AuthLayout,
 	DataTabelBulkAction,
 	DataTableCell,
 	DataTableFacetedFilter,
