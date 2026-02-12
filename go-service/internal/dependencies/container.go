@@ -36,6 +36,7 @@ type Container struct {
 	MinioClient      *minioclient.MinioClient
 	ScraperClient    *scraper_client.ScraperClient
 	FirebaseClient   *firebaseclient.FirebaseClient
+	RoleRepo         repository.RoleRepository
 	UserRepo         repository.UserRepository
 	SettingRepo      repository.SettingRepository
 	ApplicationRepo  repository.ApplicationRepository
@@ -95,6 +96,7 @@ func NewContainer(ctx context.Context) (*Container, error) {
 	}
 
 	// Initialize repository
+	roleRepo := repository.NewRoleRepository(dbPool.Pool, logger)
 	userRepo := repository.NewUserRepository(dbPool.Pool, logger)
 	settingRepo := repository.NewSettingRepository(dbPool.Pool, logger)
 	applicationRepo := repository.NewApplicationRepository(dbPool.Pool, logger)
@@ -117,6 +119,7 @@ func NewContainer(ctx context.Context) (*Container, error) {
 		MinioClient:      minio,
 		ScraperClient:    scraperClient,
 		FirebaseClient:   firebaseClient,
+		RoleRepo:         roleRepo,
 		UserRepo:         userRepo,
 		SettingRepo:      settingRepo,
 		ApplicationRepo:  applicationRepo,

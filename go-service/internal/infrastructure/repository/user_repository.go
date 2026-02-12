@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"time"
@@ -40,6 +41,9 @@ type UserRepository interface {
 	BulkDelete(ctx context.Context, ids []uuid.UUID) error
 	Search(ctx context.Context, opts *ListOptions) ([]*entity.User, int64, error)
 	Count(ctx context.Context, filter *Filter) (int64, error)
+	FindByRoleID(ctx context.Context, roleID uuid.UUID) ([]*entity.User, error)
+	FindRoleByName(ctx context.Context, name string) (*entity.Role, error)
+	SetRoleID(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error
 }
 
 type userRepository struct {
@@ -60,9 +64,13 @@ func (r *userRepository) Create(ctx context.Context, user *entity.User) error {
 
 	query := `
 		INSERT INTO users (
-			id, email, password_hash, full_name, phone, avatar_url,
+			id, email, password_hash, full_name, role_id, phone, avatar_url,
 			is_active, is_verified, created_at
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		) VALUES (
+			$1, $2, $3, $4,
+			COALESCE(NULLIF($5, '00000000-0000-0000-0000-000000000000'::uuid), (SELECT id FROM roles WHERE name = 'user' LIMIT 1)),
+			$6, $7, $8, $9, $10
+		)
 		RETURNING id, created_at, updated_at
 	`
 	err := r.db.QueryRow(subCtx,
@@ -71,6 +79,7 @@ func (r *userRepository) Create(ctx context.Context, user *entity.User) error {
 		user.Email,
 		user.PasswordHash,
 		user.FullName,
+		user.RoleID,
 		user.Phone,
 		user.AvatarURL,
 		user.IsActive,
@@ -103,9 +112,13 @@ func (r *userRepository) CreateTx(ctx context.Context, tx pgx.Tx, user *entity.U
 
 	query := `
 		INSERT INTO users (
-			id, email, password_hash, full_name, phone, avatar_url,
+			id, email, password_hash, full_name, role_id, phone, avatar_url,
 			is_active, is_verified, created_at
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		) VALUES (
+			$1, $2, $3, $4,
+			COALESCE(NULLIF($5, '00000000-0000-0000-0000-000000000000'::uuid), (SELECT id FROM roles WHERE name = 'user' LIMIT 1)),
+			$6, $7, $8, $9, $10
+		)
 		RETURNING id, created_at, updated_at
 	`
 	err := tx.QueryRow(subCtx,
@@ -114,6 +127,7 @@ func (r *userRepository) CreateTx(ctx context.Context, tx pgx.Tx, user *entity.U
 		user.Email,
 		user.PasswordHash,
 		user.FullName,
+		user.RoleID,
 		user.Phone,
 		user.AvatarURL,
 		user.IsActive,
@@ -150,15 +164,52 @@ func (r *userRepository) FindByID(ctx context.Context, id uuid.UUID) (*entity.Us
 	defer cancel()
 
 	query := `
-		SELECT * FROM users WHERE id = $1 AND deleted_at IS NULL
+		SELECT 
+			u.id, u.email, u.password_hash, u.full_name, u.role_id, u.phone, u.avatar_url,
+			u.two_fa_secret, u.is_active, u.is_verified, u.created_at, u.updated_at,
+			r.id, r.name, r.level
+		FROM users u
+		LEFT JOIN roles r ON u.role_id = r.id
+		WHERE u.id = $1 AND u.deleted_at IS NULL
 	`
 	var user entity.User
-	err := pgxscan.Get(subCtx, r.db, &user, query, id)
+	var userRoleID uuid.NullUUID
+	var roleID uuid.NullUUID
+	var roleName sql.NullString
+	var roleLevel sql.NullInt32
+
+	err := r.db.QueryRow(subCtx, query, id).Scan(
+		&user.ID,
+		&user.Email,
+		&user.PasswordHash,
+		&user.FullName,
+		&userRoleID,
+		&user.Phone,
+		&user.AvatarURL,
+		&user.TwoFaSecret,
+		&user.IsActive,
+		&user.IsVerified,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+		&roleID,
+		&roleName,
+		&roleLevel,
+	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, fmt.Errorf("user not found")
 		}
 		return nil, fmt.Errorf("failed to find user by id: %w", err)
+	}
+
+	if userRoleID.Valid {
+		user.RoleID = userRoleID.UUID
+	} else {
+		user.RoleID = uuid.Nil
+	}
+
+	if roleID.Valid {
+		user.Role = &entity.Role{ID: roleID.UUID, Name: roleName.String, Level: entity.RoleLevel(roleLevel.Int32)}
 	}
 	return &user, nil
 }
@@ -167,15 +218,52 @@ func (r *userRepository) FindByEmail(ctx context.Context, email string) (*entity
 	defer cancel()
 
 	query := `
-		SELECT * FROM users WHERE email = $1 AND deleted_at IS NULL
+		SELECT 
+			u.id, u.email, u.password_hash, u.full_name, u.role_id, u.phone, u.avatar_url,
+			u.two_fa_secret, u.is_active, u.is_verified, u.created_at, u.updated_at,
+			r.id, r.name, r.level
+		FROM users u
+		LEFT JOIN roles r ON u.role_id = r.id
+		WHERE u.email = $1 AND u.deleted_at IS NULL
 	`
 	var user entity.User
-	err := pgxscan.Get(subCtx, r.db, &user, query, email)
+	var userRoleID uuid.NullUUID
+	var roleID uuid.NullUUID
+	var roleName sql.NullString
+	var roleLevel sql.NullInt32
+
+	err := r.db.QueryRow(subCtx, query, email).Scan(
+		&user.ID,
+		&user.Email,
+		&user.PasswordHash,
+		&user.FullName,
+		&userRoleID,
+		&user.Phone,
+		&user.AvatarURL,
+		&user.TwoFaSecret,
+		&user.IsActive,
+		&user.IsVerified,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+		&roleID,
+		&roleName,
+		&roleLevel,
+	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, fmt.Errorf("user not found")
 		}
 		return nil, fmt.Errorf("failed to find user by email: %w", err)
+	}
+
+	if userRoleID.Valid {
+		user.RoleID = userRoleID.UUID
+	} else {
+		user.RoleID = uuid.Nil
+	}
+
+	if roleID.Valid {
+		user.Role = &entity.Role{ID: roleID.UUID, Name: roleName.String, Level: entity.RoleLevel(roleLevel.Int32)}
 	}
 	return &user, nil
 }
@@ -187,17 +275,19 @@ func (r *userRepository) Update(ctx context.Context, user *entity.User) (*entity
 		UPDATE users SET
 			email = $1,
 			full_name = $2,
-			phone = $3,
-			avatar_url = $4,
-			is_active = $5,
-			is_verified = $6,
-			email_verified_at = $7
-		WHERE id = $8 AND deleted_at IS NULL
-		RETURNING id, email, full_name, phone, avatar_url, is_active, is_verified, email_verified_at, last_login_at, created_at, updated_at
+			role_id = COALESCE(NULLIF($3, '00000000-0000-0000-0000-000000000000'::uuid), role_id, (SELECT id FROM roles WHERE name = 'user' LIMIT 1)),
+			phone = $4,
+			avatar_url = $5,
+			is_active = $6,
+			is_verified = $7,
+			email_verified_at = $8
+		WHERE id = $9 AND deleted_at IS NULL
+		RETURNING id, email, full_name, role_id, phone, avatar_url, is_active, is_verified, email_verified_at, last_login_at, created_at, updated_at
 	`
 	args := []interface{}{
 		user.Email,
 		user.FullName,
+		user.RoleID,
 		user.Phone,
 		user.AvatarURL,
 		user.IsActive,
@@ -214,6 +304,7 @@ func (r *userRepository) Update(ctx context.Context, user *entity.User) (*entity
 		&updatedUser.ID,
 		&updatedUser.Email,
 		&updatedUser.FullName,
+		&updatedUser.RoleID,
 		&updatedUser.Phone,
 		&updatedUser.AvatarURL,
 		&updatedUser.IsActive,
@@ -248,17 +339,19 @@ func (r *userRepository) UpdateTx(ctx context.Context, tx pgx.Tx, user *entity.U
 		UPDATE users SET
 			email = $1,
 			full_name = $2,
-			phone = $3,
-			avatar_url = $4,
-			is_active = $5,
-			is_verified = $6,
-			email_verified_at = $7
-		WHERE id = $8 AND deleted_at IS NULL
-		RETURNING id, email, full_name, phone, avatar_url, is_active, is_verified, email_verified_at, last_login_at, created_at, updated_at
+			role_id = COALESCE(NULLIF($3, '00000000-0000-0000-0000-000000000000'::uuid), role_id, (SELECT id FROM roles WHERE name = 'user' LIMIT 1)),
+			phone = $4,
+			avatar_url = $5,
+			is_active = $6,
+			is_verified = $7,
+			email_verified_at = $8
+		WHERE id = $9 AND deleted_at IS NULL
+		RETURNING id, email, full_name, role_id, phone, avatar_url, is_active, is_verified, email_verified_at, last_login_at, created_at, updated_at
 	`
 	args := []interface{}{
 		user.Email,
 		user.FullName,
+		user.RoleID,
 		user.Phone,
 		user.AvatarURL,
 		user.IsActive,
@@ -272,6 +365,7 @@ func (r *userRepository) UpdateTx(ctx context.Context, tx pgx.Tx, user *entity.U
 		&updatedUser.ID,
 		&updatedUser.Email,
 		&updatedUser.FullName,
+		&updatedUser.RoleID,
 		&updatedUser.Phone,
 		&updatedUser.AvatarURL,
 		&updatedUser.IsActive,
@@ -662,4 +756,106 @@ func (r *userRepository) buildBaseQuery(baseQuery string, filter *Filter) *Query
 	}
 
 	return qb
+}
+
+func (r *userRepository) FindByRoleID(ctx context.Context, roleID uuid.UUID) ([]*entity.User, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	query := `
+		SELECT 
+			u.id, u.email, u.password_hash, u.full_name, u.role_id, u.phone, u.avatar_url,
+			u.two_fa_secret, u.is_active, u.is_verified, u.created_at, u.updated_at,
+			r.id, r.name, r.level
+		FROM users u
+		LEFT JOIN roles r ON u.role_id = r.id
+		WHERE u.role_id = $1 AND u.deleted_at IS NULL
+	`
+
+	rows, err := r.db.Query(subCtx, query, roleID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query users by role_id: %w", err)
+	}
+	defer rows.Close()
+
+	var users []*entity.User
+	for rows.Next() {
+		var user entity.User
+		var userRoleID uuid.NullUUID
+		var roleID uuid.NullUUID
+		var roleName sql.NullString
+		var roleLevel sql.NullInt32
+
+		err := rows.Scan(
+			&user.ID,
+			&user.Email,
+			&user.PasswordHash,
+			&user.FullName,
+			&userRoleID,
+			&user.Phone,
+			&user.AvatarURL,
+			&user.TwoFaSecret,
+			&user.IsActive,
+			&user.IsVerified,
+			&user.CreatedAt,
+			&user.UpdatedAt,
+			&roleID,
+			&roleName,
+			&roleLevel,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan user: %w", err)
+		}
+
+		if userRoleID.Valid {
+			user.RoleID = userRoleID.UUID
+		} else {
+			user.RoleID = uuid.Nil
+		}
+		if roleID.Valid {
+			user.Role = &entity.Role{ID: roleID.UUID, Name: roleName.String, Level: entity.RoleLevel(roleLevel.Int32)}
+		}
+
+		users = append(users, &user)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed to iterate rows: %w", err)
+	}
+	return users, nil
+}
+
+func (r *userRepository) FindRoleByName(ctx context.Context, name string) (*entity.Role, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	query := `
+		SELECT id, name, slug, description, level, created_at, updated_at
+		FROM roles
+		WHERE name = $1 AND deleted_at IS NULL
+		LIMIT 1
+	`
+	var role entity.Role
+	err := pgxscan.Get(subCtx, r.db, &role, query, name)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, fmt.Errorf("role not found")
+		}
+		return nil, fmt.Errorf("failed to find role: %w", err)
+	}
+	return &role, nil
+}
+
+func (r *userRepository) SetRoleID(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	query := `UPDATE users SET role_id = $1 WHERE id = $2 AND deleted_at IS NULL`
+	result, err := r.db.Exec(subCtx, query, roleID, userID)
+	if err != nil {
+		return fmt.Errorf("failed to update user role: %w", err)
+	}
+	if result.RowsAffected() == 0 {
+		return fmt.Errorf("user not found or already updated")
+	}
+	return nil
 }

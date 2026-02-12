@@ -21,6 +21,9 @@ func RegisterApiRoutes(router fiber.Router, cont *dependencies.Container, mw *fa
 	authFactory := factory.NewAuthFactory(cont, mw)
 	authFactory.GetRoutes(router)
 
+	adminUserFactory := factory.NewAdminUserFactory(cont, mw)
+	adminUserFactory.GetRoutes(router)
+
 	animeFactory := factory.NewAnimeFactory(cont, mw)
 	animeFactory.GetRoutes(router)
 

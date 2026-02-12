@@ -60,8 +60,13 @@ func (rm *RateLimiterMiddleware) ResetLimitCounters(c *fiber.Ctx) {
 	ip := c.Locals("real_ip").(string)
 	patterns := []string{
 		fmt.Sprintf("rate:%s:%s", "login", ip),
-		fmt.Sprintf("delay:%s:%s", "forgot", ip),
-		fmt.Sprintf("block:%s:%s", "confirm_password", ip),
+		fmt.Sprintf("delay:%s:%s", "login", ip),
+		fmt.Sprintf("rate:%s:%s", "register", ip),
+		fmt.Sprintf("delay:%s:%s", "register", ip),
+		fmt.Sprintf("rate:%s:%s", "reset_password", ip),
+		fmt.Sprintf("delay:%s:%s", "reset_password", ip),
+		fmt.Sprintf("rate:%s:%s", "verify_email", ip),
+		fmt.Sprintf("block:%s:%s", "change_password", ip),
 	}
 
 	for _, pattern := range patterns {

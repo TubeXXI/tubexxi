@@ -68,7 +68,7 @@ func (s *UserService) GetUserByID(ctx context.Context, userID string) (*entity.U
 		zap.String("user_id", userID),
 	)
 
-	return user.ToResponse(), nil
+	return user, nil
 }
 func (s *UserService) GetUserByEmail(ctx context.Context, email string) (*entity.User, error) {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
@@ -83,7 +83,7 @@ func (s *UserService) GetUserByEmail(ctx context.Context, email string) (*entity
 		zap.String("email", email),
 	)
 
-	return user.ToResponse(), nil
+	return user, nil
 }
 func (s *UserService) Logout(ctx context.Context, userID string) error {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)

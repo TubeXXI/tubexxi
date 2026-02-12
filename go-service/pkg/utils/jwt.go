@@ -23,7 +23,7 @@ func GenerateJWT(jwtSecret string, user *entity.User, expiry time.Duration) (str
 		UserID:    user.ID.String(),
 		Email:     user.Email,
 		RoleID:    user.Role.ID.String(),
-		RoleLevel: user.Role.Level,
+		RoleLevel: int(user.Role.Level),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(now.Add(expiry)),
 			IssuedAt:  jwt.NewNumericDate(now),

@@ -22,11 +22,23 @@ type AuthService struct {
 	logger   *zap.Logger
 	firebase *firebaseclient.FirebaseClient
 	userRepo repository.UserRepository
+	roleRepo repository.RoleRepository
 	mail     *helpers.MailHelper
 }
 
-func NewAuthService(logger *zap.Logger, firebase *firebaseclient.FirebaseClient, userRepo repository.UserRepository, mail *helpers.MailHelper) *AuthService {
-	return &AuthService{logger: logger, firebase: firebase, userRepo: userRepo, mail: mail}
+func NewAuthService(
+	logger *zap.Logger,
+	firebase *firebaseclient.FirebaseClient,
+	userRepo repository.UserRepository,
+	roleRepo repository.RoleRepository,
+	mail *helpers.MailHelper) *AuthService {
+	return &AuthService{
+		logger:   logger,
+		firebase: firebase,
+		userRepo: userRepo,
+		roleRepo: roleRepo,
+		mail:     mail,
+	}
 }
 
 func (s *AuthService) LoginWithIDToken(ctx context.Context, idToken string) (*dto.FirebaseAuthResponse, error) {
@@ -70,6 +82,13 @@ func (s *AuthService) LoginWithIDToken(ctx context.Context, idToken string) (*dt
 		u.Phone = entity.NewNullString(phone)
 		u.AvatarURL = entity.NewNullString(picture)
 
+		role, err := s.roleRepo.FindByLevel(ctx, entity.RoleLevelUser)
+		if err != nil {
+			return nil, fmt.Errorf("failed to find role: %w", err)
+		}
+
+		u.RoleID = role.ID
+
 		if createErr := s.userRepo.CreateWithRecovery(ctx, u); createErr != nil {
 			return nil, createErr
 		}
@@ -78,6 +97,26 @@ func (s *AuthService) LoginWithIDToken(ctx context.Context, idToken string) (*dt
 
 	if emailVerified && !user.IsVerified {
 		_ = s.userRepo.SetEmailVerified(ctx, user.ID, true)
+		user.IsVerified = true
+	}
+
+	changed := false
+	if name != "" && (strings.TrimSpace(user.FullName) == "" || user.FullName == "User") {
+		user.FullName = name
+		changed = true
+	}
+	if phone != "" && !user.Phone.Valid {
+		user.Phone = entity.NewNullString(phone)
+		changed = true
+	}
+	if picture != "" && !user.AvatarURL.Valid {
+		user.AvatarURL = entity.NewNullString(picture)
+		changed = true
+	}
+	if changed {
+		if updated, upErr := s.userRepo.UpdateWithRecovery(ctx, user); upErr == nil && updated != nil {
+			user = updated
+		}
 	}
 
 	return &dto.FirebaseAuthResponse{
@@ -117,7 +156,7 @@ func (s *AuthService) RegisterWithEmail(ctx context.Context, req *dto.FirebaseRe
 
 	user, findErr := s.userRepo.FindByEmail(ctx, req.Email)
 	if findErr != nil {
-		hash, hashErr := utils.HashPassword(utils.GenerateRandomPassword())
+		hash, hashErr := utils.HashPassword(req.Password)
 		if hashErr != nil {
 			return nil, fmt.Errorf("failed to hash password")
 		}
@@ -136,6 +175,13 @@ func (s *AuthService) RegisterWithEmail(ctx context.Context, req *dto.FirebaseRe
 		}
 		u.Phone = entity.NewNullString(req.Phone)
 		u.AvatarURL = entity.NewNullString(req.AvatarURL)
+
+		role, err := s.roleRepo.FindByLevel(ctx, entity.RoleLevelUser)
+		if err != nil {
+			return nil, fmt.Errorf("failed to find role: %w", err)
+		}
+		u.RoleID = role.ID
+
 		if createErr := s.userRepo.CreateWithRecovery(ctx, u); createErr != nil {
 			return nil, createErr
 		}

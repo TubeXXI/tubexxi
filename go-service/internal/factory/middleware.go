@@ -42,6 +42,7 @@ func NewMiddlewareFactory(cont *dependencies.Container) *MiddlewareFactory {
 			cont.Notifier,
 			ctxinject,
 			cont.FirebaseClient,
+			cont.RoleRepo,
 			cont.UserRepo,
 			cont.Logger,
 			!cont.AppConfig.App.IsDevelopment(),

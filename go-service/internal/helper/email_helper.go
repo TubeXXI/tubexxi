@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/smtp"
 	"strconv"
+	"time"
 	"tubexxi/video-api/config"
 	"tubexxi/video-api/internal/dto"
 
@@ -43,14 +44,24 @@ func (h *MailHelper) SendEmail(payload *dto.SendMailMetaData) error {
 }
 
 func (h *MailHelper) SendVerificationEmail(payload *dto.SendMailMetaData) error {
-	url := fmt.Sprintf("https://%s/confirm?token=%s", h.appConfig.ClientUrl, payload.Token)
+	url := payload.GetURL(h.appConfig.ClientUrl)
+	if url == "" {
+		url = fmt.Sprintf("https://%s/verify-email?token=%s", h.appConfig.ClientUrl, payload.Token)
+	}
+
+	username := payload.To
+	if payload.User != nil && payload.User.FullName != "" {
+		username = payload.User.FullName
+	}
 
 	data := struct {
+		Username        string
 		VerificationURL string
 		Year            int
 	}{
+		Username:        username,
 		VerificationURL: url,
-		Year:            2025,
+		Year:            time.Now().Year(),
 	}
 
 	subject := "Verify Your Email Address"
@@ -63,14 +74,24 @@ func (h *MailHelper) SendVerificationEmail(payload *dto.SendMailMetaData) error 
 }
 
 func (h *MailHelper) SendResetPasswordEmail(payload *dto.SendMailMetaData) error {
-	url := fmt.Sprintf("https://%s/reset?token=%s", h.appConfig.ClientUrl, payload.Token)
+	url := payload.GetURL(h.appConfig.ClientUrl)
+	if url == "" {
+		url = fmt.Sprintf("https://%s/reset?token=%s", h.appConfig.ClientUrl, payload.Token)
+	}
+
+	username := payload.To
+	if payload.User != nil && payload.User.FullName != "" {
+		username = payload.User.FullName
+	}
 
 	data := struct {
+		Username string
 		ResetURL string
 		Year     int
 	}{
+		Username: username,
 		ResetURL: url,
-		Year:     2025,
+		Year:     time.Now().Year(),
 	}
 
 	subject := "Reset Your Password"
@@ -83,16 +104,23 @@ func (h *MailHelper) SendResetPasswordEmail(payload *dto.SendMailMetaData) error
 }
 
 func (h *MailHelper) SendRegistrationInfo(payload *dto.SendMailMetaData) error {
+	username := payload.To
+	if payload.User != nil && payload.User.FullName != "" {
+		username = payload.User.FullName
+	}
+
 	data := struct {
+		Username string
 		Email    string
 		Password string
 		LoginURL string
 		Year     int
 	}{
+		Username: username,
 		Email:    payload.To,
 		Password: payload.Password,
 		LoginURL: fmt.Sprintf("https://%s/sign-in", h.appConfig.ClientUrl),
-		Year:     2025,
+		Year:     time.Now().Year(),
 	}
 
 	subject := "Welcome to AGC Forge - Account Information"

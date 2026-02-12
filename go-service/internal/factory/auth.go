@@ -16,7 +16,13 @@ type AuthFactory struct {
 }
 
 func NewAuthFactory(cont *dependencies.Container, mw *MiddlewareFactory) *AuthFactory {
-	svc := service.NewAuthService(cont.Logger, cont.FirebaseClient, cont.UserRepo, cont.EmailHelper)
+	svc := service.NewAuthService(
+		cont.Logger,
+		cont.FirebaseClient,
+		cont.UserRepo,
+		cont.RoleRepo,
+		cont.EmailHelper,
+	)
 	h := handler.NewAuthHandler(mw.ContextMiddleware, svc)
 	r := routes.NewAuthRoutes(h, mw.RateLimiter, mw.AuthMiddleware)
 	return &AuthFactory{service: svc, handler: h, routes: r}

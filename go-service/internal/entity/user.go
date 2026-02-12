@@ -12,6 +12,7 @@ type User struct {
 	Email           string     `json:"email" db:"email" validate:"required,email,max=255"`
 	PasswordHash    string     `json:"-" db:"password_hash"`
 	FullName        string     `json:"full_name" db:"full_name" validate:"required,max=255"`
+	RoleID          uuid.UUID  `json:"role_id" db:"role_id"`
 	Phone           NullString `json:"phone,omitempty" db:"phone" validate:"omitempty,max=20"`
 	AvatarURL       NullString `json:"avatar_url,omitempty" db:"avatar_url"`
 	TwoFaSecret     NullString `json:"two_fa_secret,omitempty" db:"two_fa_secret"`

@@ -31,6 +31,7 @@ type AuthMiddleware struct {
 	notifier     telegram.Notifier
 	ctxinject    *ContextMiddleware
 	firebase     *firebaseclient.FirebaseClient
+	roleRepo     repository.RoleRepository
 	userRepo     repository.UserRepository
 	logger       *zap.Logger
 	checkRevoked bool
@@ -40,6 +41,7 @@ func NewAuthMiddleware(
 	notifier telegram.Notifier,
 	ctxinject *ContextMiddleware,
 	firebase *firebaseclient.FirebaseClient,
+	roleRepo repository.RoleRepository,
 	userRepo repository.UserRepository,
 	logger *zap.Logger,
 	checkRevoked bool,
@@ -48,6 +50,7 @@ func NewAuthMiddleware(
 		notifier:     notifier,
 		ctxinject:    ctxinject,
 		firebase:     firebase,
+		roleRepo:     roleRepo,
 		userRepo:     userRepo,
 		logger:       logger,
 		checkRevoked: checkRevoked,
@@ -108,6 +111,13 @@ func (m *AuthMiddleware) FirebaseAuth() fiber.Handler {
 				CreatedAt:    time.Now(),
 			}
 
+			role, err := m.roleRepo.FindByLevel(ctx, entity.RoleLevelUser)
+			if err != nil {
+				m.logger.Error("failed to find role: %w", zap.Error(err))
+				return response.Error(c, fiber.StatusInternalServerError, "internal_error", nil)
+			}
+			newUser.RoleID = role.ID
+
 			if createErr := m.userRepo.CreateWithRecovery(ctx, newUser); createErr != nil {
 				m.logger.Error("failed to create user from firebase token", zap.Error(createErr), zap.String("email", email))
 				return response.Error(c, fiber.StatusUnauthorized, ErrInvalidToken, nil)
@@ -115,7 +125,38 @@ func (m *AuthMiddleware) FirebaseAuth() fiber.Handler {
 			user = newUser
 		}
 
-		roleLevel, roleName := extractRoleFromClaims(firebaseToken.Claims)
+		if emailVerified && !user.IsVerified {
+			_ = m.userRepo.SetEmailVerified(ctx, user.ID, true)
+			user.IsVerified = true
+		}
+
+		changed := false
+		if name != "" && (strings.TrimSpace(user.FullName) == "" || user.FullName == "User") {
+			user.FullName = name
+			changed = true
+		}
+		if phone != "" && !user.Phone.Valid {
+			user.Phone = entity.NewNullString(phone)
+			changed = true
+		}
+		if picture != "" && !user.AvatarURL.Valid {
+			user.AvatarURL = entity.NewNullString(picture)
+			changed = true
+		}
+		if changed {
+			if updated, upErr := m.userRepo.UpdateWithRecovery(ctx, user); upErr == nil && updated != nil {
+				user = updated
+			}
+		}
+
+		roleLevel := entity.RoleLevelUser
+		roleName := entity.RoleUser
+		if user.Role != nil && user.Role.ID != uuid.Nil {
+			roleLevel = int(user.Role.Level)
+			roleName = user.Role.Name
+		} else {
+			roleLevel, roleName = extractRoleFromClaims(firebaseToken.Claims)
+		}
 
 		c.Locals("user_id", user.ID.String())
 		c.Locals("email", user.Email)
@@ -126,6 +167,8 @@ func (m *AuthMiddleware) FirebaseAuth() fiber.Handler {
 
 		m.logger.Debug("✅ [FINAL] Firebase authentication successful",
 			zap.String("user_id", user.ID.String()),
+			zap.Int("role_level", roleLevel),
+			zap.String("role_name", roleName),
 			zap.String("firebase_uid", firebaseToken.UID),
 			zap.String("path", c.Path()))
 
@@ -135,7 +178,7 @@ func (m *AuthMiddleware) FirebaseAuth() fiber.Handler {
 
 func extractRoleFromClaims(claims map[string]interface{}) (int, string) {
 	if claims == nil {
-		return 0, "user"
+		return entity.RoleLevelUser, entity.RoleUser
 	}
 	if v, ok := claims["role_level"]; ok {
 		switch t := v.(type) {
@@ -147,30 +190,30 @@ func extractRoleFromClaims(claims map[string]interface{}) (int, string) {
 		}
 	}
 	if v, ok := claims["admin"].(bool); ok && v {
-		return 2, "admin"
+		return entity.RoleLevelAdmin, entity.RoleAdmin
 	}
 	if v, ok := claims["role"].(string); ok {
 		s := strings.ToLower(strings.TrimSpace(v))
 		switch s {
-		case "superadmin":
-			return 1, "superadmin"
-		case "admin":
-			return 2, "admin"
+		case entity.RoleSuperAdmin:
+			return entity.RoleLevelSuperAdmin, entity.RoleSuperAdmin
+		case entity.RoleAdmin:
+			return entity.RoleLevelAdmin, entity.RoleAdmin
 		default:
-			return 0, "user"
+			return entity.RoleLevelUser, entity.RoleUser
 		}
 	}
-	return 0, "user"
+	return entity.RoleLevelUser, entity.RoleUser
 }
 
 func roleNameFromLevel(level int) string {
 	switch level {
-	case 1:
-		return "superadmin"
-	case 2:
-		return "admin"
+	case entity.RoleLevelSuperAdmin:
+		return entity.RoleSuperAdmin
+	case entity.RoleLevelAdmin:
+		return entity.RoleAdmin
 	default:
-		return "user"
+		return entity.RoleUser
 	}
 }
 func (m *AuthMiddleware) extractTokenFromHeader(c *fiber.Ctx) (string, error) {

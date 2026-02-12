@@ -5,6 +5,7 @@ import (
 	"time"
 	"tubexxi/video-api/internal/entity"
 	"tubexxi/video-api/internal/infrastructure/contextpool"
+	redisclient "tubexxi/video-api/internal/infrastructure/redis-client"
 	"tubexxi/video-api/internal/infrastructure/repository"
 
 	"go.uber.org/zap"
@@ -12,15 +13,18 @@ import (
 
 type ApplicationService struct {
 	applicationRepo repository.ApplicationRepository
+	redis           *redisclient.RedisClient
 	logger          *zap.Logger
 }
 
 func NewApplicationService(
 	applicationRepo repository.ApplicationRepository,
+	redis *redisclient.RedisClient,
 	logger *zap.Logger,
 ) *ApplicationService {
 	return &ApplicationService{
 		applicationRepo: applicationRepo,
+		redis:           redis,
 		logger:          logger,
 	}
 }

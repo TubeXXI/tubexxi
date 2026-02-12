@@ -135,6 +135,18 @@ func (fc *FirebaseClient) GetUser(ctx context.Context, uid string) (*auth.UserRe
 	return user, nil
 }
 
+func (fc *FirebaseClient) GetUserByEmail(ctx context.Context, email string) (*auth.UserRecord, error) {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
+	user, err := fc.AuthClient.GetUserByEmail(ctx, email)
+	if err != nil {
+		fc.logger.Error("Failed to get user by email", zap.String("email", email), zap.Error(err))
+		return nil, err
+	}
+	return user, nil
+}
+
 func (fc *FirebaseClient) CreateUser(ctx context.Context, email string, password string, displayName string) (*auth.UserRecord, error) {
 	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
 	defer cancel()
@@ -186,6 +198,17 @@ func (fc *FirebaseClient) PasswordResetLink(ctx context.Context, email string) (
 		return "", err
 	}
 	return link, nil
+}
+
+func (fc *FirebaseClient) SetCustomUserClaims(ctx context.Context, uid string, claims map[string]interface{}) error {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
+	if err := fc.AuthClient.SetCustomUserClaims(ctx, uid, claims); err != nil {
+		fc.logger.Error("Failed to set custom user claims", zap.String("uid", uid), zap.Error(err))
+		return err
+	}
+	return nil
 }
 
 func (fc *FirebaseClient) Close() error {
