@@ -2,10 +2,9 @@ import { defaultMetaTags } from '@/utils/meta-tags.js';
 import type { SingleResponse } from "@siamf/google-translate";
 import { capitalizeFirstLetter } from "@/utils/format.js";
 import { superValidate } from 'sveltekit-superforms';
-import { loginSchema } from '$lib/utils/schema';
+import { registerSchema } from '$lib/utils/schema';
 import { fail } from '@sveltejs/kit';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { localizeHref } from '@/paraglide/runtime';
 import * as i18n from '@/paraglide/messages.js';
 
 export const load = async ({ locals, parent }) => {
@@ -14,7 +13,7 @@ export const load = async ({ locals, parent }) => {
 	const defaultOrigin = await parent().then((data) => data.canonicalUrl || '');
 	const alternates = await parent().then((data) => data.alternates || []);
 
-	const title = await deps.languageHelper.singleTranslate('Login', lang) as SingleResponse;
+	const title = await deps.languageHelper.singleTranslate('Register', lang) as SingleResponse;
 	const siteName = await deps.languageHelper.singleTranslate(settings?.WEBSITE?.site_name || '', lang) as SingleResponse;
 	const tagline = await deps.languageHelper.singleTranslate(settings?.WEBSITE?.site_tagline || '', lang) as SingleResponse;
 	const description = await deps.languageHelper.singleTranslate(settings?.WEBSITE?.site_description || '', lang) as SingleResponse;
@@ -32,27 +31,30 @@ export const load = async ({ locals, parent }) => {
 		graph_type: 'website'
 	}, settings);
 
-	const loginForm = await superValidate(zod4(loginSchema));
+	const registerForm = await superValidate(zod4(registerSchema));
 
 	return {
 		pageMetaTags,
-		loginForm,
+		registerForm,
 		settings,
 		user,
 		lang
 	};
 }
-
 export const actions = {
-	default: async ({ locals, request }) => {
+	default: async ({ request, locals }) => {
 		const { deps, session } = locals;
 
 		const formData = await request.formData();
 
 		const idToken = formData.get('idToken') as string;
-		const rememberMe = formData.get('rememberMe') === 'true';
+		const email = formData.get('email') as string;
+		const password = formData.get('password') as string;
+		const full_name = formData.get('full_name') as string;
+		const phone = formData.get('phone') as string;
+		const avatar_url = formData.get('avatar_url') as string;
 
-		const form = await superValidate(formData, zod4(loginSchema));
+		const form = await superValidate(formData, zod4(registerSchema));
 
 		if (!form.valid) {
 			return fail(400, {
@@ -63,30 +65,43 @@ export const actions = {
 			});
 		}
 
-		const loginResponse = await deps.authService.Login(idToken) as FirebaseAuthResponse | Error;
+		try {
+			const registerResponse = await deps.authService.Register({
+				idToken,
+				email,
+				password,
+				full_name,
+				phone,
+				avatar_url
+			}) as FirebaseAuthResponse | Error;
 
-		if (loginResponse instanceof Error) {
-			return fail(400, {
+			if (registerResponse instanceof Error) {
+				return fail(400, {
+					form,
+					success: false,
+					message: registerResponse.message || i18n.page_sign_up_error_message(),
+					error: registerResponse
+				});
+			}
+
+			session?.set('access_token', idToken, 60 * 60 * 24);
+
+			locals.user = registerResponse.user;
+
+			return {
+				form,
+				success: true,
+				message: i18n.page_sign_in_success_message()
+			}
+
+		} catch (error) {
+			console.error('Error registering user:', error);
+			return fail(500, {
 				form,
 				success: false,
-				message: loginResponse.message || i18n.page_sign_in_error_message(),
-				error: loginResponse
+				message: error instanceof Error ? error.message : i18n.page_sign_up_error_message(),
+				error: null
 			});
 		}
-		const maxAge = rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 24;
-		session?.set('access_token', idToken, maxAge);
-
-		locals.user = loginResponse.user;
-
-		const roleName = loginResponse.user?.role?.name || '';
-		const roleLevel = loginResponse.user?.role?.level || 0;
-		const isAdmin = roleName === 'admin' || roleLevel === 1 || roleLevel === 2;
-		const destination = isAdmin ? '/admin/dashboard' : '/user/account';
-
-		return {
-			success: true,
-			message: 'Login success',
-			redirect_url: localizeHref(destination)
-		};
 	}
 }

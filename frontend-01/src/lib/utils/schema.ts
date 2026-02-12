@@ -18,10 +18,21 @@ export const loginSchema = z.object({
 	remember_me: z.boolean().default(false)
 });
 export const registerSchema = z.object({
-	id_token: z.string().nonempty('ID token is required'),
-	email: z.string().email('Email is not valid').optional(),
-	password: z.string().min(6, 'Password must be at least 6 characters').optional(),
-	full_name: z.string().optional(),
+	id_token: z
+		.string()
+		.nonempty({ error: "Please is required" }),
+	email: z
+		.string()
+		.email({ error: 'Email is not valid' })
+		.nonempty({ error: "Please is required" }),
+	password: z
+		.string()
+		.min(6, 'Password must be at least 6 characters')
+		.nonempty({ error: "Please is required" })
+		.transform((value) => value.replaceAll(/\s+/g, '')),
+	full_name: z
+		.string()
+		.nonempty({ error: "Please is required" }),
 	phone: z.string().optional(),
 	avatar_url: z.string().optional()
 });

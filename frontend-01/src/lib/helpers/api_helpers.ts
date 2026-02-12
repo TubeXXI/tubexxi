@@ -125,13 +125,13 @@ export class ApiClientHandler extends BaseHelper implements ApiClient {
 		}
 
 		if (options.auth) {
-			// Try getting token from options first (if passed explicitly), then cookie
-			let accessToken = this.event.cookies.get('access_token');
-
-			if (accessToken) {
-				headers.set('Authorization', `Bearer ${accessToken}`);
-			} else {
-				console.warn('🔍 [ApiClient] Warning: Auth required but no access_token found in cookies');
+			if (!headers.get('Authorization')) {
+				const accessToken = this.event.cookies.get('access_token');
+				if (accessToken) {
+					headers.set('Authorization', `Bearer ${accessToken}`);
+				} else {
+					console.warn('🔍 [ApiClient] Warning: Auth required but no access_token found in cookies');
+				}
 			}
 		}
 
@@ -249,9 +249,11 @@ export class ApiClientHandler extends BaseHelper implements ApiClient {
 		}
 
 		if (options.auth) {
-			let accessToken = this.event.cookies.get('access_token');
-			if (accessToken) {
-				headers.set('Authorization', `Bearer ${accessToken}`);
+			if (!headers.get('Authorization')) {
+				const accessToken = this.event.cookies.get('access_token');
+				if (accessToken) {
+					headers.set('Authorization', `Bearer ${accessToken}`);
+				}
 			}
 		}
 

@@ -1,5 +1,6 @@
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { BaseHelper } from './base_helper';
+import { localizeHref } from '@/paraglide/runtime';
 
 export class AuthHelper extends BaseHelper {
 	constructor(event: RequestEvent) {
@@ -19,7 +20,7 @@ export class AuthHelper extends BaseHelper {
 
 	handleUnauthorized() {
 		this.clearAuthCookies();
-		throw redirect(302, '/auth/login');
+		throw redirect(302, localizeHref('/auth/login'));
 	}
 
 	getSessionByTokenType(tokenType: SessionType) {

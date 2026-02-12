@@ -1,7 +1,7 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { BaseService } from './base_service';
 import type {
-	RegisterAppSchema,
+	RegisterSchema,
 	ResetPasswordSchema,
 	VerifyEmailSchema,
 	ChangePasswordSchema
@@ -27,7 +27,7 @@ export class AuthServiceImpl extends BaseService implements AuthService {
 			return error instanceof Error ? error : new Error('Failed to login');
 		}
 	}
-	async Register(data: RegisterAppSchema): Promise<FirebaseAuthResponse | Error> {
+	async Register(data: RegisterSchema): Promise<FirebaseAuthResponse | Error> {
 		try {
 			const response = await this.api.publicRequest<FirebaseAuthResponse>('POST', '/auth/register', data);
 			if (!response.success) {

@@ -24,8 +24,8 @@ export const defaultMetaTags = (
 		site: '@idtubexxi',
 		image:
 			setting?.SYSTEM.source_logo_favicon === 'remote'
-				? (isValidUrl(setting?.WEBSITE.site_logo || '') ? setting?.WEBSITE.site_logo || '/images/cover.png' : '/images/cover.png')
-				: '/images/cover.png',
+				? (isValidUrl(setting?.WEBSITE.site_logo || '') ? setting?.WEBSITE.site_logo || '/images/app-bg.jpg' : '/images/app-bg.jpg')
+				: '/images/app-bg.jpg',
 		title: options?.title || setting?.WEBSITE.site_name || defaultSettings.WEBSITE.site_name
 	},
 	additionalMetaTags: [
@@ -66,7 +66,7 @@ export const defaultMetaTags = (
 		},
 		{
 			name: 'mobile-web-app-icon',
-			content: '/mobile-web-app-icon.png'
+			content: '/images/icon.png'
 		}
 	] as MetaTag[],
 	additionalLinkTags: [

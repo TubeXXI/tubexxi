@@ -425,7 +425,7 @@ declare global {
 	}
 	interface AuthService {
 		Login(idToken: string): Promise<FirebaseAuthResponse | Error>;
-		Register(data: RegisterAppSchema): Promise<FirebaseAuthResponse | Error>;
+		Register(data: RegisterSchema): Promise<FirebaseAuthResponse | Error>;
 		ResetPassword(data: ResetPasswordSchema): Promise<string | Error>;
 		VerifyEmail(data: VerifyEmailSchema): Promise<string | Error>;
 		ChangePassword(data: ChangePasswordSchema): Promise<string | Error>;
