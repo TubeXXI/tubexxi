@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "name": "Frontend (SvelteKit)",
+      "path": "frontend-01"
+    }
+  ],
+  "settings": {
+    "typescript.tsdk": "frontend-01/node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "typescript.disableAutomaticTypeAcquisition": true,
+    "svelte.enable-ts-plugin": true,
+    "files.associations": {
+      "*.svelte": "svelte"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "svelte.svelte-vscode",
+      "bradlc.vscode-tailwindcss",
+      "esbenp.prettier-vscode"
+    ]
+  }
+}

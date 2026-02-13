@@ -11,7 +11,7 @@ import type {
 	UpdateApplicationSchema,
 	UpdatePlatformSchema,
 	DownloadVideoSchema,
-	WebErrorReportSchema,
+	WebErrorReportSchema
 } from '@/utils/schema';
 
 declare global {
@@ -53,19 +53,19 @@ declare global {
 	};
 
 	type Movie = {
-		id: string
-		title: string
+		id: string;
+		title: string;
 		original_title?: string | null;
 		thumbnail?: string | null;
 		synopsis?: string | null;
 		rating?: number | null;
 		duration?: number | null;
 		year?: number | null;
-		date_published?: Date | null
+		date_published?: Date | null;
 		label_quality?: string | null; // '1080p' | '720p' | '480p' | '360p'
 		genre?: string | null;
 		original_page_url?: string | null;
-	}
+	};
 	type MovieDetail = Movie & {
 		votes?: number | null;
 		release_date?: Date | null;
@@ -77,24 +77,24 @@ declare global {
 		genres?: MovieGenre[] | null;
 		countries?: MovieCountry[] | null;
 		similar_movies?: Movie[] | null;
-	}
+	};
 
 	type PlayerUrl = {
 		url?: string | null; // '1080p' | '720p' | '480p' | '360p'
 		type?: string | null;
-	}
+	};
 	type MoviePerson = {
 		name?: string | null;
 		page_url?: string | null;
-	}
+	};
 	type MovieGenre = {
 		name?: string | null;
 		page_url?: string | null;
-	}
+	};
 	type MovieCountry = {
 		name?: string | null;
 		page_url?: string | null;
-	}
+	};
 
 	type SeriesDetail = Movie & {
 		season_name?: string | null;
@@ -108,26 +108,25 @@ declare global {
 		genres?: MovieGenre[] | null;
 		countries?: MovieCountry[] | null;
 		similar_movies?: Movie[] | null;
-
-	}
+	};
 	type SeasonList = {
 		current_season?: string | null;
 		total_season?: number | null;
 		episode_list?: EpisodeList[] | null;
-	}
+	};
 	type EpisodeList = {
 		episode_number?: number | null;
 		episode_url?: string | null;
 		player_url?: PlayerUrl[] | null;
 		trailer_url?: string | null;
-	}
+	};
 	type SeriesEpisode = {
 		episode_number?: number | null;
 		episode_url?: string | null;
 		player_url?: PlayerUrl[] | null;
 		trailer_url?: string | null;
 		download_url?: string | null;
-	}
+	};
 
 	type Anime = {
 		id: string;
@@ -155,7 +154,7 @@ declare global {
 	type AnimeGenre = {
 		name?: string | null;
 		url?: string | null;
-	}
+	};
 	type AnimeEpisode = {
 		id: string;
 		title?: string | null;
@@ -173,18 +172,18 @@ declare global {
 		deleted_at?: Date | null;
 		list_episodes?: AnimeListOfEpisode[] | null;
 		download_links?: DownloadLink[] | null;
-	}
+	};
 	type AnimeListOfEpisode = {
 		name?: string | null;
 		page_url?: string | null;
-	}
+	};
 	type DownloadLink = {
 		name?: string | null;
 		url?: string | null;
 		size?: string | null;
 		quality?: string | null; // '1080p' | '720p' | '480p' | '360p'
 		format?: string | null;
-	}
+	};
 
 	type Setting = {
 		id: string;
@@ -261,11 +260,15 @@ declare global {
 		group_name: string;
 		created_at: string;
 		updated_at: string;
+		name?: string;
+		api_key?: string;
+		version?: string;
+		is_active?: boolean;
 	};
 	type ApplicationValue = {
 		CONFIG: ApplicationConfig;
 		MONETIZE: ApplicationMonetize;
-	}
+	};
 	type ApplicationConfig = {
 		name: string;
 		api_key: string;
@@ -274,9 +277,27 @@ declare global {
 		type: string;
 		store_url?: string | null;
 		is_active: boolean;
-	}
+	};
+
+	type AnalyticsDaily = {
+		date: string;
+		count: number;
+	};
+
+	type Download = {
+		id: string;
+		user_id?: string;
+		movie_id?: string;
+		thumbnail_url?: string;
+		title?: string;
+		original_url?: string;
+		status?: string;
+		ip_address?: string;
+		created_at?: string;
+		updated_at?: string;
+	};
 	type ApplicationMonetize = {
-		enable_monetize: boolean
+		enable_monetize: boolean;
 		enable_admob: boolean;
 		enable_unity_ad: boolean;
 		enable_star_io_ad: boolean;
@@ -291,7 +312,7 @@ declare global {
 		unity_banner_ad?: string | null;
 		unity_interstitial_ad?: string | null;
 		unity_rewarded_ad?: string | null;
-	}
+	};
 
 	type ViewHistory = {
 		id: string;
@@ -304,10 +325,10 @@ declare global {
 		device_type?: string | null;
 		platform?: string | null;
 		view_time?: Date | null;
-		type?: 'movies' | 'series' | 'anime'
+		type?: 'movies' | 'series' | 'anime';
 		created_at: string;
 		updated_at: string;
-	}
+	};
 
 	type Ticket = {
 		id: string;
@@ -317,7 +338,7 @@ declare global {
 		status?: 'open' | 'closed' | 'resolved';
 		created_at: string;
 		updated_at: string;
-	}
+	};
 
 	type Comment = {
 		id: string;
@@ -326,7 +347,16 @@ declare global {
 		name?: string | null;
 		email?: string | null;
 		comment: string;
-		type: 'text' | 'image' | 'audio' | 'video' | 'document' | 'file' | 'location' | 'contact' | 'other';
+		type:
+			| 'text'
+			| 'image'
+			| 'audio'
+			| 'video'
+			| 'document'
+			| 'file'
+			| 'location'
+			| 'contact'
+			| 'other';
 		reply_to_id?: string | null;
 		is_edited?: boolean;
 		is_deleted?: boolean;
@@ -341,7 +371,7 @@ declare global {
 		replies?: Comment[] | null;
 		user?: User | null;
 		likes?: LikeComment[] | null;
-	}
+	};
 	type LikeComment = {
 		id: string;
 		user_id: string;
@@ -350,14 +380,23 @@ declare global {
 		updated_at: string;
 		user?: User | null;
 		comment?: Comment | null;
-	}
+	};
 
 	type Chat = {
 		id: string;
 		sender_id: string;
 		receiver_id: string;
 		message: string;
-		type: 'text' | 'image' | 'audio' | 'video' | 'document' | 'file' | 'location' | 'contact' | 'other';
+		type:
+			| 'text'
+			| 'image'
+			| 'audio'
+			| 'video'
+			| 'document'
+			| 'file'
+			| 'location'
+			| 'contact'
+			| 'other';
 		file_url?: string | null;
 		file_name?: string | null;
 		file_size?: number | null;
@@ -385,7 +424,7 @@ declare global {
 		sender_avatar?: string | null;
 		receiver_name?: string | null;
 		receiver_avatar?: string | null;
-	}
+	};
 	type ChatReaction = {
 		id: string;
 		chat_id: string;
@@ -395,7 +434,7 @@ declare global {
 		updated_at: string;
 		user?: User | null;
 		chat?: Chat | null;
-	}
+	};
 	type ChatMedia = {
 		id: string;
 		chat_id: string;
@@ -410,8 +449,7 @@ declare global {
 		thumbnail?: string | null;
 		created_at: string;
 		chat?: Chat | null;
-	}
-
+	};
 
 	// ==========================================
 	// Service Interfaces
@@ -419,7 +457,9 @@ declare global {
 	interface SettingService {
 		getPublicSettings(): Promise<SettingsValue | Error>;
 		getAllSettings(): Promise<Setting[] | Error>;
-		updateBulkSetting(settings: { key: string; value: string; description?: string; group_name: string }[]): Promise<void | Error>;
+		updateBulkSetting(
+			settings: { key: string; value: string; description?: string; group_name: string }[]
+		): Promise<void | Error>;
 		updateFavicon(favicon: File): Promise<string | Error>;
 		updateLogo(logo: File): Promise<string | Error>;
 	}
@@ -453,11 +493,11 @@ declare global {
 		GetSeriesHome(): Promise<HomeScrapperResponse | Error>;
 		GetSeriesByGenre(slug: string, page: number): Promise<PaginatedResult<Movie>>;
 		GetSeriesByCountry(country: string, page: number): Promise<PaginatedResult<Movie>>;
-		GetSeriesByYear(year: number, page?: number): Promise<PaginatedResult<Movie>>
-		SearchSeries(query: string, page?: number): Promise<PaginatedResult<Movie>>
-		GetSeriesByFeature(type: string, page?: number): Promise<PaginatedResult<Movie>>
-		GetSeriesSpecialPage(path: string, page?: number): Promise<PaginatedResult<Movie>>
-		GetSeriesDetail(slug: string): Promise<SeriesDetail | null>
+		GetSeriesByYear(year: number, page?: number): Promise<PaginatedResult<Movie>>;
+		SearchSeries(query: string, page?: number): Promise<PaginatedResult<Movie>>;
+		GetSeriesByFeature(type: string, page?: number): Promise<PaginatedResult<Movie>>;
+		GetSeriesSpecialPage(path: string, page?: number): Promise<PaginatedResult<Movie>>;
+		GetSeriesDetail(slug: string): Promise<SeriesDetail | null>;
 		GetSeriesEpisode(url: string): Promise<SeriesEpisode | null>;
 	}
 	interface AnimeService {
@@ -468,7 +508,6 @@ declare global {
 		GetDetail(url: string): Promise<Anime>;
 		GetEpisode(url: string): Promise<AnimeEpisode[]>;
 	}
-
 
 	// ==========================================
 	// Analytics Interfaces
@@ -519,4 +558,4 @@ declare global {
 	}
 }
 
-export { };
+export {};

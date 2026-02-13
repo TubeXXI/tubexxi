@@ -1,43 +1,43 @@
 <script lang="ts" module>
-type QueryOption = {
-	page: number;
-	limit: number;
-	sort_by: string;
-	order_by: 'asc' | 'desc';
-	date_from: string;
-	date_to: string;
-};
+	type QueryOption = {
+		page: number;
+		limit: number;
+		sort_by: string;
+		order_by: 'asc' | 'desc';
+		date_from: string;
+		date_to: string;
+	};
 </script>
 
 <script lang="ts">
-import { Button } from '$lib/components/ui/button/index.js';
-import { DateRangeInput } from '@/components';
-import Icon from '@iconify/svelte';
-import { IsMobile } from '@/hooks/is-mobile.svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { DateRangeInput } from '@/components';
+	import Icon from '@iconify/svelte';
+	import { IsMobile } from '@/hooks/is-mobile.svelte';
 
-let {
-	dateRange = $bindable(),
-	updateQuery,
-	onReset,
-	refresh
-}: {
-	dateRange: {
-		start: string;
-		end: string;
-	};
-	updateQuery(updates: Partial<QueryOption>, resetPage?: boolean): Promise<void>;
-	onReset(): Promise<void>;
-	refresh(): Promise<void>;
-} = $props();
+	let {
+		dateRange = $bindable(),
+		updateQuery,
+		onReset,
+		refresh
+	}: {
+		dateRange: {
+			start: string;
+			end: string;
+		};
+		updateQuery(updates: Partial<QueryOption>, resetPage?: boolean): Promise<void>;
+		onReset(): Promise<void>;
+		refresh(): Promise<void>;
+	} = $props();
 
-const mobileHook = new IsMobile();
-const isMobile = $derived(mobileHook.current);
+	const mobileHook = new IsMobile();
+	const isMobile = $derived(mobileHook.current);
 
-async function handleDateChange(range: { start: string; end: string } | null) {
-	if (range) {
-		await updateQuery({ date_from: range.start, date_to: range.end }, true);
+	async function handleDateChange(range: { start: string; end: string } | null) {
+		if (range) {
+			await updateQuery({ date_from: range.start, date_to: range.end }, true);
+		}
 	}
-}
 </script>
 
 <div class="flex w-auto flex-col items-center gap-2 lg:flex-row">

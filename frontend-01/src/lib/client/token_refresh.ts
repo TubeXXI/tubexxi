@@ -43,7 +43,7 @@ export async function checkAndRefreshToken(): Promise<boolean> {
  * Setup periodic token check (every 30 minutes)
  */
 export function setupTokenRefreshInterval(): () => void {
-	if (!browser) return () => { };
+	if (!browser) return () => {};
 
 	const interval = setInterval(
 		async () => {
@@ -59,7 +59,7 @@ export function setupTokenRefreshInterval(): () => void {
  */
 export function setupVisibilityRefresh(): () => void {
 	if (!browser) {
-		return () => { };
+		return () => {};
 	}
 
 	const handleVisibilityChange = async () => {

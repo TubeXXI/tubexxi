@@ -46,10 +46,10 @@ declare global {
 	type SessionType = 'access_token' | 'refresh_token' | 'cookie' | 'csrf';
 }
 declare module '*.md' {
-	import type { SvelteComponent } from 'svelte'
+	import type { SvelteComponent } from 'svelte';
 
-	export default class Comp extends SvelteComponent { }
+	export default class Comp extends SvelteComponent {}
 
-	export const metadata: Record<string, unknown>
+	export const metadata: Record<string, unknown>;
 }
-export { };
+export {};

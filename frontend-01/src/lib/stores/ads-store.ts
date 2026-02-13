@@ -28,29 +28,27 @@ const createAdsStore = () => {
 		open_socialbar_ad: false
 	});
 
-	const isEnableMonetize = derived(adsData, $ads => $ads?.enable_monetize ?? false);
-	const typeMonetization = derived(adsData, $ads => $ads?.type_monetize ?? 'adsterra');
+	const isEnableMonetize = derived(adsData, ($ads) => $ads?.enable_monetize ?? false);
+	const typeMonetization = derived(adsData, ($ads) => $ads?.type_monetize ?? 'adsterra');
 	const isEnablePopupAd = derived(
 		adsData,
-		$ads => ($ads?.enable_popup_ad && $ads?.popup_ad_code !== undefined) ?? false
+		($ads) => ($ads?.enable_popup_ad && $ads?.popup_ad_code !== undefined) ?? false
 	);
 	const isEnableSocialbarAd = derived(
 		adsData,
-		$ads => ($ads?.enable_socialbar_ad && $ads?.socialbar_ad_code !== undefined) ?? false
+		($ads) => ($ads?.enable_socialbar_ad && $ads?.socialbar_ad_code !== undefined) ?? false
 	);
 
 	const excludeRoutes = ['/about', '/faq', '/contact', '/privacy', '/terms'];
-	const isExcludeRoute = derived(
-		page,
-		$page => excludeRoutes.includes($page.url.pathname)
-	);
+	const isExcludeRoute = derived(page, ($page) => excludeRoutes.includes($page.url.pathname));
 
 	let visibilityHandler: (() => void) | null = null;
 
 	const handleVisibilityChange = () => {
 		if (document.visibilityState !== 'visible') return;
 
-		const shouldOpen = !get(isExcludeRoute) &&
+		const shouldOpen =
+			!get(isExcludeRoute) &&
 			get(isEnableMonetize) &&
 			(get(isEnablePopupAd) || get(isEnableSocialbarAd));
 

@@ -1,4 +1,3 @@
-
 export const load = async ({ locals, parent }) => {
 	const { user, settings, lang } = locals;
 
@@ -9,6 +8,6 @@ export const load = async ({ locals, parent }) => {
 		settings,
 		lang,
 		canonicalUrl,
-		alternates,
+		alternates
 	};
-}
+};

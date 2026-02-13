@@ -25,23 +25,9 @@ import AdminAccountUploadAvatar from './accounts/AdminAccountUploadAvatar.svelte
 import AdminDashboardChartBarInteractive from './dashboard/AdminDashboardChartBarInteractive.svelte';
 import AdminDashboardRecentDownload from './dashboard/AdminDashboardRecentDownload.svelte';
 
-// platforms
-import AdminPlatformTable from './platform/AdminPlatformTable.svelte';
-import AdminPlatformTableToolbar from './platform/AdminPlatformTableToolbar.svelte';
-import AdminPlatformUploadThumbnail from './platform/AdminPlatformUploadThumbnail.svelte';
-
 // applications
 import AdminApplicationTable from './application/AdminApplicationTable.svelte';
 import AdminApplicationTableToolbar from './application/AdminApplicationTableToolbar.svelte';
-
-// downloads
-import AdminDownloadTable from './download/AdminDownloadTable.svelte';
-import AdminDownloadTableToolbar from './download/AdminDownloadTableToolbar.svelte';
-
-// subscriptions
-import AdminSubscriptionTable from './subscription/AdminSubscriptionTable.svelte';
-import AdminSubscriptionTableToolbar from './subscription/AdminSubscriptionTableToolbar.svelte';
-import AdminSubscriptionDetail from './subscription/AdminSubscriptionDetail.svelte';
 
 // users
 import AdminUserTable from './user/AdminUserTable.svelte';
@@ -72,20 +58,9 @@ export {
 	// Dashboard
 	AdminDashboardChartBarInteractive,
 	AdminDashboardRecentDownload,
-	// platforms
-	AdminPlatformTable,
-	AdminPlatformTableToolbar,
-	AdminPlatformUploadThumbnail,
 	// applications
 	AdminApplicationTable,
 	AdminApplicationTableToolbar,
-	// downloads
-	AdminDownloadTable,
-	AdminDownloadTableToolbar,
-	// subscriptions
-	AdminSubscriptionTable,
-	AdminSubscriptionTableToolbar,
-	AdminSubscriptionDetail,
 	// users
 	AdminUserTable,
 	AdminUserTableToolbar,

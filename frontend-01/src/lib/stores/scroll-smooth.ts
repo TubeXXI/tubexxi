@@ -27,7 +27,7 @@ function createSmoothScroll() {
 
 		window.scrollTo({
 			top: offsetPosition,
-			behavior: 'smooth' as ScrollBehavior,
+			behavior: 'smooth' as ScrollBehavior
 		});
 	};
 

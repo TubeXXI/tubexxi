@@ -1,5 +1,5 @@
 import type { RequestEvent } from '@sveltejs/kit';
-import { ApiClientHandler, AuthHelper, QueryHelper, LanguageHelper } from '@/helpers';;
+import { ApiClientHandler, AuthHelper, QueryHelper, LanguageHelper } from '@/helpers';
 import {
 	SettingServiceImpl,
 	AuthServiceImpl,

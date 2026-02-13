@@ -57,4 +57,3 @@ export const PUT: RequestHandler = async (event) => {
 		{ status: 200 }
 	);
 };
-

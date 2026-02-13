@@ -31,8 +31,8 @@
 
 {#if playAnimation}
 	<span class={cn('block', className)} in:fly={{ y: -5, duration }}>
-	{#if children}
-		{@render children()}
-	{/if}
+		{#if children}
+			{@render children()}
+		{/if}
 	</span>
 {/if}

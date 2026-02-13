@@ -146,7 +146,7 @@ function createPageLoadingStore() {
 		subscribe,
 		show: () => set(true),
 		hide: () => set(false),
-		toggle: () => update(n => !n)
+		toggle: () => update((n) => !n)
 	};
 }
 

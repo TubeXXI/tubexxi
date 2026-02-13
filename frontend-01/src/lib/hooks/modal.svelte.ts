@@ -85,9 +85,7 @@ class ModalStore {
 	 * @param id - The ID of the modal to close.
 	 */
 	close(id?: string) {
-		const modalToClose = id
-			? this.state.modals.find(m => m.id === id)
-			: this.state.activeModal;
+		const modalToClose = id ? this.state.modals.find((m) => m.id === id) : this.state.activeModal;
 
 		if (!modalToClose) return;
 
@@ -97,7 +95,7 @@ class ModalStore {
 		}
 
 		// Remove modal from list
-		this.state.modals = this.state.modals.filter(m => m.id !== modalToClose.id);
+		this.state.modals = this.state.modals.filter((m) => m.id !== modalToClose.id);
 
 		// Update active modal
 		this.state.activeModal = this.state.modals[this.state.modals.length - 1] || null;
@@ -112,7 +110,7 @@ class ModalStore {
 	 * Close all open modals.
 	 */
 	closeAll() {
-		this.state.modals.forEach(modal => {
+		this.state.modals.forEach((modal) => {
 			if (modal.onClose) {
 				modal.onClose();
 			}
@@ -128,7 +126,7 @@ class ModalStore {
 	 * @param updates - Partial modal configuration to apply.
 	 */
 	update(id: string, updates: Partial<ModalConfig>) {
-		const modalIndex = this.state.modals.findIndex(m => m.id === id);
+		const modalIndex = this.state.modals.findIndex((m) => m.id === id);
 		if (modalIndex !== -1) {
 			this.state.modals[modalIndex] = { ...this.state.modals[modalIndex], ...updates };
 			if (this.state.activeModal?.id === id) {

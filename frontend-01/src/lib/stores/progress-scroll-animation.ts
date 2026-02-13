@@ -1,4 +1,3 @@
-
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
@@ -19,7 +18,6 @@ interface ScrollProgressOptions {
 	direction?: 'vertical' | 'horizontal';
 	easing?: (t: number) => number;
 }
-
 
 const PROGRESS_ANIMATIONS = {
 	fadeProgress: {
@@ -93,7 +91,7 @@ function createScrollProgressAnimationStore() {
 			const scrollY = window.scrollY;
 			const viewportHeight = window.innerHeight;
 
-			update(state => {
+			update((state) => {
 				const newAnimations = new Map(state.animations);
 
 				newAnimations.forEach((config, id) => {
@@ -108,8 +106,8 @@ function createScrollProgressAnimationStore() {
 						const viewportTop = scrollY;
 						const viewportBottom = scrollY + viewportHeight;
 
-						const startPoint = viewportBottom - (viewportHeight * config.startThreshold);
-						const endPoint = viewportTop + (viewportHeight * config.endThreshold);
+						const startPoint = viewportBottom - viewportHeight * config.startThreshold;
+						const endPoint = viewportTop + viewportHeight * config.endThreshold;
 
 						if (elementTop < startPoint && elementBottom > endPoint) {
 							const totalDistance = startPoint - endPoint;
@@ -141,9 +139,8 @@ function createScrollProgressAnimationStore() {
 			});
 		};
 
-
 		resizeHandler = () => {
-			update(state => ({
+			update((state) => ({
 				...state,
 				viewportHeight: window.innerHeight,
 				viewportWidth: window.innerWidth
@@ -179,17 +176,19 @@ function createScrollProgressAnimationStore() {
 			transition: 'opacity 0.1s, transform 0.1s, filter 0.1s'
 		});
 
-		update(state => ({
+		update((state) => ({
 			...state,
-			animations: new Map(state.animations.set(id, {
-				element,
-				animationType,
-				startThreshold,
-				endThreshold,
-				progress: 0,
-				direction,
-				easing
-			}))
+			animations: new Map(
+				state.animations.set(id, {
+					element,
+					animationType,
+					startThreshold,
+					endThreshold,
+					progress: 0,
+					direction,
+					easing
+				})
+			)
 		}));
 
 		if (scrollHandler) setTimeout(() => scrollHandler(), 100);
@@ -197,10 +196,9 @@ function createScrollProgressAnimationStore() {
 		return {
 			id,
 			destroy: () => {
-				update(state => {
+				update((state) => {
 					const newAnimations = new Map(state.animations);
 					newAnimations.delete(id);
-
 
 					Object.assign(element.style, {
 						opacity: '',
@@ -220,7 +218,7 @@ function createScrollProgressAnimationStore() {
 	const getProgress = (elementId: string): number => {
 		let progress = 0;
 
-		subscribe(state => {
+		subscribe((state) => {
 			const config = state.animations.get(elementId);
 			if (config) progress = config.progress;
 		})();

@@ -1,6 +1,6 @@
 import { writable, derived, get } from 'svelte/store';
 import { translate, type SingleResponse, type BatchResponse } from '@siamf/google-translate';
-import { langStore } from "./page_data";
+import { langStore } from './page_data';
 
 interface TranslateState {
 	isLoading: boolean;
@@ -18,11 +18,20 @@ interface TranslateOptions {
 }
 
 function createTranslateStore(): {
-	subscribe: (run: (value: TranslateState) => void, invalidate?: (value?: TranslateState) => void) => () => void;
+	subscribe: (
+		run: (value: TranslateState) => void,
+		invalidate?: (value?: TranslateState) => void
+	) => () => void;
 	singleTranslate: (text: string, options?: TranslateOptions) => Promise<SingleResponse>;
 	batchTranslate: (texts: string[], options?: TranslateOptions) => Promise<BatchResponse>;
-	autoTranslate: (text: string, options?: Omit<TranslateOptions, 'targetLang'>) => Promise<SingleResponse>;
-	translateToCurrentLang: (text: string, options?: Omit<TranslateOptions, 'targetLang'>) => Promise<SingleResponse>;
+	autoTranslate: (
+		text: string,
+		options?: Omit<TranslateOptions, 'targetLang'>
+	) => Promise<SingleResponse>;
+	translateToCurrentLang: (
+		text: string,
+		options?: Omit<TranslateOptions, 'targetLang'>
+	) => Promise<SingleResponse>;
 	clearCache: () => void;
 	clearCacheEntry: (text: string, targetLang: string) => void;
 	reset: () => void;
@@ -49,7 +58,6 @@ function createTranslateStore(): {
 		return `${text}|${targetLang}`;
 	};
 
-
 	const singleTranslate = async (
 		text: string,
 		options: TranslateOptions = {}
@@ -60,14 +68,14 @@ function createTranslateStore(): {
 			fallbackOnError = true
 		} = options;
 
-		update(state => ({ ...state, isLoading: true, error: null }));
+		update((state) => ({ ...state, isLoading: true, error: null }));
 
 		try {
 			const cacheKey = generateCacheKey(text, targetLang);
 			if (useCache) {
 				const cached = get(baseStore).cache.get(cacheKey);
 				if (cached) {
-					update(state => ({
+					update((state) => ({
 						...state,
 						isLoading: false,
 						lastTranslation: cached
@@ -78,7 +86,7 @@ function createTranslateStore(): {
 
 			const result = await translate.single(text, targetLang);
 
-			update(state => ({
+			update((state) => ({
 				...state,
 				isLoading: false,
 				lastTranslation: result,
@@ -86,12 +94,11 @@ function createTranslateStore(): {
 			}));
 
 			return result;
-
 		} catch (error) {
 			console.error('Translation error:', error);
 			const errorMessage = error instanceof Error ? error.message : 'Unknown translation error';
 
-			update(state => ({
+			update((state) => ({
 				...state,
 				isLoading: false,
 				error: errorMessage
@@ -100,7 +107,7 @@ function createTranslateStore(): {
 			if (fallbackOnError) {
 				try {
 					const fallbackResult = await translate.single(errorMessage, 'auto');
-					update(state => ({
+					update((state) => ({
 						...state,
 						lastTranslation: fallbackResult
 					}));
@@ -124,14 +131,17 @@ function createTranslateStore(): {
 			fallbackOnError = true
 		} = options;
 
-		update(state => ({ ...state, isLoading: true, error: null }));
+		update((state) => ({ ...state, isLoading: true, error: null }));
 
 		try {
-			const cacheKey = generateCacheKey(texts.join('|'), Array.isArray(targetLang) ? targetLang.join(',') : targetLang);
+			const cacheKey = generateCacheKey(
+				texts.join('|'),
+				Array.isArray(targetLang) ? targetLang.join(',') : targetLang
+			);
 			if (useCache) {
 				const cached = get(baseStore).batchCache.get(cacheKey);
 				if (cached) {
-					update(state => ({
+					update((state) => ({
 						...state,
 						isLoading: false,
 						lastBatchTranslation: cached
@@ -140,11 +150,12 @@ function createTranslateStore(): {
 				}
 			}
 
+			const result = await translate.batch(
+				texts.join(',').trim(),
+				Array.isArray(targetLang) ? targetLang : [targetLang]
+			);
 
-			const result = await translate.batch(texts.join(',').trim(), Array.isArray(targetLang) ? targetLang : [targetLang]);
-
-
-			update(state => ({
+			update((state) => ({
 				...state,
 				isLoading: false,
 				lastBatchTranslation: result,
@@ -152,12 +163,12 @@ function createTranslateStore(): {
 			}));
 
 			return result;
-
 		} catch (error) {
 			console.error('Batch translation error:', error);
-			const errorMessage = error instanceof Error ? error.message : 'Unknown batch translation error';
+			const errorMessage =
+				error instanceof Error ? error.message : 'Unknown batch translation error';
 
-			update(state => ({
+			update((state) => ({
 				...state,
 				isLoading: false,
 				error: errorMessage
@@ -166,7 +177,7 @@ function createTranslateStore(): {
 			if (fallbackOnError) {
 				try {
 					const fallbackResult = await translate.batch(errorMessage, ['auto']);
-					update(state => ({
+					update((state) => ({
 						...state,
 						lastBatchTranslation: fallbackResult
 					}));
@@ -196,7 +207,7 @@ function createTranslateStore(): {
 	};
 
 	const clearCache = (): void => {
-		update(state => ({
+		update((state) => ({
 			...state,
 			cache: new Map(),
 			batchCache: new Map()
@@ -205,7 +216,7 @@ function createTranslateStore(): {
 
 	const clearCacheEntry = (text: string, targetLang: string): void => {
 		const cacheKey = generateCacheKey(text, targetLang);
-		update(state => {
+		update((state) => {
 			const newCache = new Map(state.cache);
 			newCache.delete(cacheKey);
 			return { ...state, cache: newCache };
@@ -223,12 +234,12 @@ function createTranslateStore(): {
 		});
 	};
 
-	const isLoading = derived(baseStore, $store => $store.isLoading);
-	const error = derived(baseStore, $store => $store.error);
-	const lastTranslation = derived(baseStore, $store => $store.lastTranslation);
-	const lastBatchTranslation = derived(baseStore, $store => $store.lastBatchTranslation);
-	const cacheSize = derived(baseStore, $store => $store.cache.size);
-	const batchCacheSize = derived(baseStore, $store => $store.batchCache.size);
+	const isLoading = derived(baseStore, ($store) => $store.isLoading);
+	const error = derived(baseStore, ($store) => $store.error);
+	const lastTranslation = derived(baseStore, ($store) => $store.lastTranslation);
+	const lastBatchTranslation = derived(baseStore, ($store) => $store.lastBatchTranslation);
+	const cacheSize = derived(baseStore, ($store) => $store.cache.size);
+	const batchCacheSize = derived(baseStore, ($store) => $store.batchCache.size);
 
 	return {
 		subscribe,

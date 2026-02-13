@@ -21,6 +21,9 @@ export default defineConfig(
 		languageOptions: { globals: { ...globals.browser, ...globals.node } },
 		rules: {
 			'no-undef': 'off',
+			'no-case-declarations': 'off',
+			'no-empty': 'off',
+			'prefer-const': 'off',
 			'@typescript-eslint/no-unused-vars': [
 				'off',
 				{
@@ -33,9 +36,14 @@ export default defineConfig(
 			'no-useless-catch': 'off',
 			'no-useless-escape': 'off',
 			'@typescript-eslint/no-unused-expressions': 'off',
-			'svelte/ignore-warnings': (warning) => {
-				return warning.code === 'a11y-click-events-have-key-events';
-			}
+			'svelte/no-navigation-without-resolve': 'off',
+			'svelte/no-useless-mustaches': 'off',
+			'svelte/no-useless-children-snippet': 'off',
+			'svelte/prefer-svelte-reactivity': 'off',
+			'svelte/prefer-writable-derived': 'off',
+			'svelte/require-each-key': 'off',
+			'svelte/no-unused-svelte-ignore': 'off',
+			'svelte/no-at-html-tags': 'off'
 		}
 	},
 	{

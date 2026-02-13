@@ -2,8 +2,10 @@ import { redirect } from '@sveltejs/kit';
 import { localizeHref, locales } from '@/paraglide/runtime.js';
 
 export async function GET({ url, request, locals }) {
-	if (request.headers.get('accept')?.includes('application/json') ||
-		url.pathname.includes('__data.json')) {
+	if (
+		request.headers.get('accept')?.includes('application/json') ||
+		url.pathname.includes('__data.json')
+	) {
 		throw redirect(307, localizeHref('/sitemap.xml', { locale: locals.lang }));
 	}
 

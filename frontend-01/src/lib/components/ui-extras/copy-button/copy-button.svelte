@@ -22,7 +22,7 @@
 		...rest
 	}: CopyButtonProps = $props();
 
-		// svelte-ignore state_referenced_locally
+	// svelte-ignore state_referenced_locally
 	if (size === 'icon' && children) {
 		size = 'default';
 	}

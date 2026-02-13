@@ -72,7 +72,7 @@
 		>
 			<!-- Shimmer effect -->
 			<div
-				class="animate-shimmer absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent"
+				class="absolute inset-0 animate-shimmer bg-linear-to-r from-transparent via-white/30 to-transparent"
 			></div>
 
 			<!-- Subtle glow effect -->

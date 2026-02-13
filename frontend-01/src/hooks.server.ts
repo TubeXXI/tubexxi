@@ -12,11 +12,7 @@ const paraglideHandleWithAutoDetectedLocale: Handle = ({ event, resolve }) => {
 	const { request } = event;
 	const pathname = event.url.pathname;
 
-	if (
-		pathname.startsWith('/api') ||
-		pathname.startsWith('/_app') ||
-		pathname.includes('.')
-	) {
+	if (pathname.startsWith('/api') || pathname.startsWith('/_app') || pathname.includes('.')) {
 		return resolve(event);
 	}
 
@@ -66,7 +62,10 @@ const paraglideHandleWithAutoDetectedLocale: Handle = ({ event, resolve }) => {
 		event.locals.lang = detectedLocale;
 		setCookie(event, event.locals.lang as Locale);
 		if (event.locals.lang !== 'en') {
-			throw redirect(302, `/${event.locals.lang}${pathname === '/' ? '' : pathname}${event.url.search}`);
+			throw redirect(
+				302,
+				`/${event.locals.lang}${pathname === '/' ? '' : pathname}${event.url.search}`
+			);
 		}
 		return resolveWithParaglide(event.locals.lang as Locale);
 	}
@@ -118,7 +117,7 @@ const dependenciesInject: Handle = async ({ event, resolve }) => {
 			}
 			return user;
 		} catch (e) {
-			console.error("Error fetching user:", e);
+			console.error('Error fetching user:', e);
 			return null;
 		}
 	};
@@ -130,7 +129,7 @@ const dependenciesInject: Handle = async ({ event, resolve }) => {
 			}
 			return settings;
 		} catch (e) {
-			console.error("Error fetching settings:", e);
+			console.error('Error fetching settings:', e);
 			return null;
 		}
 	};
@@ -163,11 +162,10 @@ const authHandle: Handle = async ({ event, resolve }) => {
 		}
 		return resolve(event);
 	}
-}
+};
 
 const adminMiddleware: Handle = async ({ event, resolve }) => {
 	const { url, locals } = event;
-
 
 	const isProtected = url.pathname.startsWith('/admin');
 
@@ -184,7 +182,7 @@ const adminMiddleware: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	const isAuthRoute = url.pathname.startsWith("/auth");
+	const isAuthRoute = url.pathname.startsWith('/auth');
 
 	if (isAuthRoute) {
 		if (locals.user && locals.user.role?.name === 'admin') {
@@ -208,24 +206,24 @@ const errorHandling: Handle = async ({ event, resolve }) => {
 				redirectPath = `/${locale}`;
 			}
 
-
-			const isStaticAsset = /\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/i.test(event.url.pathname);
+			const isStaticAsset = /\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/i.test(
+				event.url.pathname
+			);
 			const isApiRoute = event.url.pathname.startsWith('/api/');
 			const isImagesRoute = event.url.pathname.startsWith('/images/');
-			const isInternalRoute = event.url.pathname.startsWith('/_') || event.url.pathname.includes('__');
+			const isInternalRoute =
+				event.url.pathname.startsWith('/_') || event.url.pathname.includes('__');
 
 			if (!isStaticAsset && !isApiRoute && !isInternalRoute && !isImagesRoute) {
 				return new Response(null, {
 					status: 302,
 					headers: {
-						'Location': redirectPath,
+						Location: redirectPath,
 						'Cache-Control': 'no-cache'
 					}
 				});
 			}
 		}
-
-
 
 		if (event.url.pathname.startsWith('/auth/')) {
 			response.headers.set('Cross-Origin-Opener-Policy', 'unsafe-none');
@@ -247,8 +245,8 @@ const errorHandling: Handle = async ({ event, resolve }) => {
 		if (event.url.pathname.startsWith('/api/')) {
 			return new Response(
 				JSON.stringify({
-					error: "Internal Server Error",
-					message: error instanceof Error ? error.message : "An unknown error occurred"
+					error: 'Internal Server Error',
+					message: error instanceof Error ? error.message : 'An unknown error occurred'
 				}),
 				{
 					status: 500,
@@ -283,7 +281,7 @@ export const handleError = async ({ error, event, status, message }) => {
 		const pathname = event.url?.pathname ?? '';
 		const search = event.url?.search ?? '';
 		const errMsg = error instanceof Error ? error.message : String(message ?? error);
-		const stack = error instanceof Error ? error.stack ?? '' : '';
+		const stack = error instanceof Error ? (error.stack ?? '') : '';
 		const key = `${status}|${routeId}|${pathname}|${errMsg}`.slice(0, 500);
 		if (key === lastSsrKey && now - lastSsrReportAt < 15_000) {
 			return;
@@ -305,7 +303,7 @@ export const handleError = async ({ error, event, status, message }) => {
 			route_id: routeId,
 			pathname,
 			search,
-			params: (event.params ? JSON.stringify(event.params).slice(0, 500) : ''),
+			params: event.params ? JSON.stringify(event.params).slice(0, 500) : '',
 			referer: event.request.headers.get('referer') ?? '',
 			x_request_id: event.request.headers.get('x-request-id') ?? '',
 			cf_ray: event.request.headers.get('cf-ray') ?? ''
@@ -331,9 +329,7 @@ export const handleError = async ({ error, event, status, message }) => {
 };
 
 function hasLocalePrefix(path: string): boolean {
-	return SUPPORTED_LOCALES.some(
-		(l) => path === `/${l}` || path.startsWith(`/${l}/`)
-	);
+	return SUPPORTED_LOCALES.some((l) => path === `/${l}` || path.startsWith(`/${l}/`));
 }
 
 function getLocaleFromPath(pathname: string): Locale | null {

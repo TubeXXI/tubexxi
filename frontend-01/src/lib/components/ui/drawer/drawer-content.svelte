@@ -7,7 +7,6 @@
 	import type { WithoutChildrenOrChild } from '$lib/utils.js';
 
 	let {
-		ref = $bindable(null),
 		class: className,
 		portalProps,
 		children,
@@ -20,7 +19,6 @@
 <DrawerPortal {...portalProps}>
 	<DrawerOverlay />
 	<DrawerPrimitive.Content
-		bind:ref
 		data-slot="drawer-content"
 		class={cn(
 			'group/drawer-content fixed z-50 flex h-auto flex-col bg-background',
@@ -30,10 +28,10 @@
 			'data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:start-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:border-e data-[vaul-drawer-direction=left]:sm:max-w-sm',
 			className
 		)}
-		{...restProps}
+		{...(restProps as any)}
 	>
 		<div
-			class="mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full bg-muted group-data-[vaul-drawer-direction=bottom]/drawer-content:block"
+			class="mx-auto mt-4 hidden h-2 w-25 shrink-0 rounded-full bg-muted group-data-[vaul-drawer-direction=bottom]/drawer-content:block"
 		></div>
 		{@render children?.()}
 	</DrawerPrimitive.Content>

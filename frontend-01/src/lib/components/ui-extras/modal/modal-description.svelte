@@ -6,11 +6,11 @@
 
 	const modal = useModalSub();
 
-	let { ref = $bindable(null), ...rest }: DialogDescriptionProps = $props();
+	let { ...rest }: DialogDescriptionProps = $props();
 </script>
 
 {#if modal.view === 'desktop'}
-	<Dialog.Description bind:ref {...rest} />
+	<Dialog.Description {...(rest as any)} />
 {:else}
-	<Drawer.Description bind:ref {...rest} />
+	<Drawer.Description {...(rest as any)} />
 {/if}

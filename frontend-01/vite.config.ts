@@ -14,7 +14,7 @@ export default defineConfig({
 			'client.giuadiario.info',
 			'compositely-sanguinolent-cari.ngrok-free.dev',
 			'agcforge.local'
-		],
+		]
 	},
 	plugins: [
 		tailwindcss(),
@@ -23,7 +23,7 @@ export default defineConfig({
 		paraglideVitePlugin({
 			project: './project.inlang',
 			outdir: './src/lib/paraglide',
-			strategy: ["url", "cookie", "baseLocale"],
+			strategy: ['url', 'cookie', 'baseLocale']
 		})
 	],
 	ssr: {
@@ -31,5 +31,5 @@ export default defineConfig({
 	},
 	optimizeDeps: {
 		include: ['svelte', 'svelte/internal']
-	},
+	}
 });

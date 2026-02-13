@@ -1,16 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { localizeHref, type Locale } from '@/paraglide/runtime.js';
 
-let pages: string[] = [
-	'about',
-	'contact',
-	'faq',
-	'privacy',
-	'terms',
-	'movies',
-	'series',
-	'anime'
-];
+let pages: string[] = ['about', 'contact', 'faq', 'privacy', 'terms', 'movies', 'series', 'anime'];
 
 const sitemap = (site: string, pages: string[]) => `<?xml version="1.0" encoding="UTF-8" ?>
 <urlset
@@ -35,8 +26,10 @@ const sitemap = (site: string, pages: string[]) => `<?xml version="1.0" encoding
 </urlset>`;
 
 export async function GET({ url, request, locals, params }) {
-	if (request.headers.get('accept')?.includes('application/json') ||
-		url.pathname.includes('__data.json')) {
+	if (
+		request.headers.get('accept')?.includes('application/json') ||
+		url.pathname.includes('__data.json')
+	) {
 		throw redirect(307, localizeHref('/sitemap.xml', { locale: locals.lang }));
 	}
 

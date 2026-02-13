@@ -3,7 +3,7 @@ export const load = async ({ data }) => {
 
 	const theme = settings?.SYSTEM.theme || 'default';
 
-	const component = (await import(`@/components/themes/${theme}/layout/MainLayout.svelte`)).default
+	const component = (await import(`@/components/themes/${theme}/layout/MainLayout.svelte`)).default;
 
 	return {
 		user,
@@ -12,6 +12,6 @@ export const load = async ({ data }) => {
 		movies,
 		pageMetaTags,
 		theme,
-		component,
+		component
 	};
 };

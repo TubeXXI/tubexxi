@@ -1,12 +1,11 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { BaseService } from './base_service';
 
-
-
 export class AnimeServiceImpl extends BaseService implements AnimeService {
 	constructor(
 		protected readonly event: RequestEvent,
-		private readonly api: ApiClient) {
+		private readonly api: ApiClient
+	) {
 		super(event);
 	}
 
@@ -18,10 +17,10 @@ export class AnimeServiceImpl extends BaseService implements AnimeService {
 			}
 			return {
 				data: response.data || [],
-				pagination: response.pagination as ApiPagination,
-			}
+				pagination: response.pagination as ApiPagination
+			};
 		} catch (error) {
-			console.error("Failed to get latest animes:", error);
+			console.error('Failed to get latest animes:', error);
 			return {
 				data: [],
 				pagination: {
@@ -30,23 +29,26 @@ export class AnimeServiceImpl extends BaseService implements AnimeService {
 					total_items: 0,
 					total_pages: 0,
 					has_prev: false,
-					has_next: false,
-				},
+					has_next: false
+				}
 			};
 		}
 	}
 	async Search(q: string, page: number = 1): Promise<PaginatedResult<Anime>> {
 		try {
-			const response = await this.api.publicRequest<Anime[]>('GET', `/anime/search?s=${q}&page=${page}`);
+			const response = await this.api.publicRequest<Anime[]>(
+				'GET',
+				`/anime/search?s=${q}&page=${page}`
+			);
 			if (!response.success) {
 				throw new Error(response.message || 'Failed to search animes');
 			}
 			return {
 				data: response.data || [],
-				pagination: response.pagination as ApiPagination,
-			}
+				pagination: response.pagination as ApiPagination
+			};
 		} catch (error) {
-			console.error("Failed to search animes:", error);
+			console.error('Failed to search animes:', error);
 			return {
 				data: [],
 				pagination: {
@@ -55,8 +57,8 @@ export class AnimeServiceImpl extends BaseService implements AnimeService {
 					total_items: 0,
 					total_pages: 0,
 					has_prev: false,
-					has_next: false,
-				},
+					has_next: false
+				}
 			};
 		}
 	}
@@ -68,10 +70,10 @@ export class AnimeServiceImpl extends BaseService implements AnimeService {
 			}
 			return {
 				data: response.data || [],
-				pagination: response.pagination as ApiPagination,
-			}
+				pagination: response.pagination as ApiPagination
+			};
 		} catch (error) {
-			console.error("Failed to get ongoing animes:", error);
+			console.error('Failed to get ongoing animes:', error);
 			return {
 				data: [],
 				pagination: {
@@ -80,8 +82,8 @@ export class AnimeServiceImpl extends BaseService implements AnimeService {
 					total_items: 0,
 					total_pages: 0,
 					has_prev: false,
-					has_next: false,
-				},
+					has_next: false
+				}
 			};
 		}
 	}
@@ -93,7 +95,7 @@ export class AnimeServiceImpl extends BaseService implements AnimeService {
 			}
 			return response.data || [];
 		} catch (error) {
-			console.error("Failed to get genres:", error);
+			console.error('Failed to get genres:', error);
 			return [];
 		}
 	}
@@ -103,21 +105,24 @@ export class AnimeServiceImpl extends BaseService implements AnimeService {
 			if (!response.success) {
 				throw new Error(response.message || 'Failed to get anime detail');
 			}
-			return response.data || {} as Anime;
+			return response.data || ({} as Anime);
 		} catch (error) {
-			console.error("Failed to get anime detail:", error);
+			console.error('Failed to get anime detail:', error);
 			return {} as Anime;
 		}
 	}
 	async GetEpisode(url: string): Promise<AnimeEpisode[]> {
 		try {
-			const response = await this.api.publicRequest<AnimeEpisode[]>('GET', `/anime/episode?url=${url}`);
+			const response = await this.api.publicRequest<AnimeEpisode[]>(
+				'GET',
+				`/anime/episode?url=${url}`
+			);
 			if (!response.success) {
 				throw new Error(response.message || 'Failed to get anime episode');
 			}
 			return response.data || [];
 		} catch (error) {
-			console.error("Failed to get anime episode:", error);
+			console.error('Failed to get anime episode:', error);
 			return [];
 		}
 	}

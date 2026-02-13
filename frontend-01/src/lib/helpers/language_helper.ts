@@ -1,5 +1,5 @@
 import { type RequestEvent } from '@sveltejs/kit';
-import { translate, type SingleResponse, type BatchResponse } from "@siamf/google-translate";
+import { translate, type SingleResponse, type BatchResponse } from '@siamf/google-translate';
 import { BaseHelper } from './base_helper';
 
 export class LanguageHelper extends BaseHelper {

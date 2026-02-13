@@ -85,7 +85,7 @@ function createRepeatScrollAnimationStore() {
 		});
 
 		scrollHandler = () => {
-			update(state => {
+			update((state) => {
 				const currentScrollY = window.scrollY;
 				const direction = currentScrollY > state.lastScrollY ? 'down' : 'up';
 
@@ -129,7 +129,7 @@ function createRepeatScrollAnimationStore() {
 				entries.forEach((entry) => {
 					if (!(entry.target instanceof HTMLElement)) return;
 
-					update(state => {
+					update((state) => {
 						const config = state.animations.get(id);
 						if (!config) return state;
 
@@ -145,10 +145,8 @@ function createRepeatScrollAnimationStore() {
 
 							const timeoutId = setTimeout(() => {
 								if (entry.isIntersecting) {
-
 									Object.assign((entry.target as HTMLElement).style, animation.visible);
 								} else {
-
 									Object.assign((entry.target as HTMLElement).style, animation.hidden);
 								}
 							}, delay * 1000);
@@ -157,13 +155,15 @@ function createRepeatScrollAnimationStore() {
 
 							return {
 								...state,
-								animations: new Map(state.animations.set(id, {
-									...config,
-									isVisible: entry.isIntersecting
-								})),
+								animations: new Map(
+									state.animations.set(id, {
+										...config,
+										isVisible: entry.isIntersecting
+									})
+								),
 								activeElements: entry.isIntersecting
 									? new Set(state.activeElements).add(id)
-									: new Set([...state.activeElements].filter(x => x !== id))
+									: new Set([...state.activeElements].filter((x) => x !== id))
 							};
 						}
 
@@ -180,16 +180,18 @@ function createRepeatScrollAnimationStore() {
 		observer.observe(element);
 		observers.set(id, observer);
 
-		update(state => ({
+		update((state) => ({
 			...state,
-			animations: new Map(state.animations.set(id, {
-				element,
-				animationType,
-				isVisible: false,
-				threshold,
-				offset,
-				direction
-			}))
+			animations: new Map(
+				state.animations.set(id, {
+					element,
+					animationType,
+					isVisible: false,
+					threshold,
+					offset,
+					direction
+				})
+			)
 		}));
 
 		return {
@@ -207,7 +209,7 @@ function createRepeatScrollAnimationStore() {
 					animationTimeouts.delete(id);
 				}
 
-				update(state => {
+				update((state) => {
 					const newAnimations = new Map(state.animations);
 					newAnimations.delete(id);
 
@@ -225,7 +227,7 @@ function createRepeatScrollAnimationStore() {
 	};
 
 	const triggerAnimation = (elementId: string, forceState?: 'show' | 'hide'): void => {
-		update(state => {
+		update((state) => {
 			const config = state.animations.get(elementId);
 			if (!config || !config.element) return state;
 
@@ -239,16 +241,18 @@ function createRepeatScrollAnimationStore() {
 
 			return {
 				...state,
-				animations: new Map(state.animations.set(elementId, {
-					...config,
-					isVisible: forceState === 'show' || (!forceState && !config.isVisible)
-				}))
+				animations: new Map(
+					state.animations.set(elementId, {
+						...config,
+						isVisible: forceState === 'show' || (!forceState && !config.isVisible)
+					})
+				)
 			};
 		});
 	};
 
 	const triggerAllVisible = (): void => {
-		update(state => {
+		update((state) => {
 			const newAnimations = new Map(state.animations);
 
 			newAnimations.forEach((config, id) => {
@@ -275,10 +279,10 @@ function createRepeatScrollAnimationStore() {
 	};
 
 	const cleanup = (): void => {
-		observers.forEach(observer => observer.disconnect());
+		observers.forEach((observer) => observer.disconnect());
 		observers.clear();
 
-		animationTimeouts.forEach(timeout => clearTimeout(timeout));
+		animationTimeouts.forEach((timeout) => clearTimeout(timeout));
 		animationTimeouts.clear();
 
 		if (scrollHandler) {

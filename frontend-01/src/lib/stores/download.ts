@@ -35,7 +35,6 @@ export type DownloadState = {
 
 export type WebsocketStore = ReturnType<typeof createWebsocketStore>;
 
-
 export const createWebsocketStore = (userID?: string | null) => {
 	let centrifuge: Centrifuge | null = null;
 	let subscriptions: Record<string, Subscription> = {};
@@ -49,8 +48,7 @@ export const createWebsocketStore = (userID?: string | null) => {
 		if (sub) {
 			try {
 				sub.unsubscribe();
-			} catch (_) {
-			}
+			} catch (_) {}
 			delete subscriptions[taskId];
 		}
 	}

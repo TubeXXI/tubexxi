@@ -24,7 +24,6 @@ export const LanguageLabels: Partial<Record<Locale, string>> = {
 	it: 'Italiano'
 };
 
-
 export function localizePath(path: string, lang: string) {
 	return `/${lang}${path.startsWith('/') ? path : `/${path}`}`;
 }

@@ -1,4 +1,3 @@
-
 import { browser } from '$app/environment';
 import type { Action } from 'svelte/action';
 
@@ -50,7 +49,6 @@ export const repeatOnScroll: Action<HTMLElement, RepeatOnScrollOptions> = (node,
 
 	const selectedAnimation = animations[animation];
 
-
 	Object.assign(node.style, {
 		...selectedAnimation.hidden,
 		transition: `all ${duration}s ease ${delay}s`,
@@ -61,7 +59,7 @@ export const repeatOnScroll: Action<HTMLElement, RepeatOnScrollOptions> = (node,
 
 	const observer = new IntersectionObserver(
 		(entries) => {
-			entries.forEach(entry => {
+			entries.forEach((entry) => {
 				const shouldAnimate =
 					direction === 'both' ||
 					(direction === 'enter' && entry.isIntersecting) ||
@@ -104,13 +102,16 @@ export const repeatOnScroll: Action<HTMLElement, RepeatOnScrollOptions> = (node,
 	};
 };
 
-export const scrollProgress: Action<HTMLElement, {
-	property?: 'opacity' | 'transform' | 'filter' | 'backgroundColor';
-	startValue?: string;
-	endValue?: string;
-	startThreshold?: number;
-	endThreshold?: number;
-}> = (node, options = {}) => {
+export const scrollProgress: Action<
+	HTMLElement,
+	{
+		property?: 'opacity' | 'transform' | 'filter' | 'backgroundColor';
+		startValue?: string;
+		endValue?: string;
+		startThreshold?: number;
+		endThreshold?: number;
+	}
+> = (node, options = {}) => {
 	if (!browser) return {};
 
 	const {
@@ -132,8 +133,8 @@ export const scrollProgress: Action<HTMLElement, {
 		const viewportTop = scrollY;
 		const viewportBottom = scrollY + viewportHeight;
 
-		const startPoint = viewportBottom - (viewportHeight * startThreshold);
-		const endPoint = viewportTop + (viewportHeight * endThreshold);
+		const startPoint = viewportBottom - viewportHeight * startThreshold;
+		const endPoint = viewportTop + viewportHeight * endThreshold;
 
 		let progress = 0;
 		if (elementTop < startPoint && elementBottom > endPoint) {

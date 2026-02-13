@@ -13,4 +13,3 @@ export const reroute: Reroute = ({ url }) => {
 	}
 	return deLocalizeUrl(url).pathname;
 };
-

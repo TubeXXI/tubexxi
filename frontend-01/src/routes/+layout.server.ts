@@ -14,7 +14,7 @@ export const load = async ({ locals, url }) => {
 		lang,
 		href: `${canonicalUrl}/${lang}`
 	}));
-	const normalizedAlternates = alternates.map(alt => ({
+	const normalizedAlternates = alternates.map((alt) => ({
 		...alt,
 		href: normalizeUrl(alt.href)
 	}));

@@ -9,7 +9,7 @@ VERSION?=$(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 BUILD_TIME=$(shell date -u '+%Y-%m-%d_%H:%M:%S')
 GO_VERSION=$(shell go version | awk '{print $$3}')
 MIGRATION_DIR=database/migrations
-SEEDER_DIR=database/seeders/main.go
+SEEDER_DIR=cmd/seed/main.go
 TOML_FILE=.air.toml
 
 # Docker variables

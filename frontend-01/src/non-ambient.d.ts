@@ -75,7 +75,6 @@ declare global {
 		textColor?: string;
 	}
 
-
 	// api config
 	interface ApiResponse<T = any, M extends Record<string, any> = ApiPagination> {
 		status: number;
@@ -245,7 +244,7 @@ declare global {
 		firebase_uid?: string | null;
 		email?: string | null;
 		email_verified?: boolean | null;
-	}
+	};
 	interface HomeScrapperResponse<T = any> {
 		key?: string | null;
 		value?: T[] | null;
@@ -253,4 +252,4 @@ declare global {
 	}
 }
 
-export { };
+export {};

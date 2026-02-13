@@ -16,8 +16,6 @@
 	import * as i18n from '@/paraglide/messages.js';
 	import { localizeHref } from '$lib/paraglide/runtime';
 	import { firebaseClient } from '@/client/firebase_client.js';
-	import { FirebaseMFAHelper } from '@/client/firebase_mfa';
-	import { getMultiFactorResolver, type MultiFactorResolver } from 'firebase/auth';
 
 	let { data } = $props();
 	let metaTags = $derived(data.pageMetaTags);
@@ -32,11 +30,10 @@
 	const SCORE_NAMING = ['Poor', 'Weak', 'Average', 'Strong', 'Secure'];
 	let strength = $state<ZxcvbnResult>();
 
-	const mfa = new FirebaseMFAHelper();
-
 	async function createSession(idToken: string): Promise<{ redirect_url: string } | null> {
 		const res = await fetch('/api/auth/session', {
 			method: 'POST',
+			credentials: 'include',
 			headers: { 'Content-Type': 'application/json', 'X-Platform': 'web' },
 			body: JSON.stringify({ idToken })
 		});
@@ -49,12 +46,6 @@
 		}
 		return payload.data;
 	}
-	async function finishRegister(idToken: string) {
-		const data = await createSession(idToken);
-		await invalidateAll();
-		isProcessing = false;
-	}
-
 	// svelte-ignore state_referenced_locally
 	const { form, enhance, errors, submitting } = superForm(data.registerForm, {
 		resetForm: true,
@@ -79,46 +70,28 @@
 					throw new Error(i18n.page_sign_up_error_message());
 				}
 
-				input.formData.append('idToken', idToken);
-				input.formData.append('firebaseUid', result.user.uid);
-				input.formData.append('full_name', $form.full_name);
-				input.formData.append('email', $form.email);
-				input.formData.append('password', $form.password);
-				if ($form.phone) {
-					input.formData.append('phone', $form.phone);
-				}
-				if (result.user.photoURL) {
-					input.formData.append('avatar_url', result.user.photoURL);
-				}
+				await createSession(idToken);
+				await fetch('/api/auth/verify-email', {
+					method: 'POST',
+					credentials: 'include',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email: $form.email })
+				});
+				successMessage = i18n.page_sign_up_success_message();
+				await invalidateAll();
+				await goto(localizeHref(`/auth/verify-email?email=${encodeURIComponent($form.email)}`));
 			} catch (error) {
 				input.cancel();
 				errorMessage = error instanceof Error ? error.message : i18n.invalid_input();
 				isProcessing = false;
 			}
 		},
-		async onUpdate(event) {
+		onUpdate() {
 			isProcessing = false;
-
-			if (event.result.type === 'failure') {
-				errorMessage = event.result.data.message;
-
-				try {
-					const currentUser = firebaseClient?.getCurrentUser();
-					if (currentUser) {
-						await currentUser.delete();
-					}
-				} catch (error) {
-					console.error('Error cleanup current user:', error);
-				}
-				return;
-			}
-			if (event.result.type === 'success') {
-				successMessage = event.result.data.message;
-				await invalidateAll();
-			}
 		},
-		onError(event) {
-			errorMessage = event.result.error.message;
+		onError() {
+			isProcessing = false;
+			errorMessage = i18n.page_sign_up_error_message();
 		}
 	});
 
@@ -281,7 +254,7 @@
 					<PhoneInput
 						bind:value={phoneInput}
 						name="phone"
-						country={(data.lang as CountryCode) || 'US'}
+						country={(data.lang.toUpperCase() as CountryCode) || 'US'}
 						placeholder={i18n.phone()}
 						disabled={$submitting || isProcessing}
 					/>
@@ -289,39 +262,37 @@
 						<Field.Error>{$errors.phone}</Field.Error>
 					{/if}
 				</Field.Field>
-				<div class="grid grid-cols-2 gap-4">
-					<Field.Field>
-						<Field.Label for="password" class="capitalize">
-							{i18n.password()}
-							<span class="text-red-500 dark:text-red-400">*</span>
-						</Field.Label>
-						<div class="relative">
-							<Icon icon="material-symbols:key" class="absolute top-4.5 left-3 -translate-y-1/2" />
-							<Password.Root minScore={2}>
-								<Password.Input
-									bind:value={passwordInput}
-									name="password"
-									class="ps-10 pe-10"
-									disabled={$submitting || isProcessing}
-									placeholder={i18n.password()}
-									autocomplete="new-password"
-									oninput={(e) => {
-										$form.password = (e.target as HTMLInputElement).value;
-									}}
-								>
-									<Password.ToggleVisibility />
-								</Password.Input>
-								<div class="flex flex-col gap-1">
-									<Password.Strength bind:strength />
-								</div>
-							</Password.Root>
-						</div>
+				<Field.Field>
+					<Field.Label for="password" class="capitalize">
+						{i18n.password()}
+						<span class="text-red-500 dark:text-red-400">*</span>
+					</Field.Label>
+					<div class="relative">
+						<Icon icon="material-symbols:key" class="absolute top-4.5 left-3 -translate-y-1/2" />
+						<Password.Root minScore={2}>
+							<Password.Input
+								bind:value={passwordInput}
+								name="password"
+								class="ps-10 pe-10"
+								disabled={$submitting || isProcessing}
+								placeholder={i18n.password()}
+								autocomplete="new-password"
+								oninput={(e) => {
+									$form.password = (e.target as HTMLInputElement).value;
+								}}
+							>
+								<Password.ToggleVisibility />
+							</Password.Input>
+							<div class="flex flex-col gap-1">
+								<Password.Strength bind:strength />
+							</div>
+						</Password.Root>
+					</div>
 
-						{#if $errors.password}
-							<Field.Error>{$errors.password}</Field.Error>
-						{/if}
-					</Field.Field>
-				</div>
+					{#if $errors.password}
+						<Field.Error>{$errors.password}</Field.Error>
+					{/if}
+				</Field.Field>
 				<Field.Field>
 					<Button type="submit" disabled={$submitting || isProcessing}>
 						{#if $submitting || isProcessing}

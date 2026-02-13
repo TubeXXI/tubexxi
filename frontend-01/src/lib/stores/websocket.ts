@@ -2,7 +2,6 @@ import { browser } from '$app/environment';
 import { PUBLIC_API_URL } from '$env/static/public';
 import { derived, writable } from 'svelte/store';
 
-
 interface WsConfig {
 	url?: string;
 	userId?: string;
@@ -22,4 +21,4 @@ interface WSStoreState {
 	reconnecting: boolean;
 }
 
-export function createWebSocketStore(config: WsConfig = {}) { }
+export function createWebSocketStore(config: WsConfig = {}) {}

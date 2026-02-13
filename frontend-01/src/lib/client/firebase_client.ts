@@ -22,7 +22,8 @@ import {
 	updatePassword,
 	updateProfile,
 	EmailAuthProvider,
-	reauthenticateWithCredential
+	reauthenticateWithCredential,
+	applyActionCode
 } from 'firebase/auth';
 import { firebaseClientConfig } from '@/constants/firebase.js';
 import * as i18n from '@/paraglide/messages.js';
@@ -340,6 +341,21 @@ export class FirebaseClientHelper {
 		}
 	}
 
+	async applyEmailVerificationCode(code: string): Promise<void> {
+		if (!this.auth) {
+			throw new Error(i18n.error_firebase_auth_not_initialized());
+		}
+		try {
+			await applyActionCode(this.auth, code);
+			if (this.auth.currentUser) {
+				await this.auth.currentUser.reload();
+			}
+		} catch (error: any) {
+			console.error('Error applying email verification code:', error);
+			throw this.handleAuthError(error);
+		}
+	}
+
 	/**
 	 * Send password reset email to user with identifier
 	 */
@@ -433,7 +449,7 @@ export class FirebaseClientHelper {
 	 * Setup automatic token refresh
 	 */
 	setupTokenRefresh(): () => void {
-		if (!this.auth) return () => { };
+		if (!this.auth) return () => {};
 
 		const interval = setInterval(
 			async () => {

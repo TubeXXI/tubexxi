@@ -10,12 +10,15 @@ import type {
 export class AuthServiceImpl extends BaseService implements AuthService {
 	constructor(
 		protected readonly event: RequestEvent,
-		private readonly api: ApiClient) {
+		private readonly api: ApiClient
+	) {
 		super(event);
 	}
 	async Login(idToken: string): Promise<FirebaseAuthResponse | Error> {
 		try {
-			const response = await this.api.publicRequest<FirebaseAuthResponse>('POST', '/auth/login', { idToken });
+			const response = await this.api.publicRequest<FirebaseAuthResponse>('POST', '/auth/login', {
+				idToken
+			});
 			if (!response.success) {
 				throw new Error(response.error?.message || response.message || 'Failed to login');
 			}
@@ -29,7 +32,11 @@ export class AuthServiceImpl extends BaseService implements AuthService {
 	}
 	async Register(data: RegisterSchema): Promise<FirebaseAuthResponse | Error> {
 		try {
-			const response = await this.api.publicRequest<FirebaseAuthResponse>('POST', '/auth/register', data);
+			const response = await this.api.publicRequest<FirebaseAuthResponse>(
+				'POST',
+				'/auth/register',
+				data
+			);
 			if (!response.success) {
 				throw new Error(response.error?.message || response.message || 'Failed to register');
 			}

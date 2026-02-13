@@ -36,8 +36,8 @@ export class ApiClientHandler extends BaseHelper implements ApiClient {
 		headers.set(
 			'X-Forwarded-For',
 			this.event.request.headers.get('x-forwarded-for') ||
-			this.event.request.headers.get('x-real-ip') ||
-			''
+				this.event.request.headers.get('x-real-ip') ||
+				''
 		);
 
 		headers.set('X-Real-IP', this.event.request.headers.get('x-real-ip') || '');
@@ -56,7 +56,7 @@ export class ApiClientHandler extends BaseHelper implements ApiClient {
 		}
 		return headers;
 	}
-	private async getCsrfToken(headers: Headers): Promise<{ token: string | null, cookie?: string }> {
+	private async getCsrfToken(headers: Headers): Promise<{ token: string | null; cookie?: string }> {
 		try {
 			const cookieString = this.getCookieString();
 			if (cookieString) {
@@ -108,7 +108,6 @@ export class ApiClientHandler extends BaseHelper implements ApiClient {
 			headers?: Record<string, string>;
 		}
 	): Promise<ApiResponse<T>> {
-
 		const headers = this.getSecureHeaders();
 		headers.set('X-Platform', 'web');
 		headers.set('X-API-Key', PUBLIC_API_KEY);
@@ -130,7 +129,9 @@ export class ApiClientHandler extends BaseHelper implements ApiClient {
 				if (accessToken) {
 					headers.set('Authorization', `Bearer ${accessToken}`);
 				} else {
-					console.warn('🔍 [ApiClient] Warning: Auth required but no access_token found in cookies');
+					console.warn(
+						'🔍 [ApiClient] Warning: Auth required but no access_token found in cookies'
+					);
 				}
 			}
 		}

@@ -1,4 +1,3 @@
-
 import { browser } from '$app/environment';
 import type { Action } from 'svelte/action';
 
@@ -13,13 +12,7 @@ interface ScrollActionOptions {
 export const fadeIn: Action<HTMLElement, ScrollActionOptions> = (node, options = {}) => {
 	if (!browser) return {};
 
-	const {
-		threshold = 0.1,
-		delay = 0,
-		duration = 0.6,
-		offset = 0,
-		once = true
-	} = options;
+	const { threshold = 0.1, delay = 0, duration = 0.6, offset = 0, once = true } = options;
 
 	Object.assign(node.style, {
 		opacity: '0',
@@ -30,7 +23,7 @@ export const fadeIn: Action<HTMLElement, ScrollActionOptions> = (node, options =
 
 	const observer = new IntersectionObserver(
 		(entries) => {
-			entries.forEach(entry => {
+			entries.forEach((entry) => {
 				if (entry.isIntersecting) {
 					Object.assign((entry.target as HTMLElement).style, {
 						opacity: '1',
@@ -81,7 +74,7 @@ export const slideInLeft: Action<HTMLElement, ScrollActionOptions> = (node, opti
 
 	const observer = new IntersectionObserver(
 		(entries) => {
-			entries.forEach(entry => {
+			entries.forEach((entry) => {
 				if (entry.isIntersecting) {
 					Object.assign((entry.target as HTMLElement).style, {
 						opacity: '1',

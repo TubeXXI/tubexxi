@@ -15,11 +15,8 @@
 	import { Button, buttonVariants } from '@/components/ui/button';
 	import * as Dialog from '@/components/ui/dialog';
 	import { CameraIcon, XIcon } from '@lucide/svelte';
-		import * as FileDropZone from '$lib/components/ui-extras/file-drop-zone';
-	import {
-		displaySize,
-		MEGABYTE,
-	} from '@/components/ui-extras/file-drop-zone';
+	import * as FileDropZone from '$lib/components/ui-extras/file-drop-zone';
+	import { displaySize, MEGABYTE } from '@/components/ui-extras/file-drop-zone';
 	import { Progress } from '@/components/ui/progress';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
@@ -35,7 +32,10 @@
 	const onUpload: FileDropZone.FileDropZoneRootProps['onUpload'] = async (files) => {
 		await Promise.allSettled(files.map((file) => uploadFile(file)));
 	};
-	const onFileRejected: FileDropZone.FileDropZoneRootProps['onFileRejected'] = async ({ reason, file }) => {
+	const onFileRejected: FileDropZone.FileDropZoneRootProps['onFileRejected'] = async ({
+		reason,
+		file
+	}) => {
 		toast.error(`${file.name} failed to upload! ${reason}`);
 	};
 	const uploadFile = async (file: File) => {
@@ -60,7 +60,6 @@
 	let date = new SvelteDate();
 	let avatarFile = $state<File | null>(null);
 	let isUploading = $state(false);
-
 
 	async function uploadToServer() {
 		if (!avatarFile) return;
@@ -87,9 +86,7 @@
 				files = [];
 			}
 		} catch (error) {
-			toast.error(
-				(error instanceof Error ? error.message : 'Failed to upload avatar!')
-		)
+			toast.error(error instanceof Error ? error.message : 'Failed to upload avatar!');
 		} finally {
 			isUploading = false;
 			await invalidateAll();
@@ -128,9 +125,7 @@
 	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>Upload Avatar</Dialog.Title>
-			<Dialog.Description>
-				Upload a new avatar image for the user.
-			</Dialog.Description>
+			<Dialog.Description>Upload a new avatar image for the user.</Dialog.Description>
 		</Dialog.Header>
 		<div class="flex w-full flex-col gap-2 p-6">
 			{#if isUploading}
@@ -139,16 +134,12 @@
 						<Empty.Media variant="icon">
 							<Spinner />
 						</Empty.Media>
-						<Empty.Title>
-							Please wait
-						</Empty.Title>
-						<Empty.Description>
-							Processing request...
-						</Empty.Description>
+						<Empty.Title>Please wait</Empty.Title>
+						<Empty.Description>Processing request...</Empty.Description>
 					</Empty.Header>
 				</Empty.Root>
 			{:else}
-					<FileDropZone.Root
+				<FileDropZone.Root
 					{onUpload}
 					{onFileRejected}
 					maxFileSize={5 * MEGABYTE}
@@ -157,8 +148,8 @@
 					maxFiles={1}
 					disabled={files.length > 0 || isUploading}
 				>
-				<FileDropZone.Trigger />
-						</FileDropZone.Root>
+					<FileDropZone.Trigger />
+				</FileDropZone.Root>
 				<div class="flex flex-col gap-2">
 					{#each files as file, i (file.name)}
 						<div class="flex place-items-center justify-between gap-2">
@@ -201,13 +192,9 @@
 			{/if}
 		</div>
 		<Dialog.Footer>
-			<Button type="button" onclick={uploadToServer}>
-				Upload
-			</Button>
+			<Button type="button" onclick={uploadToServer}>Upload</Button>
 			<Dialog.Close>
-				<Button variant="destructive" size="default">
-					Close
-				</Button>
+				<Button variant="destructive" size="default">Close</Button>
 			</Dialog.Close>
 		</Dialog.Footer>
 	</Dialog.Content>

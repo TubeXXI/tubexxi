@@ -14,10 +14,7 @@
 	import { SvelteDate } from 'svelte/reactivity';
 	import { Button } from '@/components/ui/button';
 	import * as FileDropZone from '$lib/components/ui-extras/file-drop-zone';
-	import {
-		displaySize,
-		MEGABYTE,
-	} from '@/components/ui-extras/file-drop-zone';
+	import { displaySize, MEGABYTE } from '@/components/ui-extras/file-drop-zone';
 	import { Progress } from '@/components/ui/progress';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
@@ -25,7 +22,6 @@
 	import { toast } from '@/stores';
 	import { sleep } from '@/utils/sleep.js';
 	import { XIcon } from '@lucide/svelte';
-
 
 	let {
 		web
@@ -36,7 +32,10 @@
 	const onUpload: FileDropZone.FileDropZoneRootProps['onUpload'] = async (files) => {
 		await Promise.allSettled(files.map((file) => uploadFile(file)));
 	};
-	const onFileRejected: FileDropZone.FileDropZoneRootProps['onFileRejected'] = async ({ reason, file }) => {
+	const onFileRejected: FileDropZone.FileDropZoneRootProps['onFileRejected'] = async ({
+		reason,
+		file
+	}) => {
 		toast.error(`${file.name} failed to upload! ${reason}`);
 	};
 	const uploadFile = async (file: File) => {
@@ -60,7 +59,6 @@
 	let date = new SvelteDate();
 	let faviconFile = $state<File | null>(null);
 	let isUploading = $state(false);
-
 
 	async function uploadToServer() {
 		if (!faviconFile) return;
@@ -86,9 +84,7 @@
 				files = [];
 			}
 		} catch (error) {
-			toast.error(
-				(error instanceof Error ? error.message : 'Failed to upload favicon!')
-			);
+			toast.error(error instanceof Error ? error.message : 'Failed to upload favicon!');
 		} finally {
 			isUploading = false;
 			await invalidateAll();
@@ -116,9 +112,7 @@
 <Field.Group>
 	<Field.Set>
 		<Field.Legend>Upload Favicon</Field.Legend>
-		<Field.Description
-			>Upload a favicon image to be used on the site.</Field.Description
-		>
+		<Field.Description>Upload a favicon image to be used on the site.</Field.Description>
 		<Field.Group>
 			<Field.Content>
 				<div class="flex w-full flex-col gap-2">
@@ -128,12 +122,8 @@
 								<Empty.Media variant="icon">
 									<Spinner />
 								</Empty.Media>
-								<Empty.Title>
-									Please wait
-								</Empty.Title>
-								<Empty.Description>
-									Processing request...
-								</Empty.Description>
+								<Empty.Title>Please wait</Empty.Title>
+								<Empty.Description>Processing request...</Empty.Description>
 							</Empty.Header>
 						</Empty.Root>
 					{:else}
@@ -188,7 +178,6 @@
 								</div>
 							{/each}
 						</div>
-
 					{/if}
 				</div>
 			</Field.Content>

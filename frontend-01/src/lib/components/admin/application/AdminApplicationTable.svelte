@@ -128,7 +128,7 @@
 			cell: ({ row }) => {
 				return renderSnippet(NameCell, {
 					id: row.original.id,
-					value: row.original.name
+					value: row.original.name || 'N/A'
 				});
 			},
 			filterFn: (row, id, value) => {
@@ -142,7 +142,7 @@
 			},
 			cell: ({ row }) => {
 				return renderSnippet(PackageNameCell, {
-					value: row.original.package_name
+					value: row.original.package_name || ''
 				});
 			},
 			filterFn: (row, id, value) => {
@@ -332,7 +332,7 @@
 						<div class="flex flex-col items-start gap-6 md:flex-row md:items-center">
 							<div class="relative">
 								<span class="h-38 w-26 rounded-md object-cover shadow-lg">
-									{application?.name.split(' ')[0].slice(0, 2).toUpperCase() || ''}
+									{application?.name?.split(' ')[0].slice(0, 2).toUpperCase() || ''}
 								</span>
 							</div>
 							<div class="flex-1 space-y-2">
@@ -641,7 +641,9 @@
 								</Empty.Header>
 								<Empty.Content>
 									<div class="flex items-center justify-center gap-2">
-										<Button href={localizeHref('/application/create')} variant="default">Create new</Button>
+										<Button href={localizeHref('/application/create')} variant="default"
+											>Create new</Button
+										>
 										<Button variant="outline" onclick={onreset}>Clear filters</Button>
 									</div>
 								</Empty.Content>

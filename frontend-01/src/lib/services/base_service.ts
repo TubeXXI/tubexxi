@@ -26,7 +26,7 @@ export class BaseService {
 		if (error instanceof Error) {
 			throw error;
 		}
-		throw new Error("Unknown server error");
+		throw new Error('Unknown server error');
 	}
 	protected toISO(value?: string | Date | null): string | null {
 		if (value === undefined || value === null) return null;
@@ -47,7 +47,7 @@ export class BaseService {
 		const endDate = new Date(end);
 		const dateRange: Date[] = [];
 
-		const currentData = new Date(startDate)
+		const currentData = new Date(startDate);
 		currentData.setHours(0, 0, 0, 0);
 		endDate.setHours(0, 0, 0, 0);
 
@@ -80,7 +80,7 @@ export class BaseService {
 		const option: Intl.DateTimeFormatOptions = {
 			weekday: 'short',
 			day: 'numeric',
-			month: 'short',
+			month: 'short'
 		};
 		return date.toLocaleDateString('en-US', option);
 	}

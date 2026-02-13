@@ -1,14 +1,12 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { BaseService } from './base_service';
-import type {
-	SetRoleSchema
-} from '@/utils/schema';
-
+import type { SetRoleSchema } from '@/utils/schema';
 
 export class AdminServiceImpl extends BaseService implements AdminService {
 	constructor(
 		protected readonly event: RequestEvent,
-		private readonly api: ApiClient) {
+		private readonly api: ApiClient
+	) {
 		super(event);
 	}
 	async SetRole(data: SetRoleSchema): Promise<string | Error> {
@@ -19,7 +17,7 @@ export class AdminServiceImpl extends BaseService implements AdminService {
 			}
 			return response.message || 'Role set successfully';
 		} catch (error) {
-			return error instanceof Error ? error : new Error("Unknown server error");
+			return error instanceof Error ? error : new Error('Unknown server error');
 		}
 	}
 }

@@ -29,8 +29,8 @@
 			onComplete: () => animation.onComplete?.()
 		}}
 	>
-	{#if children}
-		{@render children()}
-	{/if}
+		{#if children}
+			{@render children()}
+		{/if}
 	</span>
 {/if}

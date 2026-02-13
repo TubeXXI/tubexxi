@@ -1,4 +1,3 @@
-
 export function parseQueryParams<T extends Record<string, any>>(
 	url: URL,
 	config: QueryParamsConfig<T>
@@ -378,7 +377,7 @@ export function createBlogPostManager() {
 			sort_by: 'created_at',
 			order_by: 'desc' as 'asc' | 'desc',
 			year: '',
-			month: '',
+			month: ''
 		},
 		validators: {
 			page: (v) => Math.max(1, Number(v) || 1),

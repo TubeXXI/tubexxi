@@ -1,7 +1,5 @@
-
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
-
 
 interface AnimationConfig {
 	element: HTMLElement;
@@ -67,7 +65,6 @@ interface ProgressAnimationOptions {
 interface StaggerOptions extends Omit<AnimationOptions, 'stagger'> {
 	stagger?: number;
 }
-
 
 const ANIMATIONS = {
 	fadeIn: {
@@ -135,7 +132,7 @@ function createScrollAnimationStore() {
 		});
 
 		const handleScroll = () => {
-			update(state => ({
+			update((state) => ({
 				...state,
 				scrollY: window.pageYOffset
 			}));
@@ -144,7 +141,7 @@ function createScrollAnimationStore() {
 		window.addEventListener('scroll', handleScroll, { passive: true });
 
 		const handleResize = () => {
-			update(state => ({
+			update((state) => ({
 				...state,
 				viewportHeight: window.innerHeight
 			}));
@@ -197,26 +194,30 @@ function createScrollAnimationStore() {
 							}
 						}, stagger);
 
-						update(state => ({
+						update((state) => ({
 							...state,
-							animations: new Map(state.animations.set(id, {
-								element: entry.target as HTMLElement,
-								isVisible: true,
-								animationType,
-								progress: 1
-							}))
+							animations: new Map(
+								state.animations.set(id, {
+									element: entry.target as HTMLElement,
+									isVisible: true,
+									animationType,
+									progress: 1
+								})
+							)
 						}));
 					} else if (!once) {
 						Object.assign(entry.target.style, animation.hidden);
 
-						update(state => ({
+						update((state) => ({
 							...state,
-							animations: new Map(state.animations.set(id, {
-								element: entry.target as HTMLElement,
-								isVisible: false,
-								animationType,
-								progress: 0
-							}))
+							animations: new Map(
+								state.animations.set(id, {
+									element: entry.target as HTMLElement,
+									isVisible: false,
+									animationType,
+									progress: 0
+								})
+							)
 						}));
 					}
 				});
@@ -244,7 +245,7 @@ function createScrollAnimationStore() {
 				observers.delete(id);
 				animationCallbacks.delete(id);
 
-				update(state => {
+				update((state) => {
 					const newAnimations = new Map(state.animations);
 					newAnimations.delete(id);
 					return { ...state, animations: newAnimations };
@@ -259,10 +260,7 @@ function createScrollAnimationStore() {
 	): (RegisterElementReturn | null)[] => {
 		if (!browser || !elements.length) return [];
 
-		const {
-			stagger = 100,
-			...elementOptions
-		} = options;
+		const { stagger = 100, ...elementOptions } = options;
 
 		return elements.map((element, index) =>
 			registerElement(element, {
@@ -279,10 +277,7 @@ function createScrollAnimationStore() {
 	): { id: string; destroy: () => void } | null => {
 		if (!browser || !element) return null;
 
-		const {
-			speed = 0.5,
-			direction = 'vertical'
-		} = options;
+		const { speed = 0.5, direction = 'vertical' } = options;
 
 		const id = `parallax-${Math.random().toString(36).substring(2, 11)}`;
 
@@ -468,7 +463,7 @@ function createScrollAnimationStore() {
 	const getAnimationState = (elementId: string): AnimationConfig | undefined => {
 		let animationState: AnimationConfig | undefined;
 
-		subscribe(state => {
+		subscribe((state) => {
 			animationState = state.animations.get(elementId);
 		})();
 
@@ -481,12 +476,12 @@ function createScrollAnimationStore() {
 	};
 
 	const cleanup = (): void => {
-		observers.forEach(observer => {
+		observers.forEach((observer) => {
 			observer.disconnect();
 		});
 		observers.clear();
 
-		animationCallbacks.forEach(callback => callback());
+		animationCallbacks.forEach((callback) => callback());
 		animationCallbacks.clear();
 
 		if (browser) {
@@ -500,7 +495,7 @@ function createScrollAnimationStore() {
 			scrollListeners.clear();
 		}
 
-		update(state => ({
+		update((state) => ({
 			...state,
 			animations: new Map()
 		}));

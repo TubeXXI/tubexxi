@@ -1,5 +1,5 @@
 import type { Component } from 'svelte';
-import { modalStore, type ModalConfig } from "@/hooks/modal.svelte";
+import { modalStore, type ModalConfig } from '@/hooks/modal.svelte';
 
 export const modal = {
 	/**
@@ -35,12 +35,7 @@ export const modal = {
 	 * @param options - Optional modal configuration.
 	 * @returns The ID of the opened modal.
 	 */
-	confirm(
-		title: string,
-		content: string,
-		onConfirm: () => void,
-		options?: Partial<ModalConfig>
-	) {
+	confirm(title: string, content: string, onConfirm: () => void, options?: Partial<ModalConfig>) {
 		return modalStore.open({
 			title,
 			content,

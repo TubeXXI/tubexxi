@@ -1,7 +1,4 @@
-import AppModal from "./AppModal.svelte";
-import AppModalProvider from "./AppModalProvider.svelte";
+import AppModal from './AppModal.svelte';
+import AppModalProvider from './AppModalProvider.svelte';
 
-export {
-	AppModal,
-	AppModalProvider
-}
+export { AppModal, AppModalProvider };

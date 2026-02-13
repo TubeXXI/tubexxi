@@ -1,5 +1,5 @@
 import { getContext, setContext } from 'svelte';
-import { adsStore } from "@/stores";
+import { adsStore } from '@/stores';
 
 const ADS_CONTEXT_KEY = Symbol('ads');
 
@@ -62,7 +62,6 @@ function createAds() {
 		getPopupCode,
 		getSocialbarCode,
 		getNativeAdsCode,
-
 
 		// Convenience
 		get autoAdData() {

@@ -4,20 +4,18 @@
 	import { cn } from '$lib/utils.js';
 
 	let {
-		ref = $bindable(null),
 		class: className,
 		portalProps,
 		children,
 		...restProps
 	}: DrawerPrimitive.ContentProps & {
-		portalProps?: DrawerPrimitive.;
+		portalProps?: any;
 	} = $props();
 </script>
 
 <DrawerPrimitive.Portal {...portalProps}>
 	<DrawerOverlay />
 	<DrawerPrimitive.Content
-		bind:ref
 		data-slot="drawer-content"
 		class={cn(
 			'group/drawer-content fixed z-50 flex h-auto flex-col gap-4 bg-background p-4',
@@ -27,7 +25,7 @@
 			'data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:border-r data-[vaul-drawer-direction=left]:sm:max-w-sm',
 			className
 		)}
-		{...restProps}
+		{...(restProps as any)}
 	>
 		<div
 			class="mx-auto mt-4 hidden h-2 w-25 shrink-0 rounded-full bg-muted group-data-[vaul-drawer-direction=bottom]/drawer-content:block"

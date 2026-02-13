@@ -6,15 +6,15 @@
 
 	const modal = useModalSub();
 
-	let { ref = $bindable(null), children, ...rest }: DialogTriggerProps = $props();
+	let { children, ...rest }: DialogTriggerProps = $props();
 </script>
 
 {#if modal.view === 'desktop'}
-	<Dialog.Trigger bind:ref {...rest}>
+	<Dialog.Trigger {...(rest as any)}>
 		{@render children?.()}
 	</Dialog.Trigger>
 {:else}
-	<Drawer.Trigger bind:ref {...rest}>
+	<Drawer.Trigger {...(rest as any)}>
 		{@render children?.()}
 	</Drawer.Trigger>
 {/if}

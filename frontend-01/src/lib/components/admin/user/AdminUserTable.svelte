@@ -180,6 +180,8 @@
 			cell: ({ row }) => {
 				return renderSnippet(LastLoginCell, {
 					value: row.original.last_login_at
+						? new Date(row.original.last_login_at).toISOString()
+						: ''
 				});
 			},
 			filterFn: (row, id, value) => {

@@ -10,13 +10,15 @@ export default {
 
 		const imagesRegex = /\.(png|jpg|jpeg|gif|webp|svg)$/;
 
-		if (url.pathname.startsWith('/_app') ||
+		if (
+			url.pathname.startsWith('/_app') ||
 			url.pathname.startsWith('/api') ||
 			url.pathname.startsWith('/favicon.ico') ||
 			imagesRegex.test(url.pathname) ||
 			url.pathname.startsWith('/images/') ||
 			url.pathname.startsWith('/robots.txt') ||
-			url.pathname.includes('.')) {
+			url.pathname.includes('.')
+		) {
 			return fetch(req);
 		}
 

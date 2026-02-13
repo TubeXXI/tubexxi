@@ -1,9 +1,11 @@
+# version: "3.8"
+
 services:
   backend:
     build:
       context: ./go-service
       dockerfile: Dockerfile
-    container_name: tubexxi_go_api
+    container_name: tubexxi_backend_api
     restart: always
     logging:
       driver: "json-file"
@@ -125,7 +127,8 @@ services:
       - DB_MAX_IDLE_CONNS=${DB_MAX_IDLE_CONNS}
       - DB_CONN_MAX_LIFETIME=${DB_CONN_MAX_LIFETIME}
     networks:
-      - infrastructure-network
+      - tubexxi-network
+      - shared-network
     command: >
       /bin/sh -c "
       echo 'Waiting for PostgreSQL to be ready...'
