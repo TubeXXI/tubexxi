@@ -15,11 +15,11 @@
 </script>
 
 {#if modal.view === 'desktop'}
-	<Dialog.Header {...(rest as any)}>
+	<Dialog.Header {...rest as any}>
 		{@render children?.()}
 	</Dialog.Header>
 {:else}
-	<Drawer.Header {...(rest as any)}>
+	<Drawer.Header {...rest as any}>
 		{@render children?.()}
 	</Drawer.Header>
 {/if}

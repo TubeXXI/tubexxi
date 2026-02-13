@@ -133,7 +133,7 @@
 	</Sidebar.Header>
 	<Separator class="my-2 lg:hidden" />
 	<Sidebar.Content
-		class="scrollbar-thumb-cyan scrollbar-thin scrollbar-thumb-foreground scrollbar-track-accent overflow-hidden overflow-y-auto group-data-[collapsible=icon]:bg-background"
+		class="scrollbar-thumb-cyan scrollbar-thin overflow-hidden overflow-y-auto scrollbar-thumb-foreground scrollbar-track-accent group-data-[collapsible=icon]:bg-background"
 	>
 		<Sidebar.Group>
 			<Sidebar.GroupContent class="group-data-[collapsible=icon]:px-2">

@@ -14,11 +14,11 @@
 </script>
 
 {#if modal.view === 'desktop'}
-	<Dialog.Content {...(rest as any)} {hideClose}>
+	<Dialog.Content {...rest as any} {hideClose}>
 		{@render children?.()}
 	</Dialog.Content>
 {:else}
-	<Drawer.Content {...(rest as any)}>
+	<Drawer.Content {...rest as any}>
 		{@render children?.()}
 	</Drawer.Content>
 {/if}

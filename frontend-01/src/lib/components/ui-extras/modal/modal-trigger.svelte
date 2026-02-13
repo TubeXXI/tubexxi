@@ -10,11 +10,11 @@
 </script>
 
 {#if modal.view === 'desktop'}
-	<Dialog.Trigger {...(rest as any)}>
+	<Dialog.Trigger {...rest as any}>
 		{@render children?.()}
 	</Dialog.Trigger>
 {:else}
-	<Drawer.Trigger {...(rest as any)}>
+	<Drawer.Trigger {...rest as any}>
 		{@render children?.()}
 	</Drawer.Trigger>
 {/if}

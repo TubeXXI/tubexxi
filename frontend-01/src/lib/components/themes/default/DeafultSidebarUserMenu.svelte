@@ -75,22 +75,11 @@
 				<DropdownMenu.Item>
 					{#snippet child()}
 						<a
-							href={localizeHref('/user/accounts/profile')}
+							href={localizeHref('/user/accounts')}
 							class="flex items-center gap-2 ps-3 text-sm transition-all active:scale-95"
 						>
 							<Icon icon="solar:user-circle-linear" />
 							{i18n.page_account_profile()}
-						</a>
-					{/snippet}
-				</DropdownMenu.Item>
-				<DropdownMenu.Item>
-					{#snippet child()}
-						<a
-							href={localizeHref('/user/accounts')}
-							class="flex items-center gap-2 ps-3 text-sm transition-all active:scale-95"
-						>
-							<Icon icon="material-symbols:dashboard-2-outline" />
-							{i18n.dashboard()}
 						</a>
 					{/snippet}
 				</DropdownMenu.Item>

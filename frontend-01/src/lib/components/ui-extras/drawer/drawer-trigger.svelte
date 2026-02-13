@@ -4,4 +4,4 @@
 	let { ...restProps }: DrawerPrimitive.TriggerProps = $props();
 </script>
 
-<DrawerPrimitive.Trigger data-slot="drawer-trigger" {...(restProps as any)} />
+<DrawerPrimitive.Trigger data-slot="drawer-trigger" {...restProps as any} />

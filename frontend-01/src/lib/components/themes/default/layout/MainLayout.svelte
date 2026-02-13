@@ -12,7 +12,7 @@
 
 <DefaultSidebarLayout {user} {setting}>
 	<div
-		class="scrollbar-thin scrollbar-thumb-foreground scrollbar-track-accent flex min-h-[calc(100vh-160px)] flex-col overflow-hidden overflow-y-auto scroll-smooth"
+		class="scrollbar-thin flex min-h-[calc(100vh-160px)] flex-col overflow-hidden overflow-y-auto scroll-smooth scrollbar-thumb-foreground scrollbar-track-accent"
 	>
 		<div>Content</div>
 	</div>

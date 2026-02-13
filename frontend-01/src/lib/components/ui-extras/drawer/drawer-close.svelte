@@ -4,4 +4,4 @@
 	let { ...restProps }: DrawerPrimitive.CloseProps = $props();
 </script>
 
-<DrawerPrimitive.Close data-slot="drawer-close" {...(restProps as any)} />
+<DrawerPrimitive.Close data-slot="drawer-close" {...restProps as any} />

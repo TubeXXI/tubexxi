@@ -69,11 +69,12 @@ export const defaultMetaTags = (
 		},
 		{
 			name: 'mobile-web-app-icon',
-			content: setting?.SYSTEM.source_logo_favicon === 'remote'
-				? isValidUrl(setting?.WEBSITE.site_favicon || '')
-					? setting?.WEBSITE.site_favicon || '/android-chrome-192x192.png'
+			content:
+				setting?.SYSTEM.source_logo_favicon === 'remote'
+					? isValidUrl(setting?.WEBSITE.site_favicon || '')
+						? setting?.WEBSITE.site_favicon || '/android-chrome-192x192.png'
+						: '/android-chrome-192x192.png'
 					: '/android-chrome-192x192.png'
-				: '/android-chrome-192x192.png',
 		}
 	] as MetaTag[],
 	additionalLinkTags: [

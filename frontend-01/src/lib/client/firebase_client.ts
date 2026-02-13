@@ -242,7 +242,22 @@ export class FirebaseClientHelper {
 			'auth/user-token-expired': i18n.error_user_token_expired()
 		};
 
-		const message = errorMessages[errorCode] || errorMessage || i18n.error_unknown_login_error();
+		let message = errorMessages[errorCode] || errorMessage || i18n.error_unknown_login_error();
+		if (errorCode === 'auth/network-request-failed' && browser) {
+			const origin = globalThis.location?.origin || '';
+			const host = globalThis.location?.host || '';
+			message = [
+				message,
+				'\n- Cek koneksi internet / VPN / firewall / extension AdBlock',
+				'- Pastikan akses ke `identitytoolkit.googleapis.com` dan `securetoken.googleapis.com` tidak diblokir',
+				origin ? `- Jika API key dibatasi HTTP referrer, whitelist: ${origin}/*` : undefined,
+				host.includes('127.0.0.1')
+					? '- Coba akses app via `http://localhost:5173` (bukan 127.0.0.1)'
+					: undefined
+			]
+				.filter(Boolean)
+				.join('\n');
+		}
 
 		return new Error(message);
 	}
@@ -295,11 +310,7 @@ export class FirebaseClientHelper {
 		}
 
 		try {
-			const userCredential = await signInWithEmailAndPassword(
-				this.auth,
-				email,
-				password
-			);
+			const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
 			return userCredential;
 		} catch (error: any) {
 			console.error('Error signing in with email:', error);
@@ -323,6 +334,9 @@ export class FirebaseClientHelper {
 		}
 	}
 
+	/**
+	 * Apply email verification code to current user
+	 */
 	async applyEmailVerificationCode(code: string): Promise<void> {
 		if (!this.auth) {
 			throw new Error(i18n.error_firebase_auth_not_initialized());

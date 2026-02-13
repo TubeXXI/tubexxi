@@ -25,6 +25,12 @@
 	let errorMessage = $state<string | undefined>(undefined);
 	let successMessage = $state<string | undefined>(undefined);
 	let isProcessing = $state(false);
+	let fieldErrors = $state<{
+		full_name?: string;
+		email?: string;
+		phone?: string;
+		password?: string;
+	}>({});
 	let strength = $state<ZxcvbnResult>();
 
 	async function createSession(idToken: string): Promise<{ redirect_url: string } | null> {
@@ -43,53 +49,65 @@
 		}
 		return payload.data;
 	}
-	// svelte-ignore state_referenced_locally
-	const { form, enhance, errors, submitting } = superForm(data.registerForm, {
-		resetForm: true,
-		dataType: 'json',
-		async onSubmit(input) {
-			errorMessage = undefined;
-			successMessage = undefined;
-			isProcessing = true;
-			input.cancel();
-			try {
-				const result = await firebaseClient?.registerWithEmail(
-					$form.email,
-					$form.password,
-					$form.full_name
-				);
-				if (!result) {
-					throw new Error(i18n.page_sign_up_error_message());
-				}
-				const idToken = await result.user.getIdToken();
 
-				if (!idToken) {
-					throw new Error(i18n.page_sign_up_error_message());
-				}
-
-				await createSession(idToken);
-				await fetch('/api/auth/verify-email', {
-					method: 'POST',
-					credentials: 'include',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ email: $form.email })
-				});
-				successMessage = i18n.page_sign_up_success_message();
-				await invalidateAll();
-				await goto(localizeHref(`/auth/verify-email?email=${encodeURIComponent($form.email)}`));
-			} catch (error) {
-				input.cancel();
-				errorMessage = error instanceof Error ? error.message : i18n.invalid_input();
-				isProcessing = false;
+	async function handleRegisterSubmit() {
+		fieldErrors = {};
+		errorMessage = undefined;
+		successMessage = undefined;
+		isProcessing = true;
+		try {
+			if (!$form.full_name?.trim()) {
+				fieldErrors = { ...fieldErrors, full_name: i18n.invalid_input() };
+				throw new Error(i18n.invalid_input());
 			}
-		},
-		onUpdate() {
+			if (!$form.email?.trim()) {
+				fieldErrors = { ...fieldErrors, email: i18n.invalid_input() };
+				throw new Error(i18n.invalid_input());
+			}
+			const phone = `${phoneInput || ''}`.trim();
+			if (!phone) {
+				fieldErrors = { ...fieldErrors, phone: i18n.invalid_input() };
+				throw new Error(i18n.invalid_input());
+			}
+			if (!$form.password?.trim()) {
+				fieldErrors = { ...fieldErrors, password: i18n.invalid_input() };
+				throw new Error(i18n.invalid_input());
+			}
+
+			const result = await firebaseClient?.registerWithEmail(
+				$form.email,
+				$form.password,
+				$form.full_name
+			);
+			if (!result) {
+				throw new Error(i18n.page_sign_up_error_message());
+			}
+			const idToken = await result.user.getIdToken();
+			if (!idToken) {
+				throw new Error(i18n.page_sign_up_error_message());
+			}
+
+			await createSession(idToken);
+			await fetch('/api/auth/verify-email', {
+				method: 'POST',
+				credentials: 'include',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email: $form.email })
+			});
+			successMessage = i18n.page_sign_up_success_message();
+			await invalidateAll();
+			await goto(localizeHref(`/auth/verify-email?email=${encodeURIComponent($form.email)}`));
+		} catch (error) {
+			errorMessage = error instanceof Error ? error.message : i18n.invalid_input();
+		} finally {
 			isProcessing = false;
-		},
-		onError() {
-			isProcessing = false;
-			errorMessage = i18n.page_sign_up_error_message();
 		}
+	}
+
+	// svelte-ignore state_referenced_locally
+	const { form } = superForm(data.registerForm, {
+		resetForm: true,
+		dataType: 'json'
 	});
 
 	async function handleSocialLogin(provider: SocialProvider) {
@@ -199,7 +217,13 @@
 				{i18n.button_go_back_to_sign_in()}
 			</Button>
 		{/if}
-		<form method="POST" class="w-full" use:enhance>
+		<form
+			class="w-full"
+			onsubmit={async (e) => {
+				e.preventDefault();
+				await handleRegisterSubmit();
+			}}
+		>
 			<Field.Group class="Root">
 				<Field.Field>
 					<Field.Label for="full_name" class="capitalize">
@@ -214,12 +238,12 @@
 							type="text"
 							class="ps-10"
 							placeholder={i18n.label_full_name()}
-							aria-invalid={!!$errors.full_name}
+							aria-invalid={!!fieldErrors.full_name}
 							autocomplete="given-name"
 						/>
 					</div>
-					{#if $errors.full_name}
-						<Field.Error>{$errors.full_name}</Field.Error>
+					{#if fieldErrors.full_name}
+						<Field.Error>{fieldErrors.full_name}</Field.Error>
 					{/if}
 				</Field.Field>
 				<Field.Field>
@@ -235,12 +259,12 @@
 							type="email"
 							class="ps-10"
 							placeholder={i18n.email()}
-							aria-invalid={!!$errors.email}
+							aria-invalid={!!fieldErrors.email}
 							autocomplete="email"
 						/>
 					</div>
-					{#if $errors.email}
-						<Field.Error>{$errors.email}</Field.Error>
+					{#if fieldErrors.email}
+						<Field.Error>{fieldErrors.email}</Field.Error>
 					{/if}
 				</Field.Field>
 				<Field.Field>
@@ -253,10 +277,10 @@
 						name="phone"
 						country={(data.lang.toUpperCase() as CountryCode) || 'US'}
 						placeholder={i18n.phone()}
-						disabled={$submitting || isProcessing}
+						disabled={isProcessing}
 					/>
-					{#if $errors.phone}
-						<Field.Error>{$errors.phone}</Field.Error>
+					{#if fieldErrors.phone}
+						<Field.Error>{fieldErrors.phone}</Field.Error>
 					{/if}
 				</Field.Field>
 				<Field.Field>
@@ -271,7 +295,7 @@
 								bind:value={passwordInput}
 								name="password"
 								class="ps-10 pe-10"
-								disabled={$submitting || isProcessing}
+								disabled={isProcessing}
 								placeholder={i18n.password()}
 								autocomplete="new-password"
 								oninput={(e) => {
@@ -286,16 +310,16 @@
 						</Password.Root>
 					</div>
 
-					{#if $errors.password}
-						<Field.Error>{$errors.password}</Field.Error>
+					{#if fieldErrors.password}
+						<Field.Error>{fieldErrors.password}</Field.Error>
 					{/if}
 				</Field.Field>
 				<Field.Field>
-					<Button type="submit" disabled={$submitting || isProcessing}>
-						{#if $submitting || isProcessing}
+					<Button type="submit" disabled={isProcessing}>
+						{#if isProcessing}
 							<Spinner />
 						{/if}
-						{$submitting || isProcessing ? i18n.please_wait() : i18n.create_account()}
+						{isProcessing ? i18n.please_wait() : i18n.create_account()}
 					</Button>
 				</Field.Field>
 				<Field.Separator>OR</Field.Separator>

@@ -6,12 +6,13 @@
 	import { Button } from '../ui/button';
 	import { goto } from '$app/navigation';
 	import { localizeHref } from '@/paraglide/runtime';
+	import { firebaseClient } from '@/client/firebase_client';
 
 	let { user }: { user?: User | null } = $props();
 	const sidebar = Sidebar.useSidebar();
 
 	async function handleLogout() {
-		await fetch(`/admin/accounts/logout`, {
+		await fetch(`/admin/accounts/signout`, {
 			method: 'POST',
 			headers: {
 				'X-Platform': 'web'
@@ -19,7 +20,8 @@
 			credentials: 'include'
 		});
 
-		await goto(localizeHref('/login'));
+		await firebaseClient?.signOut();
+		await goto(localizeHref('/auth/login'));
 	}
 </script>
 

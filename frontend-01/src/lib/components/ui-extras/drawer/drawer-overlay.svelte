@@ -2,10 +2,7 @@
 	import { Drawer as DrawerPrimitive } from 'vaul-svelte';
 	import { cn } from '$lib/utils.js';
 
-	let {
-		class: className,
-		...restProps
-	}: DrawerPrimitive.OverlayProps = $props();
+	let { class: className, ...restProps }: DrawerPrimitive.OverlayProps = $props();
 </script>
 
 <DrawerPrimitive.Overlay
@@ -14,5 +11,5 @@
 		'fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
 		className
 	)}
-	{...(restProps as any)}
+	{...restProps as any}
 />

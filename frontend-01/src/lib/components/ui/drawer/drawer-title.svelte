@@ -2,10 +2,7 @@
 	import { Drawer as DrawerPrimitive } from 'vaul-svelte';
 	import { cn } from '$lib/utils.js';
 
-	let {
-		class: className,
-		...restProps
-	}: DrawerPrimitive.TitleProps = $props();
+	let { class: className, ...restProps }: DrawerPrimitive.TitleProps = $props();
 </script>
 
 <DrawerPrimitive.Title

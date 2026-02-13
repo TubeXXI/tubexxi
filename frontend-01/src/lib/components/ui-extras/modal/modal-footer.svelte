@@ -15,11 +15,11 @@
 </script>
 
 {#if modal.view === 'desktop'}
-	<Dialog.Footer {...(rest as any)}>
+	<Dialog.Footer {...rest as any}>
 		{@render children?.()}
 	</Dialog.Footer>
 {:else}
-	<Drawer.Footer {...(rest as any)}>
+	<Drawer.Footer {...rest as any}>
 		{@render children?.()}
 	</Drawer.Footer>
 {/if}

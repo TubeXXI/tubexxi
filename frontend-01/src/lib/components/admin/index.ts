@@ -64,5 +64,5 @@ export {
 	// users
 	AdminUserTable,
 	AdminUserTableToolbar,
-	AdminUserDetail,
+	AdminUserDetail
 };

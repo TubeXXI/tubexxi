@@ -23,17 +23,17 @@ function createAuthStore() {
 						...state,
 						user: user
 							? {
-								id: user.uid,
-								email: user.email || '',
-								full_name: user.displayName || '',
-								avatar_url: user.photoURL || '',
-								role_id: 'user',
-								email_verified_at: user.emailVerified ? user.metadata.creationTime : null,
-								is_active: true,
-								is_verified: user.emailVerified,
-								created_at: user.metadata.creationTime || '',
-								updated_at: user.metadata.lastSignInTime || ''
-							}
+									id: user.uid,
+									email: user.email || '',
+									full_name: user.displayName || '',
+									avatar_url: user.photoURL || '',
+									role_id: 'user',
+									email_verified_at: user.emailVerified ? user.metadata.creationTime : null,
+									is_active: true,
+									is_verified: user.emailVerified,
+									created_at: user.metadata.creationTime || '',
+									updated_at: user.metadata.lastSignInTime || ''
+								}
 							: null,
 						loading: false,
 						error: null
@@ -85,17 +85,19 @@ function createAuthStore() {
 						...state,
 						user: result.user
 							? {
-								id: result.user.uid,
-								email: result.user.email || '',
-								full_name: result.user.displayName || '',
-								avatar_url: result.user.photoURL || '',
-								role_id: 'user',
-								email_verified_at: result.user.emailVerified ? result.user.metadata.creationTime : null,
-								is_active: true,
-								is_verified: result.user.emailVerified,
-								created_at: result.user.metadata.creationTime || '',
-								updated_at: result.user.metadata.lastSignInTime || ''
-							}
+									id: result.user.uid,
+									email: result.user.email || '',
+									full_name: result.user.displayName || '',
+									avatar_url: result.user.photoURL || '',
+									role_id: 'user',
+									email_verified_at: result.user.emailVerified
+										? result.user.metadata.creationTime
+										: null,
+									is_active: true,
+									is_verified: result.user.emailVerified,
+									created_at: result.user.metadata.creationTime || '',
+									updated_at: result.user.metadata.lastSignInTime || ''
+								}
 							: null,
 						loading: false,
 						error: null
@@ -147,17 +149,19 @@ function createAuthStore() {
 					...state,
 					user: result.user
 						? {
-							id: result.user.uid,
-							email: result.user.email || '',
-							full_name: result.user.displayName || '',
-							avatar_url: result.user.photoURL || '',
-							role_id: 'user',
-							email_verified_at: result.user.emailVerified ? result.user.metadata.creationTime : null,
-							is_active: true,
-							is_verified: result.user.emailVerified,
-							created_at: result.user.metadata.creationTime || '',
-							updated_at: result.user.metadata.lastSignInTime || ''
-						}
+								id: result.user.uid,
+								email: result.user.email || '',
+								full_name: result.user.displayName || '',
+								avatar_url: result.user.photoURL || '',
+								role_id: 'user',
+								email_verified_at: result.user.emailVerified
+									? result.user.metadata.creationTime
+									: null,
+								is_active: true,
+								is_verified: result.user.emailVerified,
+								created_at: result.user.metadata.creationTime || '',
+								updated_at: result.user.metadata.lastSignInTime || ''
+							}
 						: null,
 					loading: false,
 					error: null
@@ -206,17 +210,19 @@ function createAuthStore() {
 					...state,
 					user: result.user
 						? {
-							id: result.user.uid,
-							email: result.user.email || '',
-							full_name: result.user.displayName || '',
-							avatar_url: result.user.photoURL || '',
-							role_id: 'user',
-							email_verified_at: result.user.emailVerified ? result.user.metadata.creationTime : null,
-							is_active: true,
-							is_verified: result.user.emailVerified,
-							created_at: result.user.metadata.creationTime || '',
-							updated_at: result.user.metadata.lastSignInTime || ''
-						}
+								id: result.user.uid,
+								email: result.user.email || '',
+								full_name: result.user.displayName || '',
+								avatar_url: result.user.photoURL || '',
+								role_id: 'user',
+								email_verified_at: result.user.emailVerified
+									? result.user.metadata.creationTime
+									: null,
+								is_active: true,
+								is_verified: result.user.emailVerified,
+								created_at: result.user.metadata.creationTime || '',
+								updated_at: result.user.metadata.lastSignInTime || ''
+							}
 						: null,
 					loading: false,
 					error: null
@@ -324,17 +330,19 @@ function createAuthStore() {
 					...state,
 					user: currentUser
 						? {
-							id: currentUser.uid,
-							email: currentUser.email || '',
-							full_name: currentUser.displayName || '',
-							avatar_url: currentUser.photoURL || '',
-							role_id: 'user',
-							email_verified_at: currentUser.emailVerified ? currentUser.metadata.creationTime : null,
-							is_active: true,
-							is_verified: currentUser.emailVerified,
-							created_at: currentUser.metadata.creationTime || '',
-							updated_at: currentUser.metadata.lastSignInTime || ''
-						}
+								id: currentUser.uid,
+								email: currentUser.email || '',
+								full_name: currentUser.displayName || '',
+								avatar_url: currentUser.photoURL || '',
+								role_id: 'user',
+								email_verified_at: currentUser.emailVerified
+									? currentUser.metadata.creationTime
+									: null,
+								is_active: true,
+								is_verified: currentUser.emailVerified,
+								created_at: currentUser.metadata.creationTime || '',
+								updated_at: currentUser.metadata.lastSignInTime || ''
+							}
 						: null
 				}));
 			} catch (error: any) {
@@ -388,17 +396,19 @@ function createAuthStore() {
 						...state,
 						user: result.user
 							? {
-								id: result.user.uid,
-								email: result.user.email || '',
-								full_name: result.user.displayName || '',
-								avatar_url: result.user.photoURL || '',
-								role_id: 'user',
-								email_verified_at: result.user.emailVerified ? result.user.metadata.creationTime : null,
-								is_active: true,
-								is_verified: result.user.emailVerified,
-								created_at: result.user.metadata.creationTime || '',
-								updated_at: result.user.metadata.lastSignInTime || ''
-							}
+									id: result.user.uid,
+									email: result.user.email || '',
+									full_name: result.user.displayName || '',
+									avatar_url: result.user.photoURL || '',
+									role_id: 'user',
+									email_verified_at: result.user.emailVerified
+										? result.user.metadata.creationTime
+										: null,
+									is_active: true,
+									is_verified: result.user.emailVerified,
+									created_at: result.user.metadata.creationTime || '',
+									updated_at: result.user.metadata.lastSignInTime || ''
+								}
 							: null,
 						loading: false,
 						error: null

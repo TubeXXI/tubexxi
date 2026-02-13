@@ -11,7 +11,7 @@
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import * as i18n from '@/paraglide/messages.js';
 	import { localizeHref } from '$lib/paraglide/runtime';
-	import { firebaseClient } from '@/client/firebase_client';
+	import { firebaseClient } from '@/client/firebase_client.js';
 	import { FirebaseMFAHelper } from '@/client/firebase_mfa';
 	import { getMultiFactorResolver, type MultiFactorResolver } from 'firebase/auth';
 
@@ -22,6 +22,7 @@
 	let errorMessage = $state<string | undefined>(undefined);
 	let successMessage = $state<string | undefined>(undefined);
 	let isProcessing = $state(false);
+	let fieldErrors = $state<{ email?: string; password?: string; mfa_code?: string }>({});
 	let mfaResolver = $state<MultiFactorResolver | null>(null);
 	let mfaCode = $state('');
 	let mfaPhone = $state<string | undefined>(undefined);
@@ -32,6 +33,7 @@
 	async function createSession(idToken: string): Promise<{ redirect_url: string } | null> {
 		const res = await fetch('/api/auth/session', {
 			method: 'POST',
+			credentials: 'include',
 			headers: { 'Content-Type': 'application/json', 'X-Platform': 'web' },
 			body: JSON.stringify({ idToken, rememberMe: $form.remember_me })
 		});
@@ -52,70 +54,76 @@
 		await goto(localizeHref(data?.redirect_url || '/'));
 	}
 
-	// svelte-ignore state_referenced_locally
-	const { form, enhance, errors, submitting } = superForm(data.loginForm, {
-		dataType: 'json',
-		async onSubmit(input) {
-			errorMessage = undefined;
-			successMessage = undefined;
-			isProcessing = true;
-			input.cancel();
-			try {
-				if (mfaStep) {
-					if (!mfaResolver) {
+	async function handleLoginSubmit() {
+		fieldErrors = {};
+		errorMessage = undefined;
+		successMessage = undefined;
+		isProcessing = true;
+		try {
+			if (mfaStep) {
+				if (!mfaResolver) {
+					throw new Error(i18n.page_sign_in_error_message());
+				}
+				if (!mfaCode.trim()) {
+					fieldErrors = { mfa_code: i18n.invalid_input() };
+					throw new Error(i18n.invalid_input());
+				}
+				const credential = await mfa.completeSignIn(mfaResolver, mfaCode.trim());
+				const idToken = await credential.user.getIdToken();
+				await finishLogin(idToken);
+				return;
+			}
+
+			if (!$form.email?.trim()) {
+				fieldErrors = { ...fieldErrors, email: i18n.invalid_input() };
+				throw new Error(i18n.invalid_input());
+			}
+			if (!$form.password?.trim()) {
+				fieldErrors = { ...fieldErrors, password: i18n.invalid_input() };
+				throw new Error(i18n.invalid_input());
+			}
+
+			const firebaseUser = await firebaseClient?.signInWithEmail($form.email, $form.password);
+			if (!firebaseUser?.user) {
+				throw new Error(i18n.page_sign_in_error_message());
+			}
+
+			const idToken = await firebaseUser.user.getIdToken();
+			if (!idToken) {
+				throw new Error(i18n.page_sign_in_error_message());
+			}
+
+			await finishLogin(idToken);
+		} catch (error) {
+			const errAny = error as any;
+			if (errAny?.code === 'auth/multi-factor-auth-required') {
+				try {
+					const auth = firebaseClient?.getAuth();
+					if (!auth) {
 						throw new Error(i18n.page_sign_in_error_message());
 					}
-					if (!mfaCode.trim()) {
-						throw new Error(i18n.invalid_input());
-					}
-					const credential = await mfa.completeSignIn(mfaResolver, mfaCode.trim());
-					const idToken = await credential.user.getIdToken();
-					await finishLogin(idToken);
-					return;
+					mfaResolver = getMultiFactorResolver(auth, errAny);
+					mfaPhone = (mfaResolver?.hints?.[0] as any)?.phoneNumber;
+					await mfa.sendSignInVerificationCode(mfaResolver);
+					mfaStep = true;
+					successMessage = i18n.success();
+					errorMessage = undefined;
+				} catch (mfaErr) {
+					errorMessage =
+						mfaErr instanceof Error ? mfaErr.message : i18n.page_sign_in_error_message();
+					mfaResolver = null;
+					mfaStep = false;
 				}
-
-				const firebaseUser = await firebaseClient?.signInWithEmail($form.email, $form.password);
-				if (!firebaseUser?.user) {
-					throw new Error(i18n.page_sign_in_error_message());
-				}
-
-				const idToken = await firebaseUser.user.getIdToken();
-				if (!idToken) {
-					throw new Error(i18n.page_sign_in_error_message());
-				}
-
-				await finishLogin(idToken);
-			} catch (error) {
-				const errAny = error as any;
-				if (errAny?.code === 'auth/multi-factor-auth-required') {
-					try {
-						const auth = firebaseClient?.getAuth();
-						if (!auth) {
-							throw new Error(i18n.page_sign_in_error_message());
-						}
-						mfaResolver = getMultiFactorResolver(auth, errAny);
-						mfaPhone = (mfaResolver?.hints?.[0] as any)?.phoneNumber;
-						await mfa.sendSignInVerificationCode(mfaResolver);
-						mfaStep = true;
-						successMessage = i18n.success();
-						errorMessage = undefined;
-					} catch (mfaErr) {
-						errorMessage =
-							mfaErr instanceof Error ? mfaErr.message : i18n.page_sign_in_error_message();
-						mfaResolver = null;
-						mfaStep = false;
-					}
-					isProcessing = false;
-					return;
-				}
-				errorMessage = error instanceof Error ? error.message : i18n.page_sign_in_error_message();
 				isProcessing = false;
+				return;
 			}
-		},
-		onError() {
+			errorMessage = error instanceof Error ? error.message : i18n.page_sign_in_error_message();
 			isProcessing = false;
 		}
-	});
+	}
+
+	// svelte-ignore state_referenced_locally
+	const { form } = superForm(data.loginForm, { dataType: 'json' });
 	async function handleSocialLogin(provider: SocialProvider) {
 		isProcessing = true;
 		errorMessage = undefined;
@@ -222,7 +230,13 @@
 				</Alert.Description>
 			</Alert.Root>
 		{/if}
-		<form method="POST" class="w-full" use:enhance>
+		<form
+			class="w-full"
+			onsubmit={async (e) => {
+				e.preventDefault();
+				await handleLoginSubmit();
+			}}
+		>
 			<Field.Group class="Root">
 				<Field.Field>
 					<Field.Label for="email" class="capitalize">
@@ -237,13 +251,13 @@
 							type="text"
 							class="ps-10"
 							placeholder={i18n.email()}
-							aria-invalid={!!$errors.email}
+							aria-invalid={!!fieldErrors.email}
 							autocomplete="email"
-							disabled={isProcessing || $submitting || mfaStep}
+							disabled={isProcessing || mfaStep}
 						/>
 					</div>
-					{#if $errors.email}
-						<Field.Error>{$errors.email}</Field.Error>
+					{#if fieldErrors.email}
+						<Field.Error>{fieldErrors.email}</Field.Error>
 					{/if}
 				</Field.Field>
 				<Field.Field>
@@ -267,17 +281,18 @@
 							type={passwordType}
 							class="ps-10"
 							placeholder={i18n.password()}
-							aria-invalid={!!$errors.password}
+							aria-invalid={!!fieldErrors.password}
 							autocomplete="new-password"
-							disabled={isProcessing || $submitting || mfaStep}
+							disabled={isProcessing || mfaStep}
 						/>
 
 						<Button
+							type="button"
 							variant="ghost"
 							size="icon"
 							class="absolute top-1/2 right-1 size-8 -translate-y-1/2 cursor-pointer"
 							onclick={() => (passwordType = passwordType === 'password' ? 'text' : 'password')}
-							disabled={isProcessing || $submitting || mfaStep}
+							disabled={isProcessing || mfaStep}
 						>
 							<Icon
 								icon={passwordType === 'password' ? 'mdi:eye' : 'mdi:eye-off'}
@@ -285,8 +300,8 @@
 							/>
 						</Button>
 					</div>
-					{#if $errors.password}
-						<Field.Error>{$errors.password}</Field.Error>
+					{#if fieldErrors.password}
+						<Field.Error>{fieldErrors.password}</Field.Error>
 					{/if}
 				</Field.Field>
 				{#if mfaStep}
@@ -304,14 +319,17 @@
 							inputmode="numeric"
 							autocomplete="one-time-code"
 							placeholder="123456"
-							disabled={isProcessing || $submitting}
+							disabled={isProcessing}
 						/>
+						{#if fieldErrors.mfa_code}
+							<Field.Error>{fieldErrors.mfa_code}</Field.Error>
+						{/if}
 					</Field.Field>
 					<Field.Field>
 						<Button
 							type="button"
 							variant="ghost"
-							disabled={isProcessing || $submitting}
+							disabled={isProcessing}
 							onclick={() => {
 								mfaStep = false;
 								mfaResolver = null;
@@ -329,22 +347,18 @@
 						name="remember_me"
 						bind:checked={$form.remember_me}
 						onCheckedChange={(value) => ($form.remember_me = value)}
-						disabled={isProcessing || $submitting || mfaStep}
+						disabled={isProcessing || mfaStep}
 					/>
 					<Field.Label for="remember_me" class="font-normal capitalize">
 						{i18n.remember_me()}
 					</Field.Label>
 				</Field.Field>
 				<Field.Field>
-					<Button type="submit" disabled={$submitting || isProcessing}>
-						{#if $submitting || isProcessing}
+					<Button type="submit" disabled={isProcessing}>
+						{#if isProcessing}
 							<Spinner />
 						{/if}
-						{$submitting || isProcessing
-							? i18n.please_wait()
-							: mfaStep
-								? 'Verifikasi'
-								: i18n.sign_in()}
+						{isProcessing ? i18n.please_wait() : mfaStep ? 'Verifikasi' : i18n.sign_in()}
 					</Button>
 				</Field.Field>
 				<Field.Separator>OR</Field.Separator>
@@ -352,7 +366,7 @@
 					<Button
 						type="button"
 						variant="outline"
-						disabled={$submitting || isProcessing || mfaStep}
+						disabled={isProcessing || mfaStep}
 						onclick={() => handleSocialLogin('google')}
 					>
 						<Icon icon="devicon:google" class="text-xl" />
@@ -361,7 +375,7 @@
 					<Button
 						type="button"
 						variant="outline"
-						disabled={$submitting || isProcessing || mfaStep}
+						disabled={isProcessing || mfaStep}
 						onclick={() => handleSocialLogin('facebook')}
 					>
 						<Icon icon="devicon:facebook" class="text-xl" />
@@ -380,7 +394,7 @@
 				type="button"
 				variant="outline"
 				class="w-full text-sm"
-				disabled={$submitting || isProcessing}
+				disabled={isProcessing}
 			>
 				{i18n.create_account()}
 			</Button>

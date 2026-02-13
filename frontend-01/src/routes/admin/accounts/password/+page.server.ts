@@ -2,7 +2,8 @@ import { defaultMetaTags } from '@/utils/meta-tags.js';
 import type { SingleResponse } from '@siamf/google-translate';
 import { capitalizeFirstLetter } from '@/utils/format.js';
 import { superValidate } from 'sveltekit-superforms';
-import { loginSchema } from '$lib/utils/schema';
+import { fail } from '@sveltejs/kit';
+import { updatePasswordSchema } from '$lib/utils/schema';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ locals, parent }) => {
@@ -11,7 +12,7 @@ export const load = async ({ locals, parent }) => {
 	const defaultOrigin = await parent().then((data) => data.canonicalUrl || '');
 	const alternates = await parent().then((data) => data.alternates || []);
 
-	const title = (await deps.languageHelper.singleTranslate('Login', lang)) as SingleResponse;
+	const title = (await deps.languageHelper.singleTranslate('Admin - Update Password', lang)) as SingleResponse;
 	const siteName = (await deps.languageHelper.singleTranslate(
 		settings?.WEBSITE?.site_name || '',
 		lang
@@ -40,7 +41,7 @@ export const load = async ({ locals, parent }) => {
 			keywords: keywords.map((keyword: SingleResponse) =>
 				capitalizeFirstLetter(keyword.data.target.text || '')
 			),
-			robots: 'index, follow',
+			robots: 'noindex, nofollow',
 			canonical: defaultOrigin,
 			alternates,
 			graph_type: 'website'
@@ -48,13 +49,50 @@ export const load = async ({ locals, parent }) => {
 		settings
 	);
 
-	const loginForm = await superValidate(zod4(loginSchema));
+	const passwordForm = await superValidate(zod4(updatePasswordSchema));
 
 	return {
 		pageMetaTags,
-		loginForm,
+		passwordForm,
 		settings,
 		user,
 		lang
 	};
 };
+
+export const actions = {
+	default: async ({ request, locals }) => {
+		const { deps } = locals;
+		const passwordForm = await superValidate(request, zod4(updatePasswordSchema));
+		if (!passwordForm.valid) {
+			return fail(400, {
+				passwordForm,
+				message: Object.values(passwordForm.errors).flat().join(', ')
+			});
+		}
+		try {
+
+			const response = await deps.userService.UpdatePassword(passwordForm.data);
+			if (response instanceof Error) {
+				return fail(500, {
+					passwordForm,
+					message: response.message
+				});
+			}
+
+			await deps.userService.Logout();
+
+			return {
+				passwordForm,
+				success: true,
+				message: 'Password updated successfully'
+			};
+
+		} catch (error) {
+			return fail(500, {
+				passwordForm,
+				message: error instanceof Error ? error.message : 'Internal server error'
+			});
+		}
+	}
+}

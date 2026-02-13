@@ -14,7 +14,7 @@
 	bind:this={ref}
 	data-slot="drawer-header"
 	class={cn('flex flex-col gap-1.5', className)}
-	{...(restProps as any)}
+	{...restProps as any}
 >
 	{@render children?.()}
 </div>

@@ -10,7 +10,7 @@
 </script>
 
 {#if modal.view === 'desktop'}
-	<Dialog.Title {...(rest as any)} />
+	<Dialog.Title {...rest as any} />
 {:else}
-	<Drawer.Title {...(rest as any)} />
+	<Drawer.Title {...rest as any} />
 {/if}

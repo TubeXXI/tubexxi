@@ -14,7 +14,7 @@
 	bind:this={ref}
 	data-slot="drawer-footer"
 	class={cn('mt-auto flex flex-col gap-2', className)}
-	{...(restProps as any)}
+	{...restProps as any}
 >
 	{@render children?.()}
 </div>
