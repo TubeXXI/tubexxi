@@ -24,17 +24,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tar \
     gzip \
     unzip \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/* && \
     curl -L https://github.com/golang-migrate/migrate/releases/download/v4.19.1/migrate.linux-amd64.tar.gz | tar xvz && \
     mv migrate /usr/local/bin/migrate && \
     chmod +x /usr/local/bin/migrate
 
-ENV PATH="/opt/venv/bin:${PATH}"
-
 COPY --from=builder /app/bin/api ./api
 COPY --from=builder /app/bin/worker ./worker
 COPY --from=builder /app/bin/seed ./seed
-COPY --from=builder /app/.env . 
 
 COPY --from=builder /app/database/migrations ./database/migrations
 

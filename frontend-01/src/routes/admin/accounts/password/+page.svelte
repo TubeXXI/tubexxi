@@ -43,14 +43,14 @@
 				handleSubmitLoading(false);
 				successMessage = result.data.message;
 
-				await firebaseClient?.signOut();
-				await invalidateAll();
-
+				await firebaseClient?.updatePassword($form.new_password);
 				setTimeout(async () => {
 					successMessage = null;
 					errorMessage = null;
+					await firebaseClient?.signOut();
+					await invalidateAll();
 					await goto(localizeHref('/auth/login?redirect=${page.url.pathname}'));
-				}, 2000);
+				}, 1000);
 			}
 		},
 		onError: ({ result }) => {

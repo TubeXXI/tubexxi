@@ -1,31 +1,37 @@
-# Use an official Python runtime as a parent image
-FROM python:3.11-alpine
+FROM python:3.11-slim
 
-# Set the working directory in the container
 WORKDIR /app
 
-RUN pip install --no-cache-dir requests
-
-# Copy the current directory contents into the container at /app
-COPY . /app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+	PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+		ca-certificates \
 		curl \
-    wget \
-    tar \
-    gzip \
-    unzip \
 		chromium \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+		chromium-driver \
+		fonts-liberation \
+		libasound2 \
+		libatk-bridge2.0-0 \
+		libatk1.0-0 \
+		libc6 \
+		libdrm2 \
+		libgbm1 \
+		libgtk-3-0 \
+		libnss3 \
+		libx11-xcb1 \
+		libxcomposite1 \
+		libxdamage1 \
+		libxrandr2 \
+		libu2f-udev \
+		xdg-utils \
+	&& rm -rf /var/lib/apt/lists/*
 
-# Install any needed packages specified in requirements.txt
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --from=builder /app/.env . 
+COPY . ./
 
-# Make port 80 available to the world outside this container
 EXPOSE 50051
 
-# Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD ["python", "server.py"]

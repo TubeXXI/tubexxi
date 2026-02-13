@@ -7,6 +7,8 @@ from anime_scraper import OtakuDesuScraper
 from fetcher import fetch_html
 import urllib.parse
 import os
+import signal
+import threading
 try:
     from dotenv import load_dotenv
 except ImportError:
@@ -709,9 +711,47 @@ def serve():
     scraper_pb2_grpc.add_ScraperServiceServicer_to_server(ScraperService(), server)
     host = os.getenv("SCRAPER_HOST", "localhost")
     server.add_insecure_port(f"{host}:{port}")
-    print(f"Scraper Service started on {host}:{port}")
+    
+    print(f"=======================================")
+    print(f"======== AGENT SCRAPER SERVICE ========")
+    print(f"======= Scraper Service started =======")
+    print(f"========== Host: {host} ============")
+    print(f"============ Port: {port} =============")
+    print(f"============ Version: {os.getenv('SCRAPER_VERSION', '1.0.0')} ===========")
+    print(f"========================================")
+    
+    shutdown_event = threading.Event()
+
+    def request_shutdown(signum=None, frame=None):
+        if shutdown_event.is_set():
+            return
+        shutdown_event.set()
+        try:
+            print("\nShutting down Scraper Service...")
+        except Exception:
+            pass
+        server.stop(grace=5)
+
+    try:
+        signal.signal(signal.SIGINT, request_shutdown)
+    except Exception:
+        pass
+    try:
+        signal.signal(signal.SIGTERM, request_shutdown)
+    except Exception:
+        pass
+
     server.start()
-    server.wait_for_termination()
+
+    try:
+        server.wait_for_termination()
+    except KeyboardInterrupt:
+        request_shutdown()
+    finally:
+        try:
+            print("Scraper Service stopped")
+        except Exception:
+            pass
 
 if __name__ == '__main__':
     logging.basicConfig()

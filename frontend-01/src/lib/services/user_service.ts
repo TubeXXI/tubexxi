@@ -68,9 +68,6 @@ export class UserServiceImpl extends BaseService implements UserService {
 			if (!response.success) {
 				throw new Error(response.message || 'Failed to update password');
 			}
-			if (!response.data) {
-				throw new Error('Failed to update password');
-			}
 			return response.message || 'Password updated successfully';
 		} catch (error) {
 			return error instanceof Error ? error : new Error('Unknown server error');
@@ -82,9 +79,10 @@ export class UserServiceImpl extends BaseService implements UserService {
 			if (!response.success) {
 				throw new Error(response.message || 'Failed to logout');
 			}
-			if (!response.data) {
-				throw new Error('Failed to logout');
-			}
+
+			this.event.locals.deps.authHelper.clearAuthCookies();
+			this.event.locals.user = null;
+
 			return response.message || 'Logout successful';
 		} catch (error) {
 			return error instanceof Error ? error : new Error('Unknown server error');

@@ -474,6 +474,7 @@ func (r *userRepository) UpdatePassword(ctx context.Context, id uuid.UUID, passw
 	}
 	result, err := r.db.Exec(subCtx, query, args...)
 	if err != nil {
+		r.logger.Error("Failed to update password", zap.Error(err))
 		return fmt.Errorf("failed to update password: %w", err)
 	}
 	if result.RowsAffected() == 0 {

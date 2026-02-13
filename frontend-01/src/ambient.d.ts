@@ -39,6 +39,7 @@ declare global {
 		id: string;
 		email: string;
 		full_name: string;
+		phone?: string | null;
 		avatar_url: string;
 		role_id: string;
 		two_fa_secret?: string | null;
@@ -348,15 +349,15 @@ declare global {
 		email?: string | null;
 		comment: string;
 		type:
-			| 'text'
-			| 'image'
-			| 'audio'
-			| 'video'
-			| 'document'
-			| 'file'
-			| 'location'
-			| 'contact'
-			| 'other';
+		| 'text'
+		| 'image'
+		| 'audio'
+		| 'video'
+		| 'document'
+		| 'file'
+		| 'location'
+		| 'contact'
+		| 'other';
 		reply_to_id?: string | null;
 		is_edited?: boolean;
 		is_deleted?: boolean;
@@ -388,15 +389,15 @@ declare global {
 		receiver_id: string;
 		message: string;
 		type:
-			| 'text'
-			| 'image'
-			| 'audio'
-			| 'video'
-			| 'document'
-			| 'file'
-			| 'location'
-			| 'contact'
-			| 'other';
+		| 'text'
+		| 'image'
+		| 'audio'
+		| 'video'
+		| 'document'
+		| 'file'
+		| 'location'
+		| 'contact'
+		| 'other';
 		file_url?: string | null;
 		file_name?: string | null;
 		file_size?: number | null;
@@ -558,4 +559,4 @@ declare global {
 	}
 }
 
-export {};
+export { };

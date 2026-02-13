@@ -1,113 +1,256 @@
-# version: "3.8"
-
 services:
-  backend:
+  proto-gen:
     build:
-      context: ./go-service
+      context: ./tools/proto-gen
       dockerfile: Dockerfile
-    container_name: tubexxi_backend_api
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    ports:
-      - "127.0.0.1:5002:5002"
+    container_name: tubexxi_proto_gen
+    profiles: ["tools"]
+    volumes:
+      - ./:/workspace
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: tubexxi_postgres
+    restart: unless-stopped
     environment:
-      - APP_NAME=${APP_NAME}
-      - APP_PORT=${APP_PORT}
-      - APP_ENV=${APP_ENV}
-      - APP_DEBUG=${APP_DEBUG}
-      - APP_URL=${APP_URL}
-      - APP_CLIENT_URL=${APP_CLIENT_URL}
-      - APP_ADMIN_EMAIL=${APP_ADMIN_EMAIL}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - DB_SSL_MODE=${DB_SSL_MODE}
-      - DB_MAX_OPEN_CONNS=${DB_MAX_OPEN_CONNS}
-      - DB_MAX_IDLE_CONNS=${DB_MAX_IDLE_CONNS}
-      - DB_CONN_MAX_LIFETIME=${DB_CONN_MAX_LIFETIME}
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_DB=${REDIS_DB}
-      - REDIS_ASYNQ_DB=${REDIS_ASYNQ_DB}
-      - REDIS_INSTANCE=${REDIS_INSTANCE}
-      - REDIS_POOL_SIZE=${REDIS_POOL_SIZE}
-      - REDIS_CONCURRENCY=${REDIS_CONCURRENCY}
-      - CENTRIFUGE_URL=${CENTRIFUGE_URL}
-      - CENTRIFUGO_API_KEY=${CENTRIFUGO_API_KEY}
-      - CENTRIFUGO_TOKEN_SECRET=${CENTRIFUGO_TOKEN_SECRET}
-      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
-      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-      - MINIO_BUCKET=${MINIO_BUCKET}
-      - MINIO_USE_SSL=${MINIO_USE_SSL}
-      - BCRYPT_COST=${BCRYPT_COST}
-      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_EXPIRE_HOURS=${JWT_EXPIRE_HOURS}
-      - JWT_REFRESH_EXPIRE_HOURS=${JWT_REFRESH_EXPIRE_HOURS}
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
-      - TELEGRAM_NOTIFICATIONS=${TELEGRAM_NOTIFICATIONS}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASSWORD=${SMTP_PASSWORD}
-      - SMTP_FROM_NAME=${SMTP_FROM_NAME}
-      - SMTP_FROM_ADDRESS=${SMTP_FROM_ADDRESS}
-      - SCRAPER_HOST=${SCRAPER_HOST}
-      - SCRAPER_PORT=${SCRAPER_PORT}
-      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
-      - SETTINGS_SCOPE_MAP=${SETTINGS_SCOPE_MAP}
+      POSTGRES_DB: ${DB_NAME:-indoxxi}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - tubexxi-postgres:/var/lib/postgresql/data
     networks:
       - tubexxi-network
-      - shared-network
-    volumes:
-      - ./go-service/service-account.json:/app/service-account.json
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT}/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-indoxxi}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
-  python-service:
+  redis:
+    image: redis:7-alpine
+    container_name: tubexxi_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - tubexxi-redis:/data
+    networks:
+      - tubexxi-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:RELEASE.2025-01-20T14-49-07Z
+    container_name: tubexxi_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    command: ["server", "/data", "--console-address", ":9001"]
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - tubexxi-minio:/data
+    networks:
+      - tubexxi-network
+
+  centrifugo:
+    image: centrifugo/centrifugo:v5
+    container_name: tubexxi_centrifugo
+    restart: unless-stopped
+    command: ["centrifugo", "--config", "/centrifugo/config.json"]
+    environment:
+      CENTRIFUGO_ENGINE: redis
+      CENTRIFUGO_REDIS_ADDRESS: redis:6379
+      CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY:-1234567890}
+      CENTRIFUGO_TOKEN_HMAC_SECRET_KEY: ${CENTRIFUGO_TOKEN_SECRET:-1234567890}
+      CENTRIFUGO_ALLOWED_ORIGINS: "*"
+      CENTRIFUGO_ADMIN: "true"
+      CENTRIFUGO_ADMIN_PASSWORD: ${CENTRIFUGO_ADMIN_PASSWORD:-admin}
+      CENTRIFUGO_ADMIN_SECRET: ${CENTRIFUGO_ADMIN_SECRET:-admin}
+    volumes:
+      - ./centrifugo/config.json:/centrifugo/config.json:ro
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - tubexxi-network
+
+  scraper:
     build:
       context: ./python-service
       dockerfile: Dockerfile
     container_name: tubexxi_python_service
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+    restart: unless-stopped
     ports:
-      - "127.0.0.1:${SCRAPER_PORT}:${SCRAPER_PORT}"
+      - "127.0.0.1:${SCRAPER_PORT:-50051}:${SCRAPER_PORT:-50051}"
     environment:
-      - APP_NAME=${APP_NAME}
-      - SCRAPER_PORT=${SCRAPER_PORT}
-      - SCRAPER_HOST=${SCRAPER_HOST}
-      - MOVIE_BASE_URL=${MOVIE_BASE_URL}
-      - SERIES_BASE_URL=${SERIES_BASE_URL}
-      - ANIME_BASE_URL=${ANIME_BASE_URL}
-    depends_on:
-      - backend
+      SCRAPER_PORT: ${SCRAPER_PORT:-50051}
+      SCRAPER_HOST: 0.0.0.0
+      MOVIE_BASE_URL: ${MOVIE_BASE_URL:-https://tv8.lk21official.cc}
+      SERIES_BASE_URL: ${SERIES_BASE_URL:-https://tv3.nontondrama.my}
+      ANIME_BASE_URL: ${ANIME_BASE_URL:-https://otakudesu.best}
     networks:
       - tubexxi-network
-      - shared-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${SCRAPER_PORT}/health"]
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import os,socket; s=socket.socket(); s.settimeout(2); s.connect((''127.0.0.1'', int(os.getenv(''SCRAPER_PORT'',''50051'')))); s.close()"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./go-service
+      dockerfile: Dockerfile
+    container_name: tubexxi_backend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${APP_PORT:-5002}:${APP_PORT:-5002}"
+    environment:
+      APP_NAME: ${APP_NAME:-go-service}
+      APP_PORT: ${APP_PORT:-5002}
+      APP_ENV: ${APP_ENV:-development}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_URL: ${APP_URL:-http://localhost:5002}
+      APP_CLIENT_URL: ${APP_CLIENT_URL:-http://localhost:5173}
+      APP_ADMIN_EMAIL: ${APP_ADMIN_EMAIL:-premiumwatchdevice@gmail.com}
+
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-indoxxi}
+      DB_SSL_MODE: ${DB_SSL_MODE:-disable}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_DB: ${REDIS_DB:-0}
+      REDIS_ASYNQ_DB: ${REDIS_ASYNQ_DB:-1}
+      REDIS_INSTANCE: ${REDIS_INSTANCE:-default}
+      REDIS_POOL_SIZE: ${REDIS_POOL_SIZE:-10}
+      REDIS_CONCURRENCY: ${REDIS_CONCURRENCY:-10}
+
+      CENTRIFUGE_URL: ${CENTRIFUGE_URL:-http://centrifugo:8000}
+      CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY:-1234567890}
+      CENTRIFUGO_TOKEN_SECRET: ${CENTRIFUGO_TOKEN_SECRET:-1234567890}
+
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT:-minio:9000}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_BUCKET: ${MINIO_BUCKET:-indoxxi}
+      MINIO_USE_SSL: ${MINIO_USE_SSL:-false}
+
+      BCRYPT_COST: ${BCRYPT_COST:-10}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-1234567890}
+      JWT_SECRET: ${JWT_SECRET:-1234567890}
+      JWT_EXPIRE_HOURS: ${JWT_EXPIRE_HOURS:-15m}
+      JWT_REFRESH_EXPIRE_HOURS: ${JWT_REFRESH_EXPIRE_HOURS:-24h}
+
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM_NAME: ${SMTP_FROM_NAME:-}
+      SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL:-}
+
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      TELEGRAM_NOTIFICATIONS: ${TELEGRAM_NOTIFICATIONS:-false}
+
+      SCRAPER_HOST: scraper
+      SCRAPER_PORT: ${SCRAPER_PORT:-50051}
+
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-}
+      SETTINGS_SCOPE_MAP: ${SETTINGS_SCOPE_MAP:-}
+    volumes:
+      - ./go-service/service-account.json:/app/service-account.json
+      - ./go-service/logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      scraper:
+        condition: service_healthy
+      centrifugo:
+        condition: service_started
+    networks:
+      - tubexxi-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:${APP_PORT:-5002}/health || exit 1",
+        ]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 10s
+      retries: 5
+
+  worker:
+    build:
+      context: ./go-service
+      dockerfile: Dockerfile
+    container_name: tubexxi_worker_service
+    restart: unless-stopped
+    command: ["./worker"]
+    environment:
+      APP_NAME: ${APP_NAME:-go-service}
+      APP_ENV: ${APP_ENV:-development}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-indoxxi}
+      DB_SSL_MODE: ${DB_SSL_MODE:-disable}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_DB: ${REDIS_DB:-0}
+      REDIS_ASYNQ_DB: ${REDIS_ASYNQ_DB:-1}
+      REDIS_INSTANCE: ${REDIS_INSTANCE:-default}
+      REDIS_POOL_SIZE: ${REDIS_POOL_SIZE:-10}
+      REDIS_CONCURRENCY: ${REDIS_CONCURRENCY:-10}
+      CENTRIFUGE_URL: ${CENTRIFUGE_URL:-http://centrifugo:8000}
+      CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY:-1234567890}
+      CENTRIFUGO_TOKEN_SECRET: ${CENTRIFUGO_TOKEN_SECRET:-1234567890}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT:-minio:9000}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_BUCKET: ${MINIO_BUCKET:-indoxxi}
+      MINIO_USE_SSL: ${MINIO_USE_SSL:-false}
+      SCRAPER_HOST: scraper
+      SCRAPER_PORT: ${SCRAPER_PORT:-50051}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-}
+    volumes:
+      - ./go-service/logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      scraper:
+        condition: service_healthy
+    networks:
+      - tubexxi-network
 
   setup:
     build:
@@ -115,39 +258,35 @@ services:
       dockerfile: Dockerfile
     container_name: tubexxi_setup
     restart: "no"
+    profiles: ["setup"]
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - DB_SSL_MODE=${DB_SSL_MODE}
-      - DB_MAX_OPEN_CONNS=${DB_MAX_OPEN_CONNS}
-      - DB_MAX_IDLE_CONNS=${DB_MAX_IDLE_CONNS}
-      - DB_CONN_MAX_LIFETIME=${DB_CONN_MAX_LIFETIME}
+      DB_USER: ${DB_USER:-postgres}
+      DB_NAME: ${DB_NAME:-indoxxi}
+      DATABASE_URL: ${DATABASE_URL:-postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-indoxxi}?sslmode=disable}
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - tubexxi-network
-      - shared-network
     command: >
       /bin/sh -c "
-      echo 'Waiting for PostgreSQL to be ready...'
-      until pg_isready -h infrastructure-postgres -p 5432 -U ${DB_USER}; do
-        echo 'Waiting for PostgreSQL...'
-        sleep 2
-      done
-      echo 'Running migrations...'
-      migrate -path database/migrations -database $${DATABASE_URL} up
-      echo 'Running seeders...'
-      ./seeders
-      echo 'Setup completed!'
+      echo 'Waiting for PostgreSQL to be ready...';
+      until pg_isready -h postgres -p 5432 -U $${DB_USER} -d $${DB_NAME}; do
+        echo 'Waiting for PostgreSQL...';
+        sleep 2;
+      done;
+      echo 'Running migrations...';
+      migrate -path database/migrations -database $${DATABASE_URL} up;
+      echo 'Running seed...';
+      ./seed;
+      echo 'Setup completed!';
       "
-    profiles: ["setup"]
 
 networks:
   tubexxi-network:
     driver: bridge
 
-  shared-network:
-    external: true
-    name: shared-network
+volumes:
+  tubexxi-postgres:
+  tubexxi-redis:
+  tubexxi-minio:
