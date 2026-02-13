@@ -43,7 +43,7 @@
 			{
 				id: 2,
 				title: 'Applications',
-				url: localizeHref('/admin/application'),
+				url: localizeHref('/admin/applications'),
 				icon: 'tdesign:app-filled'
 			},
 			{
@@ -153,11 +153,6 @@
 									sidebar.state === 'expanded' ? 'h-8 w-auto' : 'aspect-square size-7 object-cover'
 								)}
 							/>
-							<span
-								class={cn('text-lg font-bold', sidebar.state === 'expanded' ? 'block' : 'hidden')}
-							>
-								{webSetting?.site_name}
-							</span>
 						</a>
 					{/snippet}
 				</Sidebar.MenuButton>

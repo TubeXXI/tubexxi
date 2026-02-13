@@ -22,42 +22,5 @@ jobs:
           set -e
           cd /var/www/tubexxi
 
-          # echo "🚀 Starting deployment..."
-
-          # # Backup critical files
-          # BACKUP_ITEMS=("android" "uploads" "tmp" "docker-compose.override.yml")
-          # for item in "${BACKUP_ITEMS[@]}"; do
-          #   if [ -e "$item" ]; then
-          #     cp -r "$item" "/tmp/backup_$item" 2>/dev/null || true
-          #   fi
-          # done
-
-          # Git update
-          git fetch origin
-          git reset --hard origin/main
-
-          # # Remove unwanted directories that might come from git
-          # UNWANTED=("android" "ios" "node_modules" ".expo")
-          # for dir in "${UNWANTED[@]}"; do
-          #   if [ -d "$dir" ]; then
-          #     echo "Removing $dir..."
-          #     rm -rf "$dir"
-          #   fi
-          # done
-
-          # # Restore backups
-          # for item in "${BACKUP_ITEMS[@]}"; do
-          #   if [ -e "/tmp/backup_$item" ]; then
-          #     rm -rf "$item" 2>/dev/null || true
-          #     cp -r "/tmp/backup_$item" "$item"
-          #     rm -rf "/tmp/backup_$item"
-          #   fi
-          # done
-
-          # # Clean git ignored files (but keep important ones)
-          # git clean -fd -e .env -e .env.* -e uploads -e tmp -e docker-compose.override.yml
-
-          # echo "✅ Deployment completed!"
-
-          # Optional: Restart services
-          # docker-compose up -d --build
+          rm docker-compose.yml
+          cp docker-compose.prod.yml docker-compose.yml

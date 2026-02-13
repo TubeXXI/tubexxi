@@ -15,14 +15,18 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Icon from '@iconify/svelte';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
+	import type { E164Number } from 'svelte-tel-input/types';
+	import { PhoneInput } from '@/components/ui-extras/phone-input/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Badge } from '@/components/ui/badge/index.js';
-	import { Mail, Calendar, Clock, Info } from '@lucide/svelte';
+	import type { CountryCode } from 'svelte-tel-input/types';
+	import { Mail, Calendar, Clock } from '@lucide/svelte';
 
 	let { data } = $props();
 	let metaTags = $derived(data.pageMetaTags);
 	// svelte-ignore state_referenced_locally
+	let phoneInput = $state<E164Number | null>(data.user?.phone || null);
 	let successMessage = $state<string | null>(null);
 	let errorMessage = $state<string | null>(null);
 
@@ -54,6 +58,20 @@
 		onError: ({ result }) => {
 			handleSubmitLoading(false);
 			errorMessage = result.error?.message || 'Validation error';
+		}
+	});
+
+	$effect(() => {
+		if (data.user?.phone && data.user.phone.trim() !== '') {
+			phoneInput = data.user.phone as E164Number;
+		}
+	});
+	$effect(() => {
+		if (phoneInput && typeof phoneInput === 'string' && phoneInput.trim() !== '') {
+			const cleanNumber = phoneInput.replace(/[\s-]/g, '');
+			$form.phone = cleanNumber;
+		} else {
+			$form.phone = '';
 		}
 	});
 
@@ -215,6 +233,30 @@
 											</div>
 											{#if $errors.email}
 												<Field.Error>{$errors.email}</Field.Error>
+											{/if}
+										</Field.Field>
+										<Field.Field>
+											<Field.Label for="phone">
+												Phone
+												<span class="text-red-500 dark:text-red-400">*</span>
+											</Field.Label>
+											<div class="relative">
+												<Icon icon="mdi:phone" class="absolute top-1/2 left-3 -translate-y-1/2" />
+												<PhoneInput
+													bind:value={phoneInput}
+													name="phone"
+													placeholder="Enter your phone number"
+													disabled={$submitting}
+													options={{
+														autoPlaceholder: true,
+														spaces: false,
+														format: 'international',
+														invalidateOnCountryChange: true
+													}}
+												/>
+											</div>
+											{#if $errors.phone}
+												<Field.Error>{$errors.phone}</Field.Error>
 											{/if}
 										</Field.Field>
 									</Field.Group>

@@ -142,6 +142,7 @@ export const updateSettingEmail = z.object({
 	from_name: z.string().optional().or(z.literal(''))
 });
 export const updateSettingSystem = z.object({
+	theme: z.enum(['default', 'red-dark', 'green-dark', 'blue-dark']).optional().default('default'),
 	enable_documentation: z.boolean().optional().default(true),
 	maintenance_mode: z.boolean().optional().default(false),
 	maintenance_message: z.string().optional().or(z.literal('')),

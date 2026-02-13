@@ -7,7 +7,8 @@ import {
 	AdminServiceImpl,
 	MovieServiceImpl,
 	SeriesServiceImpl,
-	AnimeServiceImpl
+	AnimeServiceImpl,
+	ServerStatusServiceImpl
 } from '@/services';
 
 export class Dependencies {
@@ -23,6 +24,7 @@ export class Dependencies {
 	public readonly movieService: MovieServiceImpl;
 	public readonly seriesService: SeriesServiceImpl;
 	public readonly animeService: AnimeServiceImpl;
+	public readonly serverStatusService: ServerStatusServiceImpl;
 
 	constructor(event: RequestEvent) {
 		this.apiClient = new ApiClientHandler(event);
@@ -37,5 +39,6 @@ export class Dependencies {
 		this.movieService = new MovieServiceImpl(event, this.apiClient);
 		this.seriesService = new SeriesServiceImpl(event, this.apiClient);
 		this.animeService = new AnimeServiceImpl(event, this.apiClient);
+		this.serverStatusService = new ServerStatusServiceImpl(event, this.apiClient);
 	}
 }

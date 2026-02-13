@@ -12,7 +12,7 @@ export const load = async ({ locals, parent }) => {
 	const defaultOrigin = await parent().then((data) => data.canonicalUrl || '');
 	const alternates = await parent().then((data) => data.alternates || []);
 
-	const title = (await deps.languageHelper.singleTranslate('Admin - Update Password', lang)) as SingleResponse;
+	const title = (await deps.languageHelper.singleTranslate('Admin - Update Account Password', lang)) as SingleResponse;
 	const siteName = (await deps.languageHelper.singleTranslate(
 		settings?.WEBSITE?.site_name || '',
 		lang

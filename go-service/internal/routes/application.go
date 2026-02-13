@@ -38,7 +38,15 @@ func (r *ApplicationRoutes) RegisterRoutes(parent fiber.Router) {
 	protected := router.Group("/protected")
 	protected.Use(r.auth.FirebaseAuth())
 
-	protected.Post("/", r.csrf.CSRFProtect(), r.handler.RegisterApplication)
-	protected.Put("/:package_name", r.csrf.CSRFProtect(), r.handler.UpdateAppConfigBulk)
+	protected.Post("/",
+		r.csrf.CSRFProtect(),
+		r.admin.Handler(),
+		r.handler.RegisterApplication,
+	)
+	protected.Put("/:package_name",
+		r.csrf.CSRFProtect(),
+		r.admin.Handler(),
+		r.handler.UpdateAppConfigBulk,
+	)
 
 }

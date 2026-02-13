@@ -226,7 +226,7 @@ declare global {
 	};
 	type SettingSystem = {
 		api_key?: string;
-		theme?: string;
+		theme?: "default" | "red-dark" | "green-dark" | "blue-dark";
 		enable_documentation?: boolean;
 		maintenance_mode?: boolean;
 		maintenance_message?: string;
@@ -509,6 +509,12 @@ declare global {
 		GetDetail(url: string): Promise<Anime>;
 		GetEpisode(url: string): Promise<AnimeEpisode[]>;
 	}
+	interface ServerStatusService {
+		GetServerHealth(): Promise<ServerHealthResponse | null>;
+		GetServerLogs(page: number, limit: number): Promise<PaginatedResult<ServerLogsResponse> | null>;
+		ClearServerLogs(): Promise<void | Error>;
+	}
+
 
 	// ==========================================
 	// Analytics Interfaces
@@ -541,7 +547,14 @@ declare global {
 	interface ServerLogsResponse {
 		level: string;
 		message: string;
-		time: string;
+		timestamp: string;
+		caller?: string;
+		app?: string;
+		env?: string;
+		sql?: string;
+		method?: string;
+		path?: string;
+		status?: number;
 		count?: number;
 		duration?: string;
 		sql?: string;
@@ -551,11 +564,9 @@ declare global {
 		pipeline_size?: number;
 		ip?: string;
 		latency?: string;
-		method?: string;
-		path?: string;
-		status?: number;
 		user_agent?: string;
 		error?: string;
+		args?: Record<string, any>[];
 	}
 }
 

@@ -20,6 +20,7 @@ echo "Generating protos (${#PROTO_FILES[@]} files)"
 
 rm -f "$ROOT_DIR/go-service/proto"/*.pb.go || true
 rm -f "$ROOT_DIR/python-service/proto"/*_pb2*.py || true
+rm -f "$ROOT_DIR/python-service"/*_pb2*.py || true
 
 protoc -I"$ROOT_DIR" \
 	--go_out="$ROOT_DIR/go-service" \

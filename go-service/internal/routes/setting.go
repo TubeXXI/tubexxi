@@ -14,6 +14,7 @@ type SettingRoutes struct {
 	auth      *middleware.AuthMiddleware
 	csrf      *middleware.CSRFMiddleware
 	scope     *middleware.ScopeMiddleware
+	admin     *middleware.AdminMiddleware
 }
 
 func NewSettingRoutes(
@@ -22,6 +23,7 @@ func NewSettingRoutes(
 	auth *middleware.AuthMiddleware,
 	csrf *middleware.CSRFMiddleware,
 	scope *middleware.ScopeMiddleware,
+	admin *middleware.AdminMiddleware,
 ) *SettingRoutes {
 	return &SettingRoutes{
 		path:      "/settings",
@@ -30,6 +32,7 @@ func NewSettingRoutes(
 		auth:      auth,
 		csrf:      csrf,
 		scope:     scope,
+		admin:     admin,
 	}
 }
 
@@ -40,7 +43,7 @@ func (r *SettingRoutes) RegisterRoutes(parent fiber.Router) {
 	router.Get("/public", r.handler.GetPublicSettings)
 
 	protected := router.Group("/protected")
-	protected.Use(r.auth.FirebaseAuth())
+	protected.Use(r.auth.FirebaseAuth(), r.admin.Handler())
 	protected.Get("/all", r.handler.GetAllSettings)
 	protected.Put("/bulk-update", r.csrf.CSRFProtect(), r.handler.UpdateSettingsBulk)
 	protected.Post("/upload", r.csrf.CSRFProtect(), r.handler.UploadFile)

@@ -35,7 +35,7 @@
 
 <AlertDialog.Root bind:open>
 	<AlertDialog.Content
-		class="mx-auto flex w-md flex-col items-center justify-center gap-10 bg-accent py-12"
+		class="mx-auto flex w-md flex-col items-center justify-center gap-10 border border-neutral-200 bg-background py-12 dark:border-neutral-700"
 	>
 		<AlertDialog.Header>
 			<AlertDialog.Title class="flex  w-full flex-col items-center">
