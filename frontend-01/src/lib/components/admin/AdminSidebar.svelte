@@ -37,107 +37,95 @@
 			{
 				id: 1,
 				title: 'Dashboard',
-				url: localizeHref('/dashboard'),
+				url: localizeHref('/admin/dashboard'),
 				icon: 'material-symbols:home'
 			},
 			{
 				id: 2,
-				title: 'Platforms',
-				url: localizeHref('/platform'),
-				icon: 'tdesign:control-platform-filled'
-			},
-			{
-				id: 3,
 				title: 'Applications',
-				url: localizeHref('/application'),
+				url: localizeHref('/admin/application'),
 				icon: 'tdesign:app-filled'
 			},
 			{
-				id: 7,
+				id: 3,
 				title: 'Users',
-				url: localizeHref('/users'),
+				url: localizeHref('/admin/users'),
 				icon: 'material-symbols:account-circle'
 			}
 		] satisfies MenuItem[],
 		navSetting: [
 			{
-				id: 7,
+				id: 4,
 				title: 'Settings',
 				url: '#',
 				icon: 'mingcute:settings-2-fill',
 				child: [
 					{
 						title: 'Website',
-						url: localizeHref('/settings/web'),
+						url: localizeHref('/admin/settings/web'),
 						icon: 'mdi:web'
 					},
 					{
 						title: 'Email',
-						url: localizeHref('/settings/email'),
+						url: localizeHref('/admin/settings/email'),
 						icon: 'ri:mail-settings-fill'
 					},
 					{
 						title: 'System',
-						url: localizeHref('/settings/system'),
+						url: localizeHref('/admin/settings/system'),
 						icon: 'solar:settings-linear'
 					},
 					{
 						title: 'Monetization',
-						url: localizeHref('/settings/monetization'),
+						url: localizeHref('/admin/settings/monetization'),
 						icon: 'streamline:dollar-coin-remix'
 					},
 					{
 						title: 'Ads.txt',
-						url: localizeHref('/settings/ads.txt'),
+						url: localizeHref('/admin/settings/ads.txt'),
 						icon: 'lsicon:file-txt-filled'
 					},
 					{
 						title: 'Robot.txt',
-						url: localizeHref('/settings/robot.txt'),
+						url: localizeHref('/admin/settings/robot.txt'),
 						icon: 'lsicon:file-txt-filled'
 					}
 				]
 			},
 			{
-				id: 8,
+				id: 5,
 				title: 'Account',
 				url: '#',
 				icon: 'mdi:account-cog',
 				child: [
 					{
 						title: 'Profile',
-						url: localizeHref('/accounts/profile'),
+						url: localizeHref('/admin/accounts/profile'),
 						icon: 'ic:outline-account-circle'
 					},
 					{
 						title: 'Password',
-						url: localizeHref('/accounts/password'),
+						url: localizeHref('/admin/accounts/password'),
 						icon: 'ic:round-key'
 					}
 				]
-			},
-			{
-				id: 9,
-				title: 'Cookies',
-				url: localizeHref('/cookies'),
-				icon: 'fluent:cookies-16-filled'
 			}
 		] satisfies MenuItem[],
 		navBottom: [
 			{
-				id: 10,
+				id: 6,
 				title: 'Server Status',
-				url: localizeHref('/server-status'),
+				url: localizeHref('/admin/server-status'),
 				icon: 'ic:outline-monitor-heart'
 			},
 			{
-				id: 11,
+				id: 7,
 				title: 'User Panel',
-				url: localizeHref('/user'),
+				url: localizeHref('/user/accounts'),
 				icon: 'material-symbols:account-circle'
 			},
 			{
-				id: 12,
+				id: 8,
 				title: 'Home',
 				url: localizeHref('/'),
 				icon: 'material-symbols:home'
@@ -153,7 +141,7 @@
 				<Sidebar.MenuButton class="data-[slot=sidebar-menu-button]:p-1.5!">
 					{#snippet child({ props })}
 						<a
-							href={localizeHref('/dashboard')}
+							href={localizeHref('/admin/dashboard')}
 							{...props}
 							class="flex items-start gap-3 rounded-lg"
 						>
@@ -177,7 +165,7 @@
 		</Sidebar.Menu>
 	</Sidebar.Header>
 	<Sidebar.Content
-		class="scrollbar-thumb-cyan scrollbar-thin scrollbar-thumb-foreground scrollbar-track-accent overflow-hidden overflow-y-auto"
+		class="scrollbar-thumb-cyan scrollbar-thin overflow-hidden overflow-y-auto scrollbar-thumb-foreground scrollbar-track-accent"
 	>
 		<AdminNavMain items={data.navMain} />
 		<AdminNavSetting items={data.navSetting} />

@@ -40,7 +40,7 @@
 			name: 'profile',
 			description: 'Manage your profile information',
 			icon: 'mdi:account',
-			to: localizeHref('/accounts/profile'),
+			to: localizeHref('/admin/accounts/profile'),
 			exact: true
 		},
 		{
@@ -48,7 +48,7 @@
 			name: 'password',
 			description: 'Manage your password',
 			icon: 'mdi:lock',
-			to: localizeHref('/accounts/password'),
+			to: localizeHref('/admin/accounts/password'),
 			exact: true
 		}
 	];
@@ -79,7 +79,7 @@
 				</div>
 				<Separator class="my-4 flex-none" />
 				<div
-					class="scrollbar-thin scrollbar-thumb-foreground scrollbar-track-accent faded-bottom max-h-[calc(100vh-300px)] w-full overflow-y-auto scroll-smooth pe-4 pb-12"
+					class="faded-bottom scrollbar-thin max-h-[calc(100vh-300px)] w-full overflow-y-auto scroll-smooth pe-4 pb-12 scrollbar-thumb-foreground scrollbar-track-accent"
 				>
 					<div class="-mx-1 w-full px-1.5">
 						{@render children()}

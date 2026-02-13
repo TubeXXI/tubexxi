@@ -17,7 +17,6 @@
 
 	let { data } = $props();
 	let metaTags = $derived(data.pageMetaTags);
-	let settingState = $derived(data.settings);
 
 	let passwordType = $state('password');
 	let errorMessage = $state<string | undefined>(undefined);

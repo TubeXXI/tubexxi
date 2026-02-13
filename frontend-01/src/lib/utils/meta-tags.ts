@@ -69,7 +69,11 @@ export const defaultMetaTags = (
 		},
 		{
 			name: 'mobile-web-app-icon',
-			content: '/images/icon.png'
+			content: setting?.SYSTEM.source_logo_favicon === 'remote'
+				? isValidUrl(setting?.WEBSITE.site_favicon || '')
+					? setting?.WEBSITE.site_favicon || '/android-chrome-192x192.png'
+					: '/android-chrome-192x192.png'
+				: '/android-chrome-192x192.png',
 		}
 	] as MetaTag[],
 	additionalLinkTags: [
@@ -99,9 +103,9 @@ export const defaultMetaTags = (
 			href:
 				setting?.SYSTEM.source_logo_favicon === 'remote'
 					? isValidUrl(setting?.WEBSITE.site_favicon || '')
-						? setting?.WEBSITE.site_favicon || '/images/logo.png'
-						: '/images/logo.png'
-					: '/images/icon.png'
+						? setting?.WEBSITE.site_favicon || '/images/icon.png'
+						: '/images/icon.png'
+					: '/images/logo.png'
 		},
 		{
 			rel: 'icon',
@@ -112,7 +116,7 @@ export const defaultMetaTags = (
 					? isValidUrl(setting?.WEBSITE.site_favicon || '')
 						? setting?.WEBSITE.site_favicon || '/favicon-32x32.png'
 						: '/favicon-32x32.png'
-					: '/images/icon.png'
+					: '/favicon-32x32.png'
 		},
 		{
 			rel: 'icon',
@@ -123,7 +127,7 @@ export const defaultMetaTags = (
 					? isValidUrl(setting?.WEBSITE.site_favicon || '')
 						? setting?.WEBSITE.site_favicon || '/favicon-16x16.png'
 						: '/favicon-16x16.png'
-					: '/images/icon.png'
+					: '/favicon-16x16.png'
 		},
 		{
 			rel: 'icon',
@@ -132,9 +136,9 @@ export const defaultMetaTags = (
 			href:
 				setting?.SYSTEM.source_logo_favicon === 'remote'
 					? isValidUrl(setting?.WEBSITE.site_favicon || '')
-						? setting?.WEBSITE.site_favicon || '/favicon-192x192.png'
-						: '/favicon-192x192.png'
-					: '/images/icon.png'
+						? setting?.WEBSITE.site_favicon || '/android-chrome-192x192.png'
+						: '/android-chrome-192x192.png'
+					: '/android-chrome-192x192.png'
 		},
 		{
 			rel: 'icon',
@@ -143,9 +147,9 @@ export const defaultMetaTags = (
 			href:
 				setting?.SYSTEM.source_logo_favicon === 'remote'
 					? isValidUrl(setting?.WEBSITE.site_favicon || '')
-						? setting?.WEBSITE.site_favicon || '/favicon-512x512.png'
-						: '/favicon-512x512.png'
-					: '/images/icon.png'
+						? setting?.WEBSITE.site_favicon || '/android-chrome-512x512.png'
+						: '/android-chrome-512x512.png'
+					: '/android-chrome-512x512.png'
 		},
 		{
 			rel: 'apple-touch-icon',
@@ -156,7 +160,7 @@ export const defaultMetaTags = (
 					? isValidUrl(setting?.WEBSITE.site_favicon || '')
 						? setting?.WEBSITE.site_favicon || '/apple-touch-icon.png'
 						: '/apple-touch-icon.png'
-					: '/images/icon.png'
+					: '/apple-touch-icon.png'
 		}
 	] as LinkTag[],
 	openGraph: {
@@ -183,8 +187,8 @@ export const defaultMetaTags = (
 				url:
 					setting?.SYSTEM.source_logo_favicon === 'remote'
 						? isValidUrl(setting?.WEBSITE.site_favicon || '')
-							? setting?.WEBSITE.site_favicon || '/images/logo.png'
-							: '/images/logo.png'
+							? setting?.WEBSITE.site_favicon || '/images/icon.png'
+							: '/images/icon.png'
 						: '/images/icon.png',
 				width: 512,
 				height: 512,

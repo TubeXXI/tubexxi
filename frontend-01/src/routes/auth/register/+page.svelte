@@ -19,15 +19,12 @@
 
 	let { data } = $props();
 	let metaTags = $derived(data.pageMetaTags);
-	let settingState = $derived(data.settings);
 
-	let showConfirmPassword = $state(false);
 	let phoneInput = $state<E164Number | undefined>('');
 	let passwordInput = $state<string | undefined>('');
 	let errorMessage = $state<string | undefined>(undefined);
 	let successMessage = $state<string | undefined>(undefined);
 	let isProcessing = $state(false);
-	const SCORE_NAMING = ['Poor', 'Weak', 'Average', 'Strong', 'Secure'];
 	let strength = $state<ZxcvbnResult>();
 
 	async function createSession(idToken: string): Promise<{ redirect_url: string } | null> {

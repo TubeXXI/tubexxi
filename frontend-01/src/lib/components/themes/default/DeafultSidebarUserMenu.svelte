@@ -75,7 +75,7 @@
 				<DropdownMenu.Item>
 					{#snippet child()}
 						<a
-							href={localizeHref('/member/accounts/profile')}
+							href={localizeHref('/user/accounts/profile')}
 							class="flex items-center gap-2 ps-3 text-sm transition-all active:scale-95"
 						>
 							<Icon icon="solar:user-circle-linear" />
@@ -86,7 +86,7 @@
 				<DropdownMenu.Item>
 					{#snippet child()}
 						<a
-							href={localizeHref('/member')}
+							href={localizeHref('/user/accounts')}
 							class="flex items-center gap-2 ps-3 text-sm transition-all active:scale-95"
 						>
 							<Icon icon="material-symbols:dashboard-2-outline" />
@@ -98,7 +98,7 @@
 					<DropdownMenu.Item>
 						{#snippet child()}
 							<a
-								href={localizeHref('/admin')}
+								href={localizeHref('/admin/dashboard')}
 								class="flex items-center gap-2 ps-3 text-sm transition-all active:scale-95"
 							>
 								<Icon icon="material-symbols:admin-panel-settings-outline" />

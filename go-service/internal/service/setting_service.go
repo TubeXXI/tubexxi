@@ -199,7 +199,7 @@ func (s *SettingService) mapEmailSetting(target *entity.SettingEmail, parent ent
 func (s *SettingService) mapSystemSetting(target *entity.SettingSystem, parent entity.Setting) {
 	switch parent.Key {
 	case "api_key":
-		target.ApiKey = parent.Value
+		target.ApiKey = "[HIDDEN]"
 	case "theme":
 		target.Theme = parent.Value
 	case "enable_documentation":

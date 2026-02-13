@@ -67,7 +67,7 @@
 			const formData = new FormData();
 			formData.append('file', logoFile);
 
-			const response = await fetch('/settings/web/logo', {
+			const response = await fetch('/admin/settings/web/logo', {
 				method: 'POST',
 				body: formData
 			});

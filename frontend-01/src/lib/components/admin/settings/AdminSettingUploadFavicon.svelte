@@ -67,7 +67,7 @@
 			const formData = new FormData();
 			formData.append('file', faviconFile);
 
-			const response = await fetch('/settings/web/favicon', {
+			const response = await fetch('/admin/settings/web/favicon', {
 				method: 'POST',
 				body: formData
 			});

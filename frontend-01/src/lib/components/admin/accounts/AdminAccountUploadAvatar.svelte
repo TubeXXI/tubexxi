@@ -69,7 +69,7 @@
 			formData.append('file', avatarFile);
 
 			// Corrected endpoint: /accounts (handled by src/routes/(admin)/accounts/+server.ts)
-			const response = await fetch('/accounts', {
+			const response = await fetch('/admin/accounts', {
 				method: 'POST',
 				body: formData
 			});

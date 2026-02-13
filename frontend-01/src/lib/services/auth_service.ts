@@ -17,7 +17,7 @@ export class AuthServiceImpl extends BaseService implements AuthService {
 	async Login(idToken: string): Promise<FirebaseAuthResponse | Error> {
 		try {
 			const response = await this.api.publicRequest<FirebaseAuthResponse>('POST', '/auth/login', {
-				idToken
+				id_token: idToken
 			});
 			if (!response.success) {
 				throw new Error(response.error?.message || response.message || 'Failed to login');

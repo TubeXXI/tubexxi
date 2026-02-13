@@ -295,27 +295,9 @@ export class FirebaseClientHelper {
 		}
 
 		try {
-			const response = await fetch('/api/public/identifier', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-Platform': 'web'
-				},
-				body: JSON.stringify({ identifier: email })
-			});
-
-			const result = await response.json();
-			if (!response.ok) {
-				throw new Error(i18n.error_invalid_identifier());
-			}
-
-			if (!result.data.email) {
-				throw new Error(i18n.error_invalid_identifier());
-			}
-
 			const userCredential = await signInWithEmailAndPassword(
 				this.auth,
-				result.data.email,
+				email,
 				password
 			);
 			return userCredential;
@@ -449,7 +431,7 @@ export class FirebaseClientHelper {
 	 * Setup automatic token refresh
 	 */
 	setupTokenRefresh(): () => void {
-		if (!this.auth) return () => {};
+		if (!this.auth) return () => { };
 
 		const interval = setInterval(
 			async () => {

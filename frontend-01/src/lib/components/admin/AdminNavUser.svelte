@@ -11,7 +11,7 @@
 	const sidebar = Sidebar.useSidebar();
 
 	async function handleLogout() {
-		await fetch(`/accounts/logout`, {
+		await fetch(`/admin/accounts/logout`, {
 			method: 'POST',
 			headers: {
 				'X-Platform': 'web'
@@ -76,7 +76,7 @@
 					<DropdownMenu.Item class="ps-5">
 						{#snippet child()}
 							<a
-								href={localizeHref('/accounts/profile')}
+								href={localizeHref('/admin/accounts/profile')}
 								class="flex items-center gap-2 ps-3 text-sm transition-all active:scale-95"
 							>
 								<Icon icon="solar:user-circle-linear" />

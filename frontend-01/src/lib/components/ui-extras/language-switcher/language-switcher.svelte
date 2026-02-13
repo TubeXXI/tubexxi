@@ -30,6 +30,14 @@
 				return 'https://flagicons.lipis.dev/flags/4x3/in.svg';
 			case 'el':
 				return 'https://flagicons.lipis.dev/flags/4x3/gr.svg';
+			case 'ko':
+				return 'https://flagicons.lipis.dev/flags/4x3/kr.svg';
+			case 'vi':
+				return 'https://flagicons.lipis.dev/flags/4x3/vn.svg';
+			case 'ms':
+				return 'https://flagicons.lipis.dev/flags/4x3/my.svg';
+			case 'tl':
+				return 'https://flagicons.lipis.dev/flags/4x3/ph.svg';
 			default:
 				return 'https://flagicons.lipis.dev/flags/4x3/' + code + '.svg';
 		}
@@ -59,7 +67,7 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content {align}>
 		<DropdownMenu.RadioGroup bind:value onValueChange={onChange}>
-			{#each languages as language (language.code)}
+			{#each languages.sort((a, b) => a.code.localeCompare(b.code)) as language (language.code)}
 				<DropdownMenu.RadioItem value={language.code} class="flex items-center gap-2">
 					<img src={setFlagUrl(language.code)} alt={language.label} class="size-4" />
 					{language.label}

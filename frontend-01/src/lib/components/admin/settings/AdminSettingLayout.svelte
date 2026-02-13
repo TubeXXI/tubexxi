@@ -40,7 +40,7 @@
 			name: 'Web',
 			description: 'Web settings',
 			icon: 'mdi:web',
-			to: localizeHref('/settings/web'),
+			to: localizeHref('/admin/settings/web'),
 			exact: true
 		},
 		{
@@ -48,35 +48,35 @@
 			name: 'Email',
 			description: 'Email settings',
 			icon: 'lucide-mail',
-			to: localizeHref('/settings/email')
+			to: localizeHref('/admin/settings/email')
 		},
 		{
 			label: 'System',
 			name: 'System',
 			description: 'System settings',
 			icon: 'solar:settings-linear',
-			to: localizeHref('/settings/system')
+			to: localizeHref('/admin/settings/system')
 		},
 		{
 			label: 'Monetization',
 			name: 'Monetization',
 			description: 'Monetization settings',
 			icon: 'streamline:dollar-coin-remix',
-			to: localizeHref('/settings/monetization')
+			to: localizeHref('/admin/settings/monetization')
 		},
 		{
 			label: 'Ads.txt',
 			name: 'Ads.txt',
 			description: 'Ads.txt settings',
 			icon: 'lsicon:file-txt-filled',
-			to: localizeHref('/settings/ads.txt')
+			to: localizeHref('/admin/settings/ads.txt')
 		},
 		{
 			label: 'Robot.txt',
 			name: 'Robot.txt',
 			description: 'Robot.txt settings',
 			icon: 'lsicon:file-txt-filled',
-			to: localizeHref('/settings/robot.txt')
+			to: localizeHref('/admin/settings/robot.txt')
 		}
 	];
 </script>
@@ -104,7 +104,7 @@
 				</div>
 				<Separator class="my-4 flex-none" />
 				<div
-					class="scrollbar-thin scrollbar-thumb-foreground scrollbar-track-accent faded-bottom max-h-[calc(100vh-300px)] w-full overflow-y-auto scroll-smooth pe-4 pb-12"
+					class="faded-bottom scrollbar-thin max-h-[calc(100vh-300px)] w-full overflow-y-auto scroll-smooth pe-4 pb-12 scrollbar-thumb-foreground scrollbar-track-accent"
 				>
 					<div class="-mx-1 w-full px-1.5">
 						{@render children()}

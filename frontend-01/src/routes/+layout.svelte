@@ -332,9 +332,6 @@
 	});
 </script>
 
-<svelte:head>
-	<link rel="icon" type="image/png" href="/images/icon.png" />
-</svelte:head>
 <ModeWatcher />
 <ProgressBarIndicator />
 <ToastContent />
