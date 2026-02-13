@@ -7,7 +7,7 @@ import { localizeHref } from '@/paraglide/runtime.js';
 export const load = async ({ locals, parent, url }) => {
 	const { user, settings, deps, lang } = locals;
 
-	const tokenParam = url.searchParams.get('token') || '';
+	const tokenParam = url.searchParams.get('token') || url.searchParams.get('oobCode') || '';
 	const emailParam = url.searchParams.get('email') || '';
 	let token = '';
 	let email = '';
