@@ -161,7 +161,7 @@
 		{
 			accessorKey: 'status',
 			header: ({ column }) => {
-				return renderSnippet(ColumnHeader, { column, title: 'Version' });
+				return renderSnippet(ColumnHeader, { column, title: 'Status' });
 			},
 			cell: ({ row }) => {
 				return renderSnippet(IsActiveCell, {
@@ -175,12 +175,28 @@
 		{
 			accessorKey: 'last_login_at',
 			header: ({ column }) => {
-				return renderSnippet(ColumnHeader, { column, title: 'Status' });
+				return renderSnippet(ColumnHeader, { column, title: 'Last Login At' });
 			},
 			cell: ({ row }) => {
-				return renderSnippet(LastLoginCell, {
+				return renderSnippet(DateCell, {
 					value: row.original.last_login_at
 						? new Date(row.original.last_login_at).toISOString()
+						: ''
+				});
+			},
+			filterFn: (row, id, value) => {
+				return value.includes(row.getValue(id));
+			}
+		},
+		{
+			accessorKey: 'email_verified_at',
+			header: ({ column }) => {
+				return renderSnippet(ColumnHeader, { column, title: 'Email Verified At' });
+			},
+			cell: ({ row }) => {
+				return renderSnippet(DateCell, {
+					value: row.original.email_verified_at
+						? new Date(row.original.email_verified_at).toISOString()
 						: ''
 				});
 			},
@@ -388,16 +404,6 @@
 {#snippet IsActiveCell({ value }: { value: boolean })}
 	<div class="flex max-w-125">
 		<Badge variant={value ? 'default' : 'destructive'}>{value ? 'Active' : 'Inactive'}</Badge>
-	</div>
-{/snippet}
-
-{#snippet LastLoginCell({ value }: { value?: string | null })}
-	<div class="flex">
-		<span class="max-w-125 truncate font-medium capitalize">
-			{value
-				? formatTimeAgo(value ? new Date(value).toISOString() : new Date().toISOString())
-				: 'N/A'}
-		</span>
 	</div>
 {/snippet}
 

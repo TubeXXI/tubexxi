@@ -5,7 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
+	"tubexxi/video-api/internal/dto"
 	"tubexxi/video-api/internal/entity"
 	"tubexxi/video-api/internal/infrastructure/contextpool"
 
@@ -39,8 +41,7 @@ type UserRepository interface {
 	ExistsByEmail(ctx context.Context, email string) (bool, error)
 	ExistsByPhone(ctx context.Context, phone string) (bool, error)
 	BulkDelete(ctx context.Context, ids []uuid.UUID) error
-	Search(ctx context.Context, opts *ListOptions) ([]*entity.User, int64, error)
-	Count(ctx context.Context, filter *Filter) (int64, error)
+	Search(ctx context.Context, params dto.QueryParamsRequest) ([]*entity.User, dto.Pagination, error)
 	FindByRoleID(ctx context.Context, roleID uuid.UUID) ([]*entity.User, error)
 	FindRoleByName(ctx context.Context, name string) (*entity.Role, error)
 	SetRoleID(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error
@@ -635,10 +636,7 @@ func (r *userRepository) BulkDelete(ctx context.Context, ids []uuid.UUID) error 
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()
 
-	query := `
-		UPDATE users SET
-			deleted_at = NOW()
-		WHERE id = ANY($1) AND deleted_at IS NULL
+	query := `DELETE FROM users WHERE id = ANY($1) AND deleted_at IS NULL
 	`
 	args := []interface{}{
 		ids,
@@ -652,111 +650,127 @@ func (r *userRepository) BulkDelete(ctx context.Context, ids []uuid.UUID) error 
 	}
 	return nil
 }
-
-func (r *userRepository) Search(ctx context.Context, opts *ListOptions) ([]*entity.User, int64, error) {
-	subCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
+func (r *userRepository) Search(ctx context.Context, params dto.QueryParamsRequest) ([]*entity.User, dto.Pagination, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()
 
-	if opts == nil {
-		opts = NewListOptions()
+	qb := NewQueryBuilder(`
+		SELECT 
+			u.id, u.email, u.full_name, u.avatar_url, u.role_id, u.phone, u.is_active, u.is_verified, u.email_verified_at, u.last_login_at, u.created_at, u.updated_at,
+			r.id, r.name, r.level
+		FROM users u
+		LEFT JOIN roles r ON u.role_id = r.id
+	`)
+
+	if params.Search != "" {
+		qb.Where("(u.email ILIKE $? OR u.full_name ILIKE $?)",
+			"%"+params.Search+"%",
+			"%"+params.Search+"%",
+		)
 	}
 
-	totalRows, err := r.Count(ctx, opts.Filter)
-	if err != nil {
-		return nil, 0, err
+	if !params.DateFrom.IsZero() && !params.DateTo.IsZero() {
+		qb.Where("u.created_at BETWEEN $? AND $?", params.DateFrom, params.DateTo)
 	}
 
-	qb := r.buildBaseQuery("SELECT * FROM users", opts.Filter)
-
-	if opts.OrderBy != "" {
-		qb.OrderByField(opts.OrderBy, opts.OrderDir)
-	} else {
-		qb.OrderByField("created_at", "DESC")
-	}
-	if opts.Pagination != nil && opts.Pagination.Limit > 0 {
-		qb.WithLimit(opts.Pagination.Limit)
-		if opts.Pagination.Page > 1 {
-			qb.WithOffset(opts.Pagination.GetOffset())
+	if params.SortBy != "" {
+		sortBy := params.SortBy
+		switch sortBy {
+		case "created_at", "email", "full_name", "is_active", "last_login_at":
+			sortBy = "u." + sortBy
+		case "role":
+			sortBy = "r.name"
+		case "updated_at":
+			sortBy = "u.updated_at"
+		default:
+			sortBy = "u.created_at"
 		}
+		qb.OrderByField(sortBy, params.OrderBy)
+	} else {
+		qb.OrderByField("u.created_at", "DESC")
 	}
 
-	query, args := qb.Build()
+	countQuery := `SELECT COUNT(*) FROM users`
+	args := []interface{}{}
+	whereClauses := []string{}
+	argIdx := 1
+
+	if params.Search != "" {
+		whereClauses = append(whereClauses, fmt.Sprintf("(email ILIKE $%d OR full_name ILIKE $%d)", argIdx, argIdx+1))
+		args = append(args, "%"+params.Search+"%", "%"+params.Search+"%")
+		argIdx += 2
+	}
+
+	if !params.DateFrom.IsZero() && !params.DateTo.IsZero() {
+		whereClauses = append(whereClauses, fmt.Sprintf("created_at BETWEEN $%d AND $%d", argIdx, argIdx+1))
+		args = append(args, params.DateFrom, params.DateTo)
+	}
+
+	if len(whereClauses) > 0 {
+		countQuery += " WHERE " + strings.Join(whereClauses, " AND ")
+	}
+
+	var totalItems int64
+	err := r.db.QueryRow(subCtx, countQuery, args...).Scan(&totalItems)
+	if err != nil {
+		return nil, dto.Pagination{}, fmt.Errorf("failed to count users: %w", err)
+	}
+
+	offset := (params.Page - 1) * params.Limit
+	qb.WithLimit(params.Limit).WithOffset(offset)
+
+	query, finalArgs := qb.Build()
+	rows, err := r.db.Query(subCtx, query, finalArgs...)
+	if err != nil {
+		return nil, dto.Pagination{}, fmt.Errorf("failed to query users: %w", err)
+	}
+	defer rows.Close()
+
 	var users []*entity.User
-	err = pgxscan.Select(subCtx, r.db, &users, query, args...)
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, 0, fmt.Errorf("no users found")
+	for rows.Next() {
+		var user entity.User
+		var role entity.Role
+		err := rows.Scan(
+			&user.ID,
+			&user.Email,
+			&user.FullName,
+			&user.AvatarURL,
+			&user.RoleID,
+			&user.Phone,
+			&user.IsActive,
+			&user.IsVerified,
+			&user.EmailVerifiedAt,
+			&user.LastLoginAt,
+			&user.CreatedAt,
+			&user.UpdatedAt,
+			&role.ID,
+			&role.Name,
+			&role.Level,
+		)
+		if err != nil {
+			return nil, dto.Pagination{}, fmt.Errorf("failed to scan user: %w", err)
 		}
-		return nil, 0, fmt.Errorf("failed to list users: %w", err)
+		user.Role = &role
+		users = append(users, &user)
 	}
 
-	return users, totalRows, nil
-}
-func (r *userRepository) Count(ctx context.Context, filter *Filter) (int64, error) {
-	subCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
-	defer cancel()
-
-	qb := r.buildBaseQuery("SELECT COUNT(*) FROM users", filter)
-	query, args := qb.Build()
-
-	var count int64
-	err := r.db.QueryRow(subCtx, query, args...).Scan(&count)
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return 0, fmt.Errorf("no users found")
-		}
-		return 0, fmt.Errorf("failed to count users: %w", err)
-	}
-	return count, nil
-}
-func (r *userRepository) buildBaseQuery(baseQuery string, filter *Filter) *QueryBuilder {
-	qb := NewQueryBuilder(baseQuery)
-
-	if filter == nil {
-		qb.Where("deleted_at IS NULL")
-		return qb
+	if err := rows.Err(); err != nil {
+		return nil, dto.Pagination{}, fmt.Errorf("rows iteration error: %w", err)
 	}
 
-	if filter.IncludeDeleted != nil && *filter.IncludeDeleted {
-		qb.Where("deleted_at IS NOT NULL")
-	} else {
-		qb.Where("deleted_at IS NULL")
+	totalPages := 0
+	if params.Limit > 0 {
+		totalPages = int((totalItems + int64(params.Limit) - 1) / int64(params.Limit))
 	}
 
-	if filter.Search != "" {
-		searchPattern := "%" + filter.Search + "%"
-		qb.Where("(email ILIKE $? OR full_name ILIKE $?)",
-			searchPattern, searchPattern, searchPattern)
-	}
-	if filter.IsActive != nil {
-		qb.Where("is_active = $?", *filter.IsActive)
-	}
-	if filter.UserID != nil {
-		qb.Where("id = $?", *filter.UserID)
-	}
-	if filter.IsVerified != nil {
-		qb.Where("is_verified = $?", *filter.IsVerified)
-	}
-	if filter.RangeDate != nil {
-		var startDate time.Time
-		var endDate time.Time
-
-		if !filter.RangeDate.StartDate.IsZero() {
-			startDate = filter.RangeDate.StartDate
-		} else {
-			startDate = time.Now().AddDate(0, 0, -7)
-		}
-		if !filter.RangeDate.EndDate.IsZero() {
-			endDate = filter.RangeDate.EndDate
-		} else {
-			endDate = time.Now()
-		}
-		if !startDate.IsZero() || !endDate.IsZero() {
-			qb.Where("created_at BETWEEN $? AND $?", startDate, endDate)
-		}
-	}
-
-	return qb
+	return users, dto.Pagination{
+		CurrentPage: params.Page,
+		Limit:       params.Limit,
+		TotalItems:  totalItems,
+		TotalPages:  totalPages,
+		HasNext:     params.Page < totalPages,
+		HasPrev:     params.Page > 1,
+	}, nil
 }
 
 func (r *userRepository) FindByRoleID(ctx context.Context, roleID uuid.UUID) ([]*entity.User, error) {
@@ -845,7 +859,6 @@ func (r *userRepository) FindRoleByName(ctx context.Context, name string) (*enti
 	}
 	return &role, nil
 }
-
 func (r *userRepository) SetRoleID(ctx context.Context, userID uuid.UUID, roleID uuid.UUID) error {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()

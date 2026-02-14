@@ -473,6 +473,9 @@ declare global {
 	}
 	interface AdminService {
 		SetRole(data: SetRoleSchema): Promise<string | Error>;
+		SearchUser(query: QueryParams): Promise<PaginatedResult<User>>
+		HardDeleteUser(id: string): Promise<string | Error>;
+		BulkDeleteUser(ids: string[]): Promise<string | Error>;
 	}
 	interface UserService {
 		UpdateProfile(data: UpdateProfileSchema): Promise<User | Error>;

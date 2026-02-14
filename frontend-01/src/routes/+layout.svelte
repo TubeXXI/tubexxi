@@ -332,7 +332,7 @@
 	});
 </script>
 
-<ModeWatcher />
+<ModeWatcher defaultMode="system" />
 <ProgressBarIndicator />
 <ToastContent />
 <main class="font-roboto bg-background text-foreground antialiased">

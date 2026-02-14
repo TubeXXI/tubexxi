@@ -37,7 +37,9 @@ export const POST: RequestHandler = async (event) => {
 	}
 
 	const api = new ApiClientHandler(event);
-	const login = await api.publicRequest<FirebaseAuthResponse>('POST', '/auth/login', { idToken });
+	const login = await api.publicRequest<FirebaseAuthResponse>('POST', '/auth/login', {
+		id_token: idToken
+	});
 	if (!login.success) {
 		event.locals.session?.delete('access_token');
 		return json(

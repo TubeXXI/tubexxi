@@ -15,7 +15,7 @@ type QueryParamsRequest struct {
 	UserID         string                 `json:"user_id,omitempty" validate:"omitempty"`
 	DateFrom       time.Time              `json:"date_from,omitempty" validate:"omitempty"`
 	DateTo         time.Time              `json:"date_to,omitempty" validate:"omitempty"`
-	Extra          map[string]interface{} `json:"extra,omitempty" validate:"dive,key,required,value"`
+	Extra          map[string]interface{} `json:"extra,omitempty" validate:"omitempty"`
 }
 
 type Pagination struct {

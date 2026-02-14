@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap"
 
 	"tubexxi/video-api/internal/dto"
+	"tubexxi/video-api/internal/entity"
 	firebaseclient "tubexxi/video-api/internal/infrastructure/firebase-client"
 	"tubexxi/video-api/internal/infrastructure/repository"
 )
@@ -78,4 +79,16 @@ func (s *AdminUserService) SetUserRole(ctx context.Context, req *dto.SetUserRole
 	}
 
 	return nil
+}
+func (s *AdminUserService) SearchUser(ctx context.Context, req dto.QueryParamsRequest) ([]*entity.User, dto.Pagination, error) {
+	return s.userRepo.Search(ctx, req)
+}
+func (s *AdminUserService) FindUserByID(ctx context.Context, userID uuid.UUID) (*entity.User, error) {
+	return s.userRepo.FindByID(ctx, userID)
+}
+func (s *AdminUserService) HardDeleteUser(ctx context.Context, userID uuid.UUID) error {
+	return s.userRepo.HardDelete(ctx, userID)
+}
+func (s *AdminUserService) BulkDeleteUser(ctx context.Context, userIDs []uuid.UUID) error {
+	return s.userRepo.BulkDelete(ctx, userIDs)
 }
