@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "Gizlilik Politikasındaki Değişiklikler",
   "privacy_policy_changes_description": "Gizlilik Politikamızı herhangi bir zamanda güncelleme veya değiştirme hakkını saklı tutuyoruz. ",
   "privacy_policy_changes_description_2": "Güncellenen Gizlilik Politikasının yürürlüğe girdiği tarihten sonra hizmetlerimizi kullanmaya devam etmeniz, değişiklikleri kabul ettiğiniz anlamına gelir.",
-  "text_delete": "Silmek"
+  "text_delete": "Silmek",
+  "information": "Bilgi",
+  "pages": "Sayfalar",
+  "ongoing": "Ongoing",
+  "special": "Special",
+  "season": "Season",
+  "episode": "Episode",
+  "watch": "Watch",
+  "streaming": "Streaming",
+  "full": "Full",
+  "hd": "HD",
+  "latest": "Latest",
+  "all_rights_reserved": "Her hakkı saklıdır."
 }

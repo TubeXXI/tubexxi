@@ -75,14 +75,41 @@
 </script>
 
 <div class="@container/main flex flex-col gap-4 overflow-hidden py-4 pl-0 lg:pl-10">
-	<div class="grid grid-cols-1 gap-4 px-4 py-4 md:grid-cols-3 lg:px-10 lg:py-6">
+	<div class="grid grid-cols-1 gap-6 px-4 py-4 md:grid-cols-3 lg:px-10 lg:py-6">
 		<div class="col-span-1 flex flex-col items-center lg:items-start">
 			<a href={localizeHref('/')} rel="noopener noreferrer">
 				<img src={logo} alt={webSetting?.site_name} class="h-12 w-auto" />
 			</a>
+			<div class="mt-4 space-y-4 lg:pl-2">
+				{#if translateLoading}
+					<p class="line-clamp-4 text-sm">{webSetting?.site_description || ''}</p>
+				{:else}
+					<p class="text-sm">{translatedSiteDescription || ''}</p>
+				{/if}
+				{#if systemSetting?.play_store_app_url}
+					<a
+						href={systemSetting?.play_store_app_url}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="flex max-w-max rounded-md bg-neutral-100 p-2 shadow-xl/30 shadow-neutral-500 backdrop-blur-md dark:bg-neutral-800 dark:shadow-neutral-400"
+					>
+						<img src="/images/play-store.png" alt="" class="h-10 w-auto" />
+					</a>
+				{/if}
+				{#if systemSetting?.app_store_app_url}
+					<a
+						href={systemSetting?.app_store_app_url}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="flex max-w-max rounded-md bg-neutral-100 p-2 shadow-xl/30 shadow-neutral-500 backdrop-blur-md dark:bg-neutral-800 dark:shadow-neutral-400"
+					>
+						<img src="/images/app-store.png" alt="" class="h-10 w-auto" />
+					</a>
+				{/if}
+			</div>
 		</div>
 		<div class="col-span-1 flex flex-col items-start">
-			<h3 class="font-roboto text-base font-semibold">Information</h3>
+			<h3 class="font-roboto text-base font-semibold text-white">{i18n.page()}</h3>
 			<ul class="list-none space-y-0">
 				<li>
 					<a
@@ -137,7 +164,7 @@
 			</ul>
 		</div>
 		<div class="col-span-1 flex flex-col items-start">
-			<h3 class="font-roboto text-base font-semibold text-white">Pages</h3>
+			<h3 class="font-roboto text-base font-semibold text-white">{i18n.featured()}</h3>
 			<ul class="list-none space-y-0">
 				<li>
 					<a
@@ -226,7 +253,7 @@
 			</div>
 			<div class="text-sm text-muted-foreground">
 				© {new Date().getFullYear()}
-				{webSetting?.site_name}. All rights reserved.
+				{webSetting?.site_name}. {i18n.all_rights_reserved()}.
 			</div>
 		</div>
 	</div>

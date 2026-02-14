@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "गोपनीयता नीति में परिवर्तन",
   "privacy_policy_changes_description": "हम किसी भी समय अपनी गोपनीयता नीति को अद्यतन या संशोधित करने का अधिकार सुरक्षित रखते हैं। ",
   "privacy_policy_changes_description_2": "अद्यतन गोपनीयता नीति की प्रभावी तिथि के बाद हमारी सेवाओं का आपका निरंतर उपयोग परिवर्तनों के प्रति आपकी स्वीकृति है।",
-  "text_delete": "मिटाना"
+  "text_delete": "मिटाना",
+  "information": "सूचना",
+  "pages": "पृष्ठ",
+  "ongoing": "चालू",
+  "special": "विशेष",
+  "season": "अधिमान",
+  "episode": "अधिमान",
+  "watch": "पросмотр",
+  "streaming": "प्रसारण",
+  "full": "पूर्ण",
+  "hd": "高清",
+  "latest": "अंतिम",
+  "all_rights_reserved": "सभी अधिकार सुरक्षित रहें।"
 }

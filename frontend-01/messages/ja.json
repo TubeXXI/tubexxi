@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "プライバシーポリシーの変更",
   "privacy_policy_changes_description": "当社は、プライバシー ポリシーをいつでも更新または変更する権利を留保します。",
   "privacy_policy_changes_description_2": "更新されたプライバシー ポリシーの発効日以降も当社のサービスを継続して使用することにより、変更に同意したものとみなされます。",
-  "text_delete": "消去"
+  "text_delete": "消去",
+  "information": "情報",
+  "pages": "ページ",
+  "ongoing": "進行中",
+  "special": "特殊",
+  "season": "シーズン",
+  "episode": "エピソード",
+  "watch": "視聴",
+  "streaming": "ストリーミング",
+  "full": "完全",
+  "hd": "HD",
+  "latest": "最新",
+  "all_rights_reserved": "すべての権利は保護されています。"
 }

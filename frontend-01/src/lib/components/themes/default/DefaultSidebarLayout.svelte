@@ -50,7 +50,7 @@
 		<div class="flex flex-1">
 			<DefaultSidebar {user} {setting} />
 			<Sidebar.Inset>
-				<div class="scrollbar-primary h-full bg-muted p-4">
+				<div class="scrollbar-primary h-full bg-muted p-0 md:p-2 lg:p-4">
 					{@render children?.()}
 				</div>
 			</Sidebar.Inset>

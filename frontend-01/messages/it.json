@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "Modifiche all'Informativa sulla privacy",
   "privacy_policy_changes_description": "Ci riserviamo il diritto di aggiornare o modificare la nostra Privacy Policy in qualsiasi momento. ",
   "privacy_policy_changes_description_2": "L'uso continuato dei nostri servizi dopo la data di entrata in vigore dell'Informativa sulla privacy aggiornata costituisce l'accettazione delle modifiche.",
-  "text_delete": "Eliminare"
+  "text_delete": "Eliminare",
+  "information": "Informazione",
+  "pages": "Pagine",
+  "ongoing": "In corso",
+  "special": "Speciale",
+  "season": "Stagione",
+  "episode": "Episodio",
+  "watch": "Guarda",
+  "streaming": "Streaming",
+  "full": "Completa",
+  "hd": "HD",
+  "latest": "Maggiormente recente",
+  "all_rights_reserved": "Tutti i diritti riservati."
 }

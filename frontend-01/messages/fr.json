@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "Modifications de la politique de confidentialité",
   "privacy_policy_changes_description": "Nous nous réservons le droit de mettre à jour ou de modifier notre politique de confidentialité à tout moment. ",
   "privacy_policy_changes_description_2": "Votre utilisation continue de nos services après la date d’entrée en vigueur de la politique de confidentialité mise à jour constitue votre acceptation des modifications.",
-  "text_delete": "Supprimer"
+  "text_delete": "Supprimer",
+  "information": "Information",
+  "pages": "Pages",
+  "ongoing": "En cours",
+  "special": "Spécial",
+  "season": "Saison",
+  "episode": "Épisode",
+  "watch": "Regarder",
+  "streaming": "Streaming",
+  "full": "Complet",
+  "hd": "HD",
+  "latest": "Dernière",
+  "all_rights_reserved": "Tous droits réservés."
 }

@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "隐私政策的变更",
   "privacy_policy_changes_description": "我们保留随时更新或修改我们的隐私政策的权利。",
   "privacy_policy_changes_description_2": "您在更新后的隐私政策生效后继续使用我们的服务即表示您接受这些更改。",
-  "text_delete": "删除"
+  "text_delete": "删除",
+  "information": "信息",
+  "pages": "页面",
+  "ongoing": "进行中",
+  "special": "特殊",
+  "season": "季节",
+  "episode": "集数",
+  "watch": "观看",
+  "streaming": "流式传输",
+  "full": "完整",
+  "hd": "HD",
+  "latest": "最新",
+  "all_rights_reserved": "所有权利均已保留。"
 }

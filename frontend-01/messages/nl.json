@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "Wijzigingen in het privacybeleid",
   "privacy_policy_changes_description": "Wij behouden ons het recht voor om ons privacybeleid op elk moment bij te werken of te wijzigen. ",
   "privacy_policy_changes_description_2": "Als u onze diensten blijft gebruiken na de ingangsdatum van het bijgewerkte privacybeleid, betekent dit dat u de wijzigingen accepteert.",
-  "text_delete": "Verwijderen"
+  "text_delete": "Verwijderen",
+  "information": "Informatie",
+  "pages": "Pagina's",
+  "ongoing": "Ongoing",
+  "special": "Speciaal",
+  "season": " seizoen",
+  "episode": "Episode",
+  "watch": "Bekijk",
+  "streaming": "Streaming",
+  "full": "Volledig",
+  "hd": "HD",
+  "latest": "Meest recente",
+  "all_rights_reserved": "Alle rechten voorbehouden."
 }

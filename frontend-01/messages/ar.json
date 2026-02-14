@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "التغييرات في سياسة الخصوصية",
   "privacy_policy_changes_description": "نحن نحتفظ بالحق في تحديث أو تعديل سياسة الخصوصية الخاصة بنا في أي وقت. ",
   "privacy_policy_changes_description_2": "إن استمرارك في استخدام خدماتنا بعد تاريخ سريان سياسة الخصوصية المحدثة يشكل موافقتك على التغييرات.",
-  "text_delete": "يمسح"
+  "text_delete": "يمسح",
+  "information": "معلومات",
+  "pages": "صفحات",
+  "ongoing": "مستمر",
+  "special": "خاص",
+  "season": " الموسم",
+  "episode": " tập",
+  "watch": "شاهد",
+  "streaming": "تدفق",
+  "full": "مكمل",
+  "hd": "HD",
+  "latest": "آخر",
+  "all_rights_reserved": "جميع الحقوق محفوظة."
 }

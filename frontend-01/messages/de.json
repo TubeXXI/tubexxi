@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "Änderungen der Datenschutzrichtlinie",
   "privacy_policy_changes_description": "Wir behalten uns das Recht vor, unsere Datenschutzrichtlinie jederzeit zu aktualisieren oder zu ändern. ",
   "privacy_policy_changes_description_2": "Durch Ihre fortgesetzte Nutzung unserer Dienste nach dem Datum des Inkrafttretens der aktualisierten Datenschutzrichtlinie erklären Sie sich mit den Änderungen einverstanden.",
-  "text_delete": "Löschen"
+  "text_delete": "Löschen",
+  "information": "Information",
+  "pages": "Seiten",
+  "ongoing": "Aktuell",
+  "special": "Sonder",
+  "season": " Staffel",
+  "episode": " Folge",
+  "watch": "Wiedergabeliste",
+  "streaming": "Streamen",
+  "full": "Vollständige",
+  "hd": "HD",
+  "latest": "Letzte",
+  "all_rights_reserved": "Alle Rechte vorbehalten."
 }

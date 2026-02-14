@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "Mga pagbabago sa Patakaran sa Privacy",
   "privacy_policy_changes_description": "Inilalaan namin ang karapatang i-update o baguhin ang aming Patakaran sa Privacy anumang oras. ",
   "privacy_policy_changes_description_2": "Ang iyong patuloy na paggamit ng aming mga serbisyo pagkatapos ng petsa ng bisa ng na-update na Patakaran sa Privacy ay bumubuo sa iyong pagtanggap sa mga pagbabago.",
-  "text_delete": "Tanggalin"
+  "text_delete": "Tanggalin",
+  "information": "Impormasyon",
+  "pages": "Mga pahina",
+  "ongoing": "Patuloy",
+  "special": "Espesyal",
+  "season": "Season",
+  "episode": "Episode",
+  "watch": "Panoorin",
+  "streaming": "Streaming",
+  "full": "Puno",
+  "hd": "HD",
+  "latest": "Pinakabago",
+  "all_rights_reserved": "Lahat ng karapatan ay nakalaan."
 }

@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "Perubahan pada Kebijakan Privasi",
   "privacy_policy_changes_description": "Kami berhak memperbarui atau mengubah Kebijakan Privasi kami kapan saja. ",
   "privacy_policy_changes_description_2": "Jika Anda terus menggunakan layanan kami setelah tanggal berlakunya Kebijakan Privasi yang diperbarui, Anda dianggap menerima perubahan tersebut.",
-  "text_delete": "Menghapus"
+  "text_delete": "Menghapus",
+  "information": "Informasi",
+  "pages": "Halaman",
+  "ongoing": "Sedang berlangsung",
+  "special": "Spesial",
+  "season": "Musim",
+  "episode": "Episode",
+  "watch": "Menonton",
+  "streaming": "Streaming",
+  "full": "Lengkap",
+  "hd": "HD",
+  "latest": "Terbaru",
+  "all_rights_reserved": "Semua hak cipta dilindungi."
 }

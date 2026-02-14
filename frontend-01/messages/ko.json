@@ -1551,5 +1551,17 @@
   "privacy_policy_changes": "개인정보 보호정책 변경",
   "privacy_policy_changes_description": "당사는 언제든지 개인정보 보호정책을 업데이트하거나 수정할 권리를 보유합니다. ",
   "privacy_policy_changes_description_2": "업데이트된 개인정보 보호정책의 발효일 이후에도 당사 서비스를 계속 사용하면 변경 사항에 동의하는 것으로 간주됩니다.",
-  "text_delete": "삭제"
+  "text_delete": "삭제",
+  "information": "정보",
+  "pages": "페이지",
+  "ongoing": "진행 중",
+  "special": "특별",
+  "season": "시즌",
+  "episode": "에피소드",
+  "watch": "시청",
+  "streaming": "스트리밍",
+  "full": "완전",
+  "hd": "HD",
+  "latest": "최근",
+  "all_rights_reserved": "모든 저작권은 보호됩니다."
 }
