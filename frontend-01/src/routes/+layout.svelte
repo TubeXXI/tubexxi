@@ -335,7 +335,7 @@
 <ModeWatcher defaultMode="system" />
 <ProgressBarIndicator />
 <ToastContent />
-<main class="font-roboto bg-background text-foreground antialiased">
+<main class="font-roboto scrollbar-primary bg-background text-foreground antialiased">
 	{@render children?.()}
 </main>
 <div style="display:none">

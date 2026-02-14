@@ -75,7 +75,7 @@
 				<DropdownMenu.Item>
 					{#snippet child()}
 						<a
-							href={localizeHref('/user/accounts')}
+							href={localizeHref('/user/account')}
 							class="flex items-center gap-2 ps-3 text-sm transition-all active:scale-95"
 						>
 							<Icon icon="solar:user-circle-linear" />

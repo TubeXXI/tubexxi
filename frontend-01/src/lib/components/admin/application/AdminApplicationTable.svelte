@@ -624,7 +624,7 @@
 								</Empty.Header>
 								<Empty.Content>
 									<div class="flex items-center justify-center gap-2">
-										<Button href={localizeHref('/application/create')} variant="default"
+										<Button href={localizeHref('/admin/applications/create')} variant="default"
 											>Create new</Button
 										>
 										<Button variant="outline" onclick={onreset}>Clear filters</Button>

@@ -121,7 +121,7 @@
 			{
 				id: 7,
 				title: 'User Panel',
-				url: localizeHref('/user/accounts'),
+				url: localizeHref('/user/account'),
 				icon: 'material-symbols:account-circle'
 			},
 			{

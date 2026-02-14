@@ -3,17 +3,17 @@
 
 	let {
 		user,
-		setting
+		setting,
+		lang = 'en'
 	}: {
 		user?: User | null;
 		setting?: SettingsValue | null;
+		lang?: string;
 	} = $props();
 </script>
 
-<DefaultSidebarLayout {user} {setting}>
-	<div
-		class="scrollbar-thin flex min-h-[calc(100vh-160px)] flex-col overflow-hidden overflow-y-auto scroll-smooth scrollbar-thumb-foreground scrollbar-track-accent"
-	>
+<DefaultSidebarLayout {user} {setting} {lang}>
+	<div class="scrollbar-primary flex min-h-[calc(100vh-160px)] flex-col">
 		<div>Content</div>
 	</div>
 </DefaultSidebarLayout>

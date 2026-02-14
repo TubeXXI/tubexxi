@@ -3,16 +3,22 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { DefaultSidebar } from '$lib/components/themes/index.js';
 	import { localizeHref } from '@/paraglide/runtime';
-	import { DefaultSidebarSearch, DefaultSidebarUserMenu } from '$lib/components/themes/index.js';
+	import {
+		DefaultSidebarSearch,
+		DefaultSidebarUserMenu,
+		DefaultFooter
+	} from '$lib/components/themes/index.js';
 
 	let {
 		user,
 		setting,
-		children
+		children,
+		lang = 'en'
 	}: {
 		user?: User | null;
 		setting?: SettingsValue | null;
 		children?: Snippet<[]>;
+		lang?: string;
 	} = $props();
 
 	let isOpen = $state(false);
@@ -44,10 +50,11 @@
 		<div class="flex flex-1">
 			<DefaultSidebar {user} {setting} />
 			<Sidebar.Inset>
-				<div class="h-full bg-muted p-4">
+				<div class="scrollbar-primary h-full bg-muted p-4">
 					{@render children?.()}
 				</div>
 			</Sidebar.Inset>
 		</div>
+		<DefaultFooter {lang} {setting} />
 	</Sidebar.Provider>
 </main>

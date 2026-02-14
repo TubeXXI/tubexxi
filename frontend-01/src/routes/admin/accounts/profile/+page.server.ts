@@ -49,7 +49,7 @@ export const load = async ({ locals, parent }) => {
 		settings
 	);
 
-	const profileForm = await superValidate({
+	const form = await superValidate({
 		email: user?.email || '',
 		full_name: user?.full_name,
 		phone: user?.phone || '',
@@ -57,7 +57,7 @@ export const load = async ({ locals, parent }) => {
 
 	return {
 		pageMetaTags,
-		profileForm,
+		form,
 		settings,
 		user,
 		lang
@@ -70,7 +70,7 @@ export const actions = {
 
 		if (!form.valid) {
 			return fail(400, {
-				profileForm: form,
+				form,
 				message: Object.values(form.errors).flat().join(', ')
 			});
 		}
@@ -78,7 +78,7 @@ export const actions = {
 		const response = await deps.userService.UpdateProfile(form.data) as User | Error;
 		if (response instanceof Error) {
 			return fail(500, {
-				profileForm: form,
+				form,
 				message: response.message || 'Unknown server error'
 			});
 		}
@@ -86,7 +86,7 @@ export const actions = {
 		locals.user = response;
 
 		return {
-			profileForm: form,
+			form,
 			message: 'Profile updated successfully'
 		};
 	}

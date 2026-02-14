@@ -20,7 +20,6 @@
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Badge } from '@/components/ui/badge/index.js';
-	import type { CountryCode } from 'svelte-tel-input/types';
 	import { Mail, Calendar, Clock } from '@lucide/svelte';
 
 	let { data } = $props();
@@ -31,7 +30,7 @@
 	let errorMessage = $state<string | null>(null);
 
 	// svelte-ignore state_referenced_locally
-	const { form, enhance, errors, submitting } = superForm(data.profileForm, {
+	const { form, enhance, errors, submitting } = superForm(data.form, {
 		resetForm: false,
 		onSubmit: (input) => {
 			successMessage = null;

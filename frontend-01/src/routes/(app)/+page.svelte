@@ -28,6 +28,6 @@
 
 <MetaTags {...metaTags} />
 
-<data.component user={data.user} setting={data.settings}>
+<data.component user={data.user} setting={data.settings} lang={data.lang}>
 	<div>Content Group</div>
 </data.component>
