@@ -5,6 +5,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { contactSchema } from '$lib/utils/schema';
 import { fail } from '@sveltejs/kit';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import * as i18n from '@/paraglide/messages.js';
 
 export const load = async ({ locals, parent }) => {
 	const { user, settings, deps, lang } = locals;
@@ -56,3 +57,27 @@ export const load = async ({ locals, parent }) => {
 		form
 	};
 };
+
+export const actions = {
+	default: async ({ request, locals }) => {
+		const { deps } = locals;
+		const form = await superValidate(request, zod4(contactSchema));
+		if (!form.valid) {
+			return fail(400, {
+				form,
+				message: Object.values(form.errors).flat().join(', '),
+			});
+		}
+		const response = await deps.clientService.SendContact(form.data);
+		if (response instanceof Error) {
+			return fail(500, {
+				form,
+				message: response.message
+			});
+		}
+		return {
+			form,
+			message: i18n.contact_error()
+		};
+	}
+}

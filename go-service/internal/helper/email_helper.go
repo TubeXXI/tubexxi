@@ -2,6 +2,8 @@ package helpers
 
 import (
 	"bytes"
+	"context"
+	"crypto/tls"
 	"fmt"
 	"html/template"
 	"net/smtp"
@@ -130,6 +132,105 @@ func (h *MailHelper) SendRegistrationInfo(payload *dto.SendMailMetaData, clientO
 	}
 
 	return h.sendHTMLEmail(payload.To, subject, body)
+}
+
+func (m *MailHelper) SendContactEmail(ctx context.Context, payload *dto.ContactRequest, clientOrigin string) error {
+
+	settingEmail := m.mailConfig
+
+	// Validate required SMTP settings
+	if settingEmail.SmtpHost == "" || settingEmail.SmtpPort == "0" || settingEmail.SmtpUsername == "" || settingEmail.SmtpPassword == "" {
+		return fmt.Errorf("incomplete SMTP configuration")
+	}
+
+	siteName := m.appConfig.AppName
+	if siteName == "" {
+		siteName = "Simontok"
+	}
+
+	subject := fmt.Sprintf("Contact Us - %s", siteName)
+	body := m.getContactHTML(siteName, clientOrigin, payload)
+
+	headers := make(map[string]string)
+	headers["From"] = fmt.Sprintf("%s <%s>", settingEmail.SmtpFromName, settingEmail.SmtpFromEmail)
+	headers["To"] = m.appConfig.AdminEmail
+	headers["Subject"] = subject
+	headers["MIME-Version"] = "1.0"
+	headers["Content-Type"] = "text/html; charset=\"UTF-8\""
+
+	message := ""
+	for k, v := range headers {
+		message += fmt.Sprintf("%s: %s\r\n", k, v)
+	}
+	message += "\r\n" + body
+
+	// Setup SMTP Auth
+	auth := smtp.PlainAuth("", settingEmail.SmtpUsername, settingEmail.SmtpPassword, settingEmail.SmtpHost)
+
+	// SMTP Server Address
+	port, err := strconv.Atoi(settingEmail.SmtpPort)
+	if err != nil {
+		return fmt.Errorf("invalid SMTP port: %w", err)
+	}
+	addr := fmt.Sprintf("%s:%d", settingEmail.SmtpHost, port)
+
+	// If port is 465, use implicit TLS
+	if settingEmail.SmtpPort == "465" {
+		// Handle TLS config for non-localhost
+		tlsConfig := &tls.Config{
+			InsecureSkipVerify: false,
+			ServerName:         settingEmail.SmtpHost,
+		}
+
+		conn, err := tls.Dial("tcp", addr, tlsConfig)
+		if err != nil {
+			return fmt.Errorf("failed to dial TLS: %w", err)
+		}
+
+		c, err := smtp.NewClient(conn, settingEmail.SmtpHost)
+		if err != nil {
+			return fmt.Errorf("failed to create SMTP client: %w", err)
+		}
+		defer c.Quit()
+
+		if err = c.Auth(auth); err != nil {
+			return fmt.Errorf("failed to auth: %w", err)
+		}
+
+		if err = c.Mail(settingEmail.SmtpFromEmail); err != nil {
+			return fmt.Errorf("failed to set sender: %w", err)
+		}
+
+		if err = c.Rcpt(m.appConfig.AdminEmail); err != nil {
+			return fmt.Errorf("failed to set recipient: %w", err)
+		}
+
+		w, err := c.Data()
+		if err != nil {
+			return fmt.Errorf("failed to create data writer: %w", err)
+		}
+
+		_, err = w.Write([]byte(message))
+		if err != nil {
+			return fmt.Errorf("failed to write body: %w", err)
+		}
+
+		err = w.Close()
+		if err != nil {
+			return fmt.Errorf("failed to close data writer: %w", err)
+		}
+
+		return nil
+
+	} else {
+		// Standard smtp.SendMail for port 587 (STARTTLS) or 25 (Plain)
+		err := smtp.SendMail(addr, auth, settingEmail.SmtpFromEmail, []string{m.appConfig.AdminEmail}, []byte(message))
+		if err != nil {
+			return fmt.Errorf("failed to send email: %w", err)
+		}
+	}
+
+	return nil
 }
 
 func (h *MailHelper) renderTemplate(tmpl string, data interface{}) (string, error) {
@@ -445,3 +546,43 @@ const registrationInfoTemplate = `
     </table>
 </body>
 </html>`
+
+func (m *MailHelper) getContactHTML(siteName, siteURL string, payload *dto.ContactRequest) string {
+	return fmt.Sprintf(`
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
+        .header { background-color: #007bff; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { background-color: white; padding: 30px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .button { display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; margin-top: 20px; font-weight: bold; }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+        p { margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="margin:0;">%s</h1>
+        </div>
+        <div class="content">
+            <h2>New Contact Request</h2>
+            <p>You received a new contact request from %s.</p>
+            <p>Email: %s</p>
+            <p>Name: %s</p>
+            <p>Message: %s</p>
+            <p style="margin-top: 30px; font-size: 14px;">Or copy and paste this link into your browser:</p>
+            <p style="font-size: 13px; color: #007bff; word-break: break-all;"><a href="%s">%s</a></p>
+            <p>This link will expire in 1 hour.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; %d %s. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+`, siteName, payload.Name, payload.Email, payload.Name, payload.Message, siteURL, siteURL, 2025, siteName)
+}

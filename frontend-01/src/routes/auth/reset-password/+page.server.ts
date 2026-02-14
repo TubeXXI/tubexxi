@@ -72,7 +72,7 @@ export const actions = {
 			return fail(400, {
 				form,
 				success: false,
-				message: i18n.invalid_input(),
+				message: Object.values(form.errors).flat().join(', '),
 				error: form.errors
 			});
 		}

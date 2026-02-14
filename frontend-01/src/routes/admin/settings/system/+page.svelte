@@ -63,22 +63,26 @@
 		{
 			label: 'Default',
 			value: 'default',
-			description: 'Default theme.'
+			description: 'Default theme.',
+			active: true
 		},
 		{
 			label: 'Red Dark',
 			value: 'red-dark',
-			description: 'Red dark theme.'
+			description: 'Red dark theme.',
+			active: false
 		},
 		{
 			label: 'Green Dark',
 			value: 'green-dark',
-			description: 'Green dark theme.'
+			description: 'Green dark theme.',
+			active: false
 		},
 		{
 			label: 'Blue Dark',
 			value: 'blue-dark',
-			description: 'Blue dark theme.'
+			description: 'Blue dark theme.',
+			active: false
 		}
 	];
 </script>
@@ -198,7 +202,7 @@
 												<Select.Item
 													value={option.value}
 													label={option.label}
-													disabled={option.value === 'grapes'}
+													disabled={!option.active}
 												>
 													{option.label}
 												</Select.Item>

@@ -533,6 +533,9 @@ declare global {
 		BulkDelete(packageNames: string[]): Promise<boolean>;
 	}
 
+	interface ClientService {
+		SendContact(data: ContactSchema): Promise<void | Error>;
+	}
 
 
 	// ==========================================

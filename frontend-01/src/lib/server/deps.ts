@@ -10,6 +10,7 @@ import {
 	AnimeServiceImpl,
 	ServerStatusServiceImpl,
 	ApplicationServiceImpl,
+	ClientServiceImpl,
 } from '@/services';
 
 export class Dependencies {
@@ -27,6 +28,7 @@ export class Dependencies {
 	public readonly animeService: AnimeServiceImpl;
 	public readonly serverStatusService: ServerStatusServiceImpl;
 	public readonly applicationService: ApplicationServiceImpl;
+	public readonly clientService: ClientServiceImpl;
 
 	constructor(event: RequestEvent) {
 		this.apiClient = new ApiClientHandler(event);
@@ -43,5 +45,6 @@ export class Dependencies {
 		this.animeService = new AnimeServiceImpl(event, this.apiClient);
 		this.serverStatusService = new ServerStatusServiceImpl(event, this.apiClient);
 		this.applicationService = new ApplicationServiceImpl(event, this.apiClient);
+		this.clientService = new ClientServiceImpl(event, this.apiClient);
 	}
 }
