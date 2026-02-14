@@ -22,7 +22,7 @@ jobs:
           set -e
           cd /var/www/tubexxi
 
-          rm -f docker-compose.yml
-          cp -f docker-compose.prod.yml docker-compose.yml
+          # rm -f docker-compose.yml
+          # cp -f docker-compose.prod.yml docker-compose.yml
 
           # docker-compose -f docker-compose.prod.yml up -d
