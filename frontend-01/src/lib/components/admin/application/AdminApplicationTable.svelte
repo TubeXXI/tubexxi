@@ -46,7 +46,7 @@
 	import * as Tooltip from '@/components/ui/tooltip';
 	import * as Avatar from '@/components/ui/avatar';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { AdminApplicationTableToolbar, AdminDeleteDialog } from '@/components/admin';
+	import { AdminApplicationTableToolbar, AdminApplicationDeleteDialog } from '@/components/admin';
 	import { DataTabelBulkAction } from '@/components';
 	import { cn } from '@/utils';
 	import {
@@ -77,16 +77,16 @@
 		onRowSelection,
 		onbulkdelete
 	}: {
-		data?: PaginatedResult<Application> | null;
+		data?: PaginatedResult<ApplicationResponse> | null;
 		updateQuery: (updates: Partial<QueryOption>, resetPage: boolean) => Promise<void>;
 		openAdd?: boolean;
-		onEdit?: (data?: Application) => void;
-		onView?: (data?: Application) => void;
-		onDelete?: (data?: Application) => void;
+		onEdit?: (data?: ApplicationResponse) => void;
+		onView?: (data?: ApplicationResponse) => void;
+		onDelete?: (data?: ApplicationResponse) => void;
 		onreset: () => Promise<void>;
 		class?: ClassValue;
 		onbulkdelete?: (ids: string[]) => Promise<void>;
-		onRowSelection?: (data: Application[]) => void;
+		onRowSelection?: (data: ApplicationResponse[]) => void;
 	} = $props();
 
 	let rowSelection = $state<RowSelectionState>({});
@@ -101,7 +101,7 @@
 		pageSize: data?.pagination?.limit || 10
 	});
 
-	const columns: ColumnDef<Application>[] = [
+	const columns: ColumnDef<ApplicationResponse>[] = [
 		{
 			id: 'select',
 			header: ({ table }) =>
@@ -127,8 +127,8 @@
 			},
 			cell: ({ row }) => {
 				return renderSnippet(NameCell, {
-					id: row.original.id,
-					value: row.original.name || 'N/A'
+					package_name: row.original.config.package_name,
+					value: row.original.config.name || 'N/A'
 				});
 			},
 			filterFn: (row, id, value) => {
@@ -142,7 +142,7 @@
 			},
 			cell: ({ row }) => {
 				return renderSnippet(PackageNameCell, {
-					value: row.original.package_name || ''
+					value: row.original.config.package_name || 'N/A'
 				});
 			},
 			filterFn: (row, id, value) => {
@@ -156,7 +156,7 @@
 			},
 			cell: ({ row }) => {
 				return renderSnippet(VersionCell, {
-					value: row.original.version || 'N/A'
+					value: row.original.config.version || 'N/A'
 				});
 			},
 			filterFn: (row, id, value) => {
@@ -170,7 +170,7 @@
 			},
 			cell: ({ row }) => {
 				return renderSnippet(StatusCell, {
-					value: row.original.is_active ? 'Active' : 'Inactive'
+					value: row.original.config.is_active ? 'Active' : 'Inactive'
 				});
 			},
 			filterFn: (row, id, value) => {
@@ -178,16 +178,13 @@
 			}
 		},
 		{
-			accessorKey: 'created_at',
+			accessorKey: 'type',
 			header: ({ column }) => {
-				return renderSnippet(ColumnHeader, {
-					column,
-					title: 'Created At'
-				});
+				return renderSnippet(ColumnHeader, { column, title: 'Type' });
 			},
 			cell: ({ row }) => {
-				return renderSnippet(DateCell, {
-					value: row.original.created_at || ''
+				return renderSnippet(TypeCell, {
+					value: row.original.config.type || 'N/A'
 				});
 			},
 			filterFn: (row, id, value) => {
@@ -305,17 +302,17 @@
 	const statusOptions = [
 		{
 			label: 'Active',
-			value: 'active'
+			value: 'true'
 		},
 		{
 			label: 'Inactive',
-			value: 'inactive'
+			value: 'false'
 		}
 	];
 </script>
 
-{#snippet NameCell({ value, id }: { value: string; id: string })}
-	{@const application = data?.data.find((label) => label.id === id)}
+{#snippet NameCell({ value, package_name }: { value: string; package_name: string })}
+	{@const application = data?.data.find((item) => item.config.package_name === package_name)}
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger class="flex items-center gap-2">
@@ -332,32 +329,26 @@
 						<div class="flex flex-col items-start gap-6 md:flex-row md:items-center">
 							<div class="relative">
 								<span class="h-38 w-26 rounded-md object-cover shadow-lg">
-									{application?.name?.split(' ')[0].slice(0, 2).toUpperCase() || ''}
+									{application?.config.name?.split(' ')[0].slice(0, 2).toUpperCase() || ''}
 								</span>
 							</div>
 							<div class="flex-1 space-y-2">
 								<div class="flex flex-col gap-2 md:flex-row md:items-center">
 									<h1 class="text-2xl font-bold text-neutral-900 dark:text-white">
-										{application?.name || 'N/A'} ({new Date(
-											application?.created_at || ''
-										).toLocaleDateString('en-US', {
-											year: 'numeric',
-											month: 'long',
-											day: 'numeric'
-										})})
+										{application?.config.name || 'N/A'}
 									</h1>
 								</div>
 								<div class="mt-1 flex items-center gap-2">
 									<Badge
-										variant={application?.is_active ? 'default' : 'destructive'}
+										variant={application?.config.is_active ? 'default' : 'destructive'}
 										class="px-4 text-xs font-semibold"
 									>
-										{application?.is_active ? 'Active' : 'Inactive'}
+										{application?.config.is_active ? 'Active' : 'Inactive'}
 									</Badge>
 								</div>
 								<div class="mt-1 flex items-center gap-2">
 									<Badge variant="default" class="px-4 text-xs font-semibold">
-										{application?.version}
+										{application?.config.version || 'N/A'}
 									</Badge>
 								</div>
 							</div>
@@ -385,15 +376,13 @@
 		<Badge variant={value === 'Active' ? 'default' : 'destructive'}>{value}</Badge>
 	</div>
 {/snippet}
-{#snippet DateCell({ value }: { value: Date | string })}
-	<div class="flex">
-		<span class="max-w-125 truncate font-medium capitalize">
-			{formatTimeAgo(value instanceof Date ? value.toISOString() : new Date(value).toISOString())}
-		</span>
+{#snippet TypeCell({ value }: { value: string })}
+	<div class="flex max-w-125 capitalize">
+		<Badge>{value}</Badge>
 	</div>
 {/snippet}
 
-{#snippet RowActions({ row }: { row: Row<Application> })}
+{#snippet RowActions({ row }: { row: Row<ApplicationResponse> })}
 	{@const application = row.original}
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>
@@ -406,25 +395,19 @@
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content class="w-40" align="end">
 			{#if onView}
-				<DropdownMenu.Item onclick={() => onView(application as Application)}
-					>View</DropdownMenu.Item
-				>
+				<DropdownMenu.Item onclick={() => onView(application)}>View</DropdownMenu.Item>
 			{/if}
 			{#if onEdit}
-				<DropdownMenu.Item onclick={() => onEdit(application as Application)}
-					>Edit</DropdownMenu.Item
-				>
+				<DropdownMenu.Item onclick={() => onEdit(application)}>Edit</DropdownMenu.Item>
 			{/if}
 			{#if onDelete}
-				<DropdownMenu.Item onclick={() => onDelete(application as Application)}
-					>Delete</DropdownMenu.Item
-				>
+				<DropdownMenu.Item onclick={() => onDelete(application)}>Delete</DropdownMenu.Item>
 			{/if}
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 {/snippet}
 
-{#snippet Pagination({ table }: { table: TableType<Application> })}
+{#snippet Pagination({ table }: { table: TableType<ApplicationResponse> })}
 	<div class="flex items-center justify-between px-4">
 		<div class="hidden flex-1 text-sm text-muted-foreground lg:flex">
 			{#if table.getFilteredSelectedRowModel().rows.length > 0}
@@ -548,7 +531,7 @@
 	title,
 	class: className,
 	...restProps
-}: { column: Column<Application>; title: string } & HTMLAttributes<HTMLDivElement>)}
+}: { column: Column<ApplicationResponse>; title: string } & HTMLAttributes<HTMLDivElement>)}
 	{#if !column?.getCanSort()}
 		<div class={className} {...restProps}>
 			{title}
@@ -657,7 +640,7 @@
 	{@render Pagination({ table })}
 </div>
 
-<AdminDeleteDialog
+<AdminApplicationDeleteDialog
 	bind:open={deleteDialogOpen}
 	onOpenChange={(val) => (deleteDialogOpen = val)}
 	data={table.getSelectedRowModel().rows.map((row) => row.original)}

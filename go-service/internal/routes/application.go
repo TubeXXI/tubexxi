@@ -36,7 +36,7 @@ func (r *ApplicationRoutes) RegisterRoutes(parent fiber.Router) {
 	router.Get("/public/:package_name", r.handler.GetPublicAppConfig)
 
 	protected := router.Group("/protected")
-	protected.Use(r.auth.FirebaseAuth())
+	protected.Use(r.auth.FirebaseAuth(), r.admin.Handler())
 
 	protected.Post("/",
 		r.csrf.CSRFProtect(),
@@ -47,6 +47,22 @@ func (r *ApplicationRoutes) RegisterRoutes(parent fiber.Router) {
 		r.csrf.CSRFProtect(),
 		r.admin.Handler(),
 		r.handler.UpdateAppConfigBulk,
+	)
+	protected.Get("/search",
+		r.handler.Search,
+	)
+	protected.Get("/:package_name",
+		r.handler.GetByPackageName,
+	)
+	protected.Delete("/:package_name",
+		r.csrf.CSRFProtect(),
+		r.admin.Handler(),
+		r.handler.DeleteApplication,
+	)
+	protected.Delete("/bulk",
+		r.csrf.CSRFProtect(),
+		r.admin.Handler(),
+		r.handler.BulkDeleteApplication,
 	)
 
 }

@@ -204,45 +204,6 @@ export const updatePasswordSchema = z.object({
 		.transform((value) => value.replaceAll(/\s+/g, ''))
 });
 
-// Platforms
-export const createPlatformSchema = z.object({
-	name: z.string({ error: 'Name is required' }).nonempty('Name is required'),
-	slug: z.string({ error: 'Slug is required' }).nonempty('Slug is required'),
-	thumbnail_url: z
-		.string({ error: 'Thumbnail URL is required' })
-		.nonempty('Thumbnail URL is required'),
-	url_pattern: z.string().optional(),
-	is_active: z.boolean().default(true),
-	is_premium: z.boolean().default(false),
-	config: z.record(z.string(), z.any()).optional().default({})
-});
-
-export const updatePlatformSchema = z.object({
-	id: z.string({ error: 'ID is required' }).nonempty('ID is required'),
-	name: z.string({ error: 'Name is required' }).nonempty('Name is required'),
-	slug: z.string({ error: 'Slug is required' }).nonempty('Slug is required'),
-	type: z
-		.enum([
-			'youtube',
-			'tiktok',
-			'instagram',
-			'facebook',
-			'twitter',
-			'vimeo',
-			'dailymotion',
-			'rumble',
-			'any-video-downloader',
-			'youtube-to-mp3',
-			'snackvideo'
-		])
-		.optional()
-		.default('youtube'),
-	url_pattern: z.string().optional(),
-	is_active: z.boolean().default(true),
-	is_premium: z.boolean().default(false),
-	config: z.record(z.string(), z.any()).optional().default({})
-});
-
 // Application
 export const registerAppSchema = z
 	.object({
@@ -251,105 +212,29 @@ export const registerAppSchema = z
 			.string({ error: 'Package name is required' })
 			.nonempty('Package name is required'),
 		version: z.string({ error: 'Version is required' }).nonempty('Version is required'),
-		platform: z.string({ error: 'Platform is required' }).nonempty('Platform is required'),
-		enable_monetization: z.boolean().default(false),
+		type: z.enum(['android', 'ios']).default('android'),
+		store_url: z.string().optional().or(z.literal('')),
+		is_active: z.boolean().default(true),
+		enable_monetize: z.boolean().default(false),
 		enable_admob: z.boolean().default(false),
 		enable_unity_ad: z.boolean().default(false),
-		enable_start_app: z.boolean().default(false),
+		enable_star_io_ad: z.boolean().default(false),
 		enable_in_app_purchase: z.boolean().default(false),
-		admob_ad_unit_id: z.string().optional(),
-		unity_ad_unit_id: z.string().optional(),
-		start_app_ad_unit_id: z.string().optional(),
-		admob_banner_ad_unit_id: z.string().optional(),
-		admob_interstitial_ad_unit_id: z.string().optional(),
-		admob_native_ad_unit_id: z.string().optional(),
-		admob_rewarded_ad_unit_id: z.string().optional(),
-		unity_banner_ad_unit_id: z.string().optional(),
-		unity_interstitial_ad_unit_id: z.string().optional(),
-		unity_native_ad_unit_id: z.string().optional(),
-		unity_rewarded_ad_unit_id: z.string().optional(),
+		admob_id: z.string().optional(),
+		unity_ad_id: z.string().optional(),
+		star_io_ad_id: z.string().optional(),
+		admob_auto_ad: z.string().optional(),
+		admob_banner_ad: z.string().optional(),
+		admob_interstitial_ad: z.string().optional(),
+		admob_native_ad: z.string().optional(),
+		admob_rewarded_ad: z.string().optional(),
+		unity_banner_ad: z.string().optional(),
+		unity_interstitial_ad: z.string().optional(),
+		unity_rewarded_ad: z.string().optional(),
 		one_signal_id: z.string().optional(),
-		is_active: z.boolean().default(true)
 	})
-	.superRefine((data, ctx) => {
-		if (data.enable_monetization) {
-			if (!data.enable_admob && !data.enable_unity_ad && !data.enable_start_app) {
-				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
-					message: 'At least one ad network must be enabled when monetization is enabled'
-				});
-			}
-			if (data.enable_admob) {
-				if (!data.admob_ad_unit_id) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Admob ad unit ID is required when admob is enabled'
-					});
-				}
-				if (!data.admob_banner_ad_unit_id) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Admob banner ad unit ID is required when admob is enabled'
-					});
-				}
-				if (!data.admob_interstitial_ad_unit_id) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Admob interstitial ad unit ID is required when admob is enabled'
-					});
-				}
-				if (!data.admob_native_ad_unit_id) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Admob native ad unit ID is required when admob is enabled'
-					});
-				}
-				if (!data.admob_rewarded_ad_unit_id) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Admob rewarded ad unit ID is required when admob is enabled'
-					});
-				}
-			}
-			if (data.enable_unity_ad) {
-				if (!data.unity_ad_unit_id) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Unity ad unit ID is required when unity ad is enabled'
-					});
-				}
-				if (!data.unity_banner_ad_unit_id) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Unity banner ad unit ID is required when unity ad is enabled'
-					});
-				}
-				if (!data.unity_interstitial_ad_unit_id) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Unity interstitial ad unit ID is required when unity ad is enabled'
-					});
-				}
-				if (!data.unity_rewarded_ad_unit_id) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Unity rewarded ad unit ID is required when unity ad is enabled'
-					});
-				}
-			}
-			if (data.enable_start_app) {
-				if (!data.start_app_ad_unit_id) {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: 'Start App ad unit ID is required when Start App is enabled'
-					});
-				}
-			}
-		}
-	});
-export const updateApplicationSchema = registerAppSchema.extend({
-	id: z.string({ error: 'ID is required' }).nonempty('ID is required')
-});
+
+export const updateApplicationSchema = registerAppSchema;
 
 // Blog Post
 export const PostSchema = z.object({
@@ -408,11 +293,6 @@ export type UpdateSettingCookieSchema = z.infer<typeof updateSettingCookie>;
 // Accounts
 export type UpdateProfileSchema = z.infer<typeof updateProfileSchema>;
 export type UpdatePasswordSchema = z.infer<typeof updatePasswordSchema>;
-
-// Platforms
-export type CreatePlatformSchema = z.infer<typeof createPlatformSchema>;
-export type UpdatePlatformSchema = z.infer<typeof updatePlatformSchema>;
-
 // Applications
 export type RegisterAppSchema = z.infer<typeof registerAppSchema>;
 export type UpdateApplicationSchema = z.infer<typeof updateApplicationSchema>;

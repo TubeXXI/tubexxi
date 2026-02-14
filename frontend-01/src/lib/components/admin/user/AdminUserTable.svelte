@@ -179,9 +179,7 @@
 			},
 			cell: ({ row }) => {
 				return renderSnippet(DateCell, {
-					value: row.original.last_login_at
-						? new Date(row.original.last_login_at).toISOString()
-						: ''
+					value: row.original.last_login_at ? row.original.last_login_at : ''
 				});
 			},
 			filterFn: (row, id, value) => {
@@ -195,9 +193,7 @@
 			},
 			cell: ({ row }) => {
 				return renderSnippet(DateCell, {
-					value: row.original.email_verified_at
-						? new Date(row.original.email_verified_at).toISOString()
-						: ''
+					value: row.original.email_verified_at ? row.original.email_verified_at : ''
 				});
 			},
 			filterFn: (row, id, value) => {
@@ -336,9 +332,9 @@
 			<Tooltip.Trigger class="flex items-center gap-2">
 				<Avatar.Root>
 					<Avatar.Image src={value?.avatar_url || ''} alt={value?.full_name || ''} />
-					<Avatar.Fallback
-						>{value?.full_name.split(' ')[0].slice(0, 2).toUpperCase() || ''}</Avatar.Fallback
-					>
+					<Avatar.Fallback>
+						{value?.full_name.split(' ')[0].slice(0, 2).toUpperCase() || ''}
+					</Avatar.Fallback>
 				</Avatar.Root>
 				<span class="max-w-50 truncate font-medium capitalize">
 					{value?.full_name || 'N/A'}
@@ -349,9 +345,11 @@
 					<Card.Content>
 						<div class="flex flex-col items-start gap-6 md:flex-row md:items-center">
 							<div class="relative">
-								<span class="h-38 w-26 rounded-md object-cover shadow-lg">
-									{value?.full_name.split(' ')[0].slice(0, 2).toUpperCase() || ''}
-								</span>
+								<img
+									src={value?.avatar_url || ''}
+									alt={value?.full_name || ''}
+									class="h-38 w-26 rounded-md object-fill shadow-lg"
+								/>
 							</div>
 							<div class="flex-1 space-y-2">
 								<div class="flex flex-col gap-2 md:flex-row md:items-center">
@@ -410,7 +408,9 @@
 {#snippet DateCell({ value }: { value: Date | string })}
 	<div class="flex">
 		<span class="max-w-125 truncate font-medium capitalize">
-			{formatTimeAgo(value instanceof Date ? value.toISOString() : new Date(value).toISOString())}
+			{value
+				? formatTimeAgo(value instanceof Date ? value.toISOString() : new Date(value).toISOString())
+				: 'N/A'}
 		</span>
 	</div>
 {/snippet}

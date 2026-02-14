@@ -1,3 +1,7 @@
+import { base32Encode, base32Decode } from '@ctrl/ts-base32';
+import { stringToUint8Array, uint8ArrayToString } from 'uint8array-extras';
+import * as crypto from 'crypto';
+
 export function randomInt(min: number, max: number): number {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -104,4 +108,25 @@ export function compareVersions(a: string, b: string): number {
 		if (aVal < bVal) return -1;
 	}
 	return 0;
+}
+export function generateEncodeBase32(value: string): string {
+	const dataAsBytes = stringToUint8Array(value);
+	const encodedBase32 = base32Encode(dataAsBytes);
+
+	return encodedBase32
+}
+export function generateDecodeBase32(value: string): string {
+	const decodedBytes = base32Decode(value);
+	const decodedString = uint8ArrayToString(decodedBytes);
+
+	return decodedString
+}
+export function generateEncodeBase64(value: string): string {
+	return Buffer.from(value).toString('base64');
+}
+export function generateDecodeBase64(value: string): string {
+	const decodedBytes = Buffer.from(value, 'base64');
+	const decodedString = decodedBytes.toString('utf-8');
+
+	return decodedString;
 }

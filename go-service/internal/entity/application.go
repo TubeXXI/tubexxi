@@ -36,6 +36,7 @@ type ApplicationMonetize struct {
 	EnableAdmob         bool    `json:"enable_admob"`
 	EnableUnityAd       bool    `json:"enable_unity_ad"`
 	EnableStarIoAd      bool    `json:"enable_star_io_ad"`
+	EnableInAppPurchase bool    `json:"enable_in_app_purchase"`
 	AdmobID             *string `json:"admob_id,omitempty"`
 	UnityAdID           *string `json:"unity_ad_id,omitempty"`
 	StarIoAdID          *string `json:"star_io_ad_id,omitempty"`
@@ -47,6 +48,7 @@ type ApplicationMonetize struct {
 	UnityBannerAd       *string `json:"unity_banner_ad,omitempty"`
 	UnityInterstitialAd *string `json:"unity_interstitial_ad,omitempty"`
 	UnityRewardedAd     *string `json:"unity_rewarded_ad,omitempty"`
+	OneSignalID         *string `json:"one_signal_id,omitempty"`
 }
 
 type UpdateApplicationBulkRequest struct {

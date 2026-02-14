@@ -6,3 +6,4 @@ export * from './movie_service';
 export * from './anime_service';
 export * from './series_service';
 export * from './health_service';
+export * from './application_service';

@@ -78,6 +78,14 @@ type SettingMonetize struct {
 }
 
 // DTOs
+type RegisterSettingRequest struct {
+	Scope       string `json:"scope" validate:"required"`
+	Key         string `json:"key" validate:"required"`
+	Value       string `json:"value" validate:"required"`
+	Description string `json:"description" validate:"omitempty"`
+	GroupName   string `json:"group_name" validate:"required"`
+}
+
 type UpdateSettingsBulkRequest struct {
 	Key         string `json:"key" validate:"required"`
 	Value       string `json:"value" validate:"required"`

@@ -250,6 +250,10 @@ declare global {
 		value?: T[] | null;
 		view_all_url?: string | null;
 	}
+	interface ApplicationResponse {
+		config: ApplicationConfig
+		monetize: ApplicationMonetize
+	}
 }
 
-export {};
+export { };

@@ -8,6 +8,22 @@ export class SettingServiceImpl extends BaseService implements SettingService {
 	) {
 		super(event);
 	}
+	async registerSetting(
+		settings: { key: string; scope: string; value: string; description?: string; group_name: string }[]
+	): Promise<void | Error> {
+		try {
+			const response = await this.api.authRequest<void>(
+				'POST',
+				`/settings/protected/register?scope=default`,
+				settings
+			);
+			if (!response.success) {
+				throw new Error(response.error?.message || response.message || 'Failed to register setting');
+			}
+		} catch (error) {
+			return error instanceof Error ? error : new Error('Failed to register setting');
+		}
+	}
 
 	async getPublicSettings(): Promise<SettingsValue | Error> {
 		try {

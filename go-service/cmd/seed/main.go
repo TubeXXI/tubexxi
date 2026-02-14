@@ -150,7 +150,7 @@ func main() {
 	('banner_vertical_ad_code', 'default', '', 'Banner Vertical Ad Code', 'MONETIZE'),
 	('native_ad_code', 'default', '', 'Native Ad Code', 'MONETIZE'),
 	('direct_link_ad_code', 'default', '', 'Direct Link Ad Code', 'MONETIZE')
-	ON CONFLICT (key) DO NOTHING;`
+	ON CONFLICT (scope, key) DO NOTHING;`
 
 	_, err = cont.DBPool.Exec(ctxTimeout, settingQuery)
 	if err != nil {
@@ -173,18 +173,20 @@ func main() {
         ('enable_admob', 'com.agcforge.tubexxi', 'false', 'TubeXXI Application Enable Admob', 'MONETIZE'),
         ('enable_unity_ad', 'com.agcforge.tubexxi', 'false', 'TubeXXI Application Enable Unity Ad', 'MONETIZE'),
         ('enable_star_io_ad', 'com.agcforge.tubexxi', 'false', 'TubeXXI Application Enable Star IO Ad', 'MONETIZE'),
+        ('enable_in_app_purchase', 'com.agcforge.tubexxi', 'false', 'TubeXXI Application Enable In App Purchase', 'MONETIZE'),
         ('admob_id', 'com.agcforge.tubexxi', '', 'TubeXXI Application Admob ID', 'MONETIZE'),
         ('unity_ad_id', 'com.agcforge.tubexxi', '', 'TubeXXI Application Unity Ad ID', 'MONETIZE'),
         ('star_io_ad_id', 'com.agcforge.tubexxi', '', 'TubeXXI Application Star IO Ad ID', 'MONETIZE'),
-        ('admob_auto_ad', 'com.agcforge.tubexxi', 'false', 'TubeXXI Application Admob Auto Ad', 'MONETIZE'),
+        ('admob_auto_ad', 'com.agcforge.tubexxi', '', 'TubeXXI Application Admob Auto Ad', 'MONETIZE'),
         ('admob_banner_ad', 'com.agcforge.tubexxi', '', 'TubeXXI Application Admob Banner Ad', 'MONETIZE'),
         ('admob_interstitial_ad', 'com.agcforge.tubexxi', '', 'TubeXXI Application Admob Interstitial Ad', 'MONETIZE'),
         ('admob_rewarded_ad', 'com.agcforge.tubexxi', '', 'TubeXXI Application Admob Rewarded Ad', 'MONETIZE'),
         ('admob_native_ad', 'com.agcforge.tubexxi', '', 'TubeXXI Application Admob Native Ad', 'MONETIZE'),
         ('unity_banner_ad', 'com.agcforge.tubexxi', '', 'TubeXXI Application Unity Banner Ad', 'MONETIZE'),
         ('unity_interstitial_ad', 'com.agcforge.tubexxi', '', 'TubeXXI Application Unity Interstitial Ad', 'MONETIZE'),
-        ('unity_rewarded_ad', 'com.agcforge.tubexxi', '', 'TubeXXI Application Unity Rewarded Ad', 'MONETIZE')
-    ON CONFLICT (key) DO NOTHING;`
+        ('unity_rewarded_ad', 'com.agcforge.tubexxi', '', 'TubeXXI Application Unity Rewarded Ad', 'MONETIZE'),
+        ('one_signal_id', 'com.agcforge.tubexxi', '', 'TubeXXI Application One Signal ID', 'MONETIZE')
+    ON CONFLICT (package_name, key) DO NOTHING;`
 
 	_, err = cont.DBPool.Exec(ctxTimeout, appQuery)
 	if err != nil {

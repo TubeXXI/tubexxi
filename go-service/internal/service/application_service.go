@@ -3,11 +3,13 @@ package service
 import (
 	"context"
 	"time"
+	"tubexxi/video-api/internal/dto"
 	"tubexxi/video-api/internal/entity"
 	"tubexxi/video-api/internal/infrastructure/contextpool"
 	redisclient "tubexxi/video-api/internal/infrastructure/redis-client"
 	"tubexxi/video-api/internal/infrastructure/repository"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
@@ -28,17 +30,24 @@ func NewApplicationService(
 		logger:          logger,
 	}
 }
-func (s *ApplicationService) RegisterApplication(ctx context.Context, req *entity.RegisterNewApplicationRequest) error {
+func (s *ApplicationService) RegisterApplication(ctx context.Context, req []entity.RegisterNewApplicationRequest) error {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()
 
-	return s.applicationRepo.Create(subCtx, &entity.Application{
-		PackageName: req.PackageName,
-		Key:         req.Key,
-		Value:       req.Value,
-		Description: req.Description,
-		GroupName:   req.GroupName,
-	})
+	payload := make([]entity.Application, 0, len(req))
+	for _, item := range req {
+		payload = append(payload, entity.Application{
+			ID:          uuid.New(),
+			PackageName: item.PackageName,
+			Key:         item.Key,
+			Value:       item.Value,
+			Description: item.Description,
+			GroupName:   item.GroupName,
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		})
+	}
+	return s.applicationRepo.Create(subCtx, payload)
 }
 
 func (s *ApplicationService) GetPublicAppConfig(ctx context.Context, packageName string) (*entity.ApplicationResponse, error) {
@@ -89,6 +98,44 @@ func (s *ApplicationService) UpdateAppConfigBulk(ctx context.Context, packageNam
 	}
 	return s.applicationRepo.UpdateBulk(subCtx, packageName, payload)
 }
+func (s *ApplicationService) Search(ctx context.Context, params dto.QueryParamsRequest) ([]*entity.ApplicationResponse, dto.Pagination, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	params.SetDefaults()
+
+	if params.SortBy != "" {
+		validSortFields := map[string]bool{
+			"package_name": true,
+			"created_at":   true,
+			"updated_at":   true,
+		}
+		if !validSortFields[params.SortBy] {
+			params.SortBy = "package_name"
+		}
+	}
+
+	return s.applicationRepo.Search(subCtx, params)
+}
+func (s *ApplicationService) GetByPackageName(ctx context.Context, packageName string) (*entity.ApplicationResponse, error) {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	return s.applicationRepo.GetByPackageName(subCtx, packageName)
+}
+
+func (s *ApplicationService) DeleteApplication(ctx context.Context, packageName string) error {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	return s.applicationRepo.Delete(subCtx, packageName)
+}
+func (s *ApplicationService) BulkDeleteApplication(ctx context.Context, packageNames []string) error {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	return s.applicationRepo.BulkDelete(subCtx, packageNames)
+}
 
 // Helpers
 func (s *ApplicationService) mapAppConfigSetting(target *entity.ApplicationConfig, parent entity.Application) {
@@ -121,6 +168,8 @@ func (s *ApplicationService) mapAppMonetizeSetting(target *entity.ApplicationMon
 		target.EnableUnityAd = parent.Value == "1"
 	case "enable_star_io_ad":
 		target.EnableStarIoAd = parent.Value == "1"
+	case "enable_in_app_purchase":
+		target.EnableInAppPurchase = parent.Value == "1"
 	case "admob_id":
 		target.AdmobID = &parent.Value
 	case "unity_ad_id":
@@ -143,5 +192,7 @@ func (s *ApplicationService) mapAppMonetizeSetting(target *entity.ApplicationMon
 		target.UnityInterstitialAd = &parent.Value
 	case "unity_rewarded_ad":
 		target.UnityRewardedAd = &parent.Value
+	case "one_signal_id":
+		target.OneSignalID = &parent.Value
 	}
 }

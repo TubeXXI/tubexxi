@@ -28,6 +28,7 @@ import AdminDashboardRecentDownload from './dashboard/AdminDashboardRecentDownlo
 // applications
 import AdminApplicationTable from './application/AdminApplicationTable.svelte';
 import AdminApplicationTableToolbar from './application/AdminApplicationTableToolbar.svelte';
+import AdminApplicationDeleteDialog from './application/AdminApplicationDeleteDialog.svelte';
 
 // users
 import AdminUserTable from './user/AdminUserTable.svelte';
@@ -61,6 +62,7 @@ export {
 	// applications
 	AdminApplicationTable,
 	AdminApplicationTableToolbar,
+	AdminApplicationDeleteDialog,
 	// users
 	AdminUserTable,
 	AdminUserTableToolbar,

@@ -43,6 +43,7 @@ func (r *SettingRoutes) RegisterRoutes(parent fiber.Router) {
 	router.Get("/public", r.handler.GetPublicSettings)
 
 	protected := router.Group("/protected")
+	protected.Post("/register", r.csrf.CSRFProtect(), r.handler.RegisterSetting)
 	protected.Use(r.auth.FirebaseAuth(), r.admin.Handler())
 	protected.Get("/all", r.handler.GetAllSettings)
 	protected.Put("/bulk-update", r.csrf.CSRFProtect(), r.handler.UpdateSettingsBulk)

@@ -14,6 +14,7 @@ import (
 
 type SettingRepository interface {
 	BaseRepository
+	Create(ctx context.Context, setting []entity.Setting) error
 	GetAll(ctx context.Context, scope string) ([]entity.Setting, error)
 	ListScopes(ctx context.Context) ([]string, error)
 	GetByGroup(ctx context.Context, scope string, groupName string) ([]entity.Setting, error)
@@ -33,6 +34,44 @@ func NewSettingRepository(db *pgxpool.Pool, logger *zap.Logger) SettingRepositor
 			logger,
 		).(*baseRepository),
 	}
+}
+
+func (r *settingRepository) Create(ctx context.Context, setting []entity.Setting) error {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	for _, item := range setting {
+		if item.Scope == "" {
+			item.Scope = "default"
+		}
+	}
+
+	tx, err := r.db.Begin(subCtx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(subCtx)
+
+	query := `INSERT INTO settings (key, scope, value, description, group_name) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (scope, key) DO NOTHING`
+	for _, item := range setting {
+		_, err = tx.Exec(
+			subCtx,
+			query,
+			item.Key,
+			item.Scope,
+			item.Value,
+			item.Description,
+			item.GroupName,
+		)
+		if err != nil {
+			r.logger.Error("[SettingRepository.Create]", zap.Error(err))
+			return err
+		}
+	}
+	if err := tx.Commit(subCtx); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *settingRepository) GetAll(ctx context.Context, scope string) ([]entity.Setting, error) {
@@ -63,7 +102,6 @@ func (r *settingRepository) GetAll(ctx context.Context, scope string) ([]entity.
 	}
 	return settings, nil
 }
-
 func (r *settingRepository) ListScopes(ctx context.Context) ([]string, error) {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()

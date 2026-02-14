@@ -11,7 +11,7 @@
 	};
 </script>
 
-<script lang="ts" generics="Application">
+<script lang="ts" generics="ApplicationResponse">
 	import type { Table } from '@tanstack/table-core';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { DataTableViewOption, CommandSelectInput } from '@/components';
@@ -25,7 +25,7 @@
 		updateQuery,
 		onreset
 	}: {
-		table: Table<Application>;
+		table: Table<ApplicationResponse>;
 		statusOptions: { label: string; value: string }[];
 		updateQuery: (updates: Partial<QueryOption>, resetPage: boolean) => Promise<void>;
 		onreset: () => Promise<void>;

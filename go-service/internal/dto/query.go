@@ -26,3 +26,18 @@ type Pagination struct {
 	HasNext     bool  `json:"has_next"`
 	HasPrev     bool  `json:"has_prev"`
 }
+
+func (q *QueryParamsRequest) SetDefaults() {
+	if q.Page <= 0 {
+		q.Page = 1
+	}
+	if q.Limit <= 0 {
+		q.Limit = 10
+	}
+	if q.Limit > 100 {
+		q.Limit = 100
+	}
+	if q.OrderBy == "" {
+		q.OrderBy = "DESC"
+	}
+}

@@ -30,6 +30,20 @@ func NewSettingHandler(
 		logger:          logger,
 	}
 }
+func (h *SettingHandler) RegisterSetting(c *fiber.Ctx) error {
+	ctx := h.ctxinject.HandlerContext(c)
+
+	var req []entity.RegisterSettingRequest
+	if err := c.BodyParser(&req); err != nil {
+		return response.Error(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
+	}
+
+	if err := h.service.RegisterSetting(ctx, req); err != nil {
+		return response.Error(c, fiber.StatusInternalServerError, "Failed to register setting", err.Error())
+	}
+
+	return response.Success(c, "Setting registered successfully", nil)
+}
 
 func (h *SettingHandler) UpdateSettingsBulk(c *fiber.Ctx) error {
 	ctx := h.ctxinject.HandlerContext(c)

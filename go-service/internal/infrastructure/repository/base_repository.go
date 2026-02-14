@@ -131,41 +131,47 @@ func (qb *QueryBuilder) OrderByField(field string, direction string) *QueryBuild
 }
 
 func (qb *QueryBuilder) WithLimit(limit int) *QueryBuilder {
-	qb.Limit = limit
+	if limit >= 0 {
+		qb.Limit = limit
+	}
 	return qb
 }
 
 func (qb *QueryBuilder) WithOffset(offset int) *QueryBuilder {
-	qb.Offset = offset
+	if offset >= 0 {
+		qb.Offset = offset
+	}
 	return qb
 }
-
 func (qb *QueryBuilder) Build() (string, []interface{}) {
-	query := qb.BaseQuery
+	var queryBuilder strings.Builder
+	queryBuilder.WriteString(qb.BaseQuery)
 
+	// WHERE
 	if len(qb.Wheres) > 0 {
-		query += " WHERE "
-		for i, where := range qb.Wheres {
-			if i > 0 {
-				query += " AND "
-			}
-			query += where
-		}
+		queryBuilder.WriteString(" WHERE ")
+		queryBuilder.WriteString(strings.Join(qb.Wheres, " AND "))
 	}
 
+	// ORDER BY
 	if qb.OrderBy != "" {
-		query += " ORDER BY " + qb.OrderBy
+		queryBuilder.WriteString(" ORDER BY ")
+		queryBuilder.WriteString(qb.OrderBy)
 	}
 
+	// ✅ LIMIT - PAKAI strconv.Itoa
 	if qb.Limit > 0 {
-		query += " LIMIT " + string(rune(qb.Limit))
+		queryBuilder.WriteString(" LIMIT ")
+		queryBuilder.WriteString(strconv.Itoa(qb.Limit))
 	}
 
+	// ✅ OFFSET - PAKAI strconv.Itoa
 	if qb.Offset > 0 {
-		query += " OFFSET " + string(rune(qb.Offset))
+		queryBuilder.WriteString(" OFFSET ")
+		queryBuilder.WriteString(strconv.Itoa(qb.Offset))
 	}
 
-	return query, qb.Args
+	return queryBuilder.String(), qb.Args
 }
 
 func (qb *QueryBuilder) WithoutPagination() *QueryBuilder {

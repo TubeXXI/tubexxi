@@ -37,6 +37,28 @@ func NewSettingService(
 		logger:      logger,
 	}
 }
+func (s *SettingService) RegisterSetting(ctx context.Context, req []entity.RegisterSettingRequest) error {
+	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
+	defer cancel()
+
+	payload := make([]entity.Setting, 0, len(req))
+	for _, item := range req {
+		payload = append(payload, entity.Setting{
+			Scope:       item.Scope,
+			Key:         item.Key,
+			Value:       item.Value,
+			Description: item.Description,
+			GroupName:   item.GroupName,
+		})
+	}
+
+	if err := s.settingRepo.Create(subCtx, payload); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *SettingService) UploadFile(ctx context.Context, scope string, file *multipart.FileHeader, key string) (string, error) {
 	subCtx, cancel := contextpool.WithTimeoutIfNone(ctx, 15*time.Second)
 	defer cancel()

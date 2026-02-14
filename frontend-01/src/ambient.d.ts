@@ -261,10 +261,6 @@ declare global {
 		group_name: string;
 		created_at: string;
 		updated_at: string;
-		name?: string;
-		api_key?: string;
-		version?: string;
-		is_active?: boolean;
 	};
 	type ApplicationValue = {
 		CONFIG: ApplicationConfig;
@@ -278,6 +274,25 @@ declare global {
 		type: string;
 		store_url?: string | null;
 		is_active: boolean;
+	};
+	type ApplicationMonetize = {
+		enable_monetize: boolean;
+		enable_admob: boolean;
+		enable_unity_ad: boolean;
+		enable_star_io_ad: boolean;
+		enable_in_app_purchase: boolean;
+		admob_id?: string | null;
+		unity_ad_id?: string | null;
+		star_io_ad_id?: string | null;
+		admob_auto_ad?: string | null;
+		admob_banner_ad?: string | null;
+		admob_interstitial_ad?: string | null;
+		admob_rewarded_ad?: string | null;
+		admob_native_ad?: string | null;
+		unity_banner_ad?: string | null;
+		unity_interstitial_ad?: string | null;
+		unity_rewarded_ad?: string | null;
+		one_signal_id?: string | null;
 	};
 
 	type AnalyticsDaily = {
@@ -297,23 +312,7 @@ declare global {
 		created_at?: string;
 		updated_at?: string;
 	};
-	type ApplicationMonetize = {
-		enable_monetize: boolean;
-		enable_admob: boolean;
-		enable_unity_ad: boolean;
-		enable_star_io_ad: boolean;
-		admob_id?: string | null;
-		unity_ad_id?: string | null;
-		star_io_ad_id?: string | null;
-		admob_auto_ad?: string | null;
-		admob_banner_ad?: string | null;
-		admob_interstitial_ad?: string | null;
-		admob_rewarded_ad?: string | null;
-		admob_native_ad?: string | null;
-		unity_banner_ad?: string | null;
-		unity_interstitial_ad?: string | null;
-		unity_rewarded_ad?: string | null;
-	};
+
 
 	type ViewHistory = {
 		id: string;
@@ -456,6 +455,9 @@ declare global {
 	// Service Interfaces
 	// ==========================================
 	interface SettingService {
+		registerSetting(
+			settings: { key: string; scope: string; value: string; description?: string; group_name: string }[]
+		): Promise<void | Error>;
 		getPublicSettings(): Promise<SettingsValue | Error>;
 		getAllSettings(): Promise<Setting[] | Error>;
 		updateBulkSetting(
@@ -517,6 +519,20 @@ declare global {
 		GetServerLogs(page: number, limit: number): Promise<PaginatedResult<ServerLogsResponse> | null>;
 		ClearServerLogs(): Promise<void | Error>;
 	}
+	interface ApplicationService {
+		RegisterApplication(
+			apps: { package_name: string; key: string; value: string; description?: string; group_name: string }[]
+		): Promise<boolean>;
+		UpdateApplication(
+			package_name: string,
+			apps: { key: string; value: string; description?: string; group_name: string }[]
+		): Promise<boolean>
+		Search(query: QueryParams): Promise<PaginatedResult<ApplicationResponse>>;
+		GetByPackageName(packageName: string): Promise<ApplicationResponse | null>;
+		Delete(packageName: string): Promise<boolean>;
+		BulkDelete(packageNames: string[]): Promise<boolean>;
+	}
+
 
 
 	// ==========================================
